@@ -1,3 +1,5 @@
+use std::fmt::{self};
+
 /// The MIT License (MIT)
 ///
 /// Copyright (c) 2022 Muqiu Han
@@ -19,37 +21,40 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 /// SOFTWARE.
-use std::path::PathBuf;
-use structopt::StructOpt;
+use std::process::exit;
 
-use crate::error::ErrorCode;
-
-#[derive(Debug, StructOpt)]
-#[structopt(name = "bonding", about = "crude container")]
-pub struct Args {
-    /// Whether to enable Debug mode
-    #[structopt(short, long)]
-    debug: bool,
-
-    /// The command with arguments to be executed inside the container
-    #[structopt(short, long)]
-    pub command: String,
-
-    /// The uid that will be created
-    #[structopt(short, long)]
-    pub uid: u32,
-
-    /// An external folder inside the container as root
-    #[structopt(parse(from_os_str), short, long)]
-    pub mount: PathBuf,
+#[derive(Debug)]
+pub enum ErrorCode {
+    ArgumentInvalid(&'static str),
 }
 
-pub fn parse_args() -> Result<Args, ErrorCode> {
-    let args = Args::from_args();
-
-    if !args.mount.exists() || !args.mount.is_dir() {
-        return Err(ErrorCode::ArgumentInvalid("mount"));
+impl fmt::Display for ErrorCode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self {
+            ErrorCode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
+        }
     }
+}
 
-    Ok(args)
+pub fn exit_with_code(res: Result<(), ErrorCode>) {
+    match res {
+        Ok(_) => {
+            debug!("Exit without any error, returning 0");
+            exit(0);
+        }
+
+        Err(e) => {
+            let retcode = e.get_retcode();
+            error!("Error on exit:\n\t{}\n\tReturning {}", e, retcode);
+            exit(retcode);
+        }
+    }
+}
+
+impl ErrorCode {
+    pub fn get_retcode(&self) -> i32 {
+        match &self {
+            _ => 1,
+        }
+    }
 }
