@@ -1,5 +1,4 @@
 use std::fmt::{self};
-
 /// The MIT License (MIT)
 ///
 /// Copyright (c) 2022 Muqiu Han
@@ -26,12 +25,16 @@ use std::process::exit;
 #[derive(Debug)]
 pub enum ErrorCode {
     ArgumentInvalid(&'static str),
+    NotSupported(u8),
+    ContainerError(u8),
 }
 
 impl fmt::Display for ErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            ErrorCode::ArgumentInvalid(element) => write!(f, "ArgumentInvalid: {}", element),
+            ErrorCode::ArgumentInvalid(element) => write!(f, "Argument Invalid: {}", element),
+            ErrorCode::ContainerError(error) => write!(f, "Container Error: {}", error),
+            ErrorCode::NotSupported(error) => write!(f, "Not Support: {}", error),
         }
     }
 }

@@ -1,10 +1,3 @@
-use std::process::exit;
-
-use crate::error::exit_with_code;
-use colog;
-use log::LevelFilter;
-use std::io::{self, Write};
-
 /// The MIT License (MIT)
 ///
 /// Copyright (c) 2022 Muqiu Han
@@ -26,8 +19,22 @@ use std::io::{self, Write};
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 /// SOFTWARE.
+///
+use std::process::exit;
+
+use crate::error::exit_with_code;
+use colog;
+use log::LevelFilter;
+use std::io::{self, Write};
+
+#[macro_use]
+extern crate scan_fmt;
+
 mod cli;
+mod config;
+mod container;
 mod error;
+mod env;
 
 #[macro_use]
 extern crate log;
@@ -40,7 +47,7 @@ fn main() {
     match cli::parse_args() {
         Ok(args) => {
             debug!("{:?}", args);
-            exit_with_code(Ok(()))
+            exit_with_code(container::start(args))
         }
         Err(e) => {
             error!("Error while parsing arguments:\n\t{}", e);

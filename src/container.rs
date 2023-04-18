@@ -21,6 +21,7 @@
 /// SOFTWARE.
 use crate::cli::Args;
 use crate::config::ContainerConfig;
+use crate::env::check_linux_version;
 use crate::error::ErrorCode;
 
 pub struct Container {
@@ -34,25 +35,26 @@ impl Container {
     }
 
     pub fn create(&mut self) -> Result<(), ErrorCode> {
-        info!("container has been created");
+        info!("create container...");
         Ok(())
     }
 
     /// This function will be called every time before the container exits
     pub fn clean_exit(&mut self) -> Result<(), ErrorCode> {
-        info!("container has been cleaned");
+        info!("clean container...");
         Ok(())
     }
 }
 
 /// Handles everything from container creation to exit
 pub fn start(args: Args) -> Result<(), ErrorCode> {
+    check_linux_version()?;
     let mut container = Container::new(args)?;
     if let Err(e) = container.create() {
         container.clean_exit()?;
         log::error!("error while creating container: {:?}", e);
         return Err(e);
     }
-    log::info!("finished, cleaning & exit");
+    log::info!("exit container...");
     container.clean_exit()
 }

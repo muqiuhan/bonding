@@ -7,5 +7,7 @@ edition = "2021"
 
 [dependencies]
 structopt = "0.3.26"
+nix = '0.26.2'
 log = "0.4.17"
+scan_fmt = "0.2.6"
 colog = {git = "https://github.com/muqiuhan/rust-colog"}
