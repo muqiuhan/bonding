@@ -22,8 +22,10 @@
  **/
 
 use crate::error::ErrorCode;
+use crate::process::generate_socketpair;
 
 use std::ffi::CString;
+use std::os::fd::RawFd;
 use std::path::PathBuf;
 
 #[derive(Clone)]
@@ -39,6 +41,8 @@ pub struct ContainerConfig {
 
     // The directory path to use as /root in the container.
     pub mount_dir: PathBuf,
+
+    pub fd: RawFd,
 }
 
 impl ContainerConfig {
@@ -46,18 +50,23 @@ impl ContainerConfig {
         command: String,
         uid: u32,
         mount_dir: PathBuf,
-    ) -> Result<ContainerConfig, ErrorCode> {
+    ) -> Result<(ContainerConfig, (RawFd, RawFd)), ErrorCode> {
         let argv: Vec<CString> = command
             .split_ascii_whitespace()
             .map(|s| CString::new(s).expect("Cannot read arg"))
             .collect();
         let path = argv[0].clone();
+        let sockets = generate_socketpair()?;
 
-        Ok(ContainerConfig {
-            path,
-            argv,
-            uid,
-            mount_dir,
-        })
+        Ok((
+            ContainerConfig {
+                path,
+                argv,
+                uid,
+                mount_dir,
+                fd: sockets.1.clone(),
+            },
+            sockets,
+        ))
     }
 }

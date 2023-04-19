@@ -240,9 +240,79 @@ pub fn check_linux_version() -> Result<(), ErrorCode> {
 ```
 
 ### 进程
-我使用最简单的Unix Domain Sockets进行IPC， 容器并不需要多复杂的IPC，只需要传输简单的布尔值即可，所以只需要一对socket，一个给子进程，一个给父进程。
+我使用最简单的Unix Domain Sockets进行容器进程之间的通信， 容器并不需要多复杂的IPC，只需要传输简单的布尔值即可，所以只需要一对socket，一个给子进程，一个给父进程:
 
+```rust
+pub fn generate_socketpair() -> Result<(RawFd, RawFd), ErrorCode> { ... }
+```
 
+然后将读取数据用的套接字添加到`ContainerConfig`中：
+```rust
+#[derive(Clone)]
+pub struct ContainerConfig {
+    pub argv: Vec<CString>,
+
+    // Path to the binary/executable/script to be executed inside the container
+    pub path: CString,
+
+    // The ID of the user within the container.
+    // ID = 0 means it is root
+    pub uid: u32,
+
+    // The directory path to use as /root in the container.
+    pub mount_dir: PathBuf,
+
+    pub fd: RawFd,
+}
+```
+并在`ContainerConfig`构造完成后返回套接字对:
+```rust
+pub fn new(
+    command: String,
+    uid: u32,
+    mount_dir: PathBuf,
+) -> Result<(ContainerConfig, (RawFd, RawFd)), ErrorCode> {
+    ...
+    Ok((
+        ContainerConfig {
+            path,
+            argv,
+            uid,
+            mount_dir,
+            fd: sockets.1.clone(),
+        },
+        sockets,
+    ))
+}
+```
+
+最后在`clean_exit`中清理套接字：
+```rust
+pub fn clean_exit(&mut self) -> Result<(), ErrorCode> {
+    ...
+    if let Err(e) = close(self.sockets.0) {
+        error!("unable to close write socket: {:?}", e);
+        return Err(ErrorCode::SocketError(3));
+    }
+
+    if let Err(e) = close(self.sockets.1) {
+        error!("unable to close read socket: {:?}", e);
+        return Err(ErrorCode::SocketError(4));
+    }
+    Ok(())
+}
+```
+
+由于只是在进程间传递`Bool`值，所以我通过两个函数简化这一行为：
+```rust
+pub fn send_boolean(fd: RawFd, boolean: bool) -> Result<(), ErrorCode> {
+    ...
+}
+
+pub fn recv_boolean(fd: RawFd) -> Result<bool, ErrorCode> {
+    ...
+}
+```
 
 
 ## 参考

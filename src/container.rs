@@ -20,7 +20,11 @@
  ** OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  ** SOFTWARE.
  **/
- 
+
+use std::os::fd::RawFd;
+
+use nix::unistd::close;
+
 use crate::cli::Args;
 use crate::config::ContainerConfig;
 use crate::env::check_linux_version;
@@ -28,12 +32,13 @@ use crate::error::ErrorCode;
 
 pub struct Container {
     config: ContainerConfig,
+    sockets: (RawFd, RawFd),
 }
 
 impl Container {
     pub fn new(args: Args) -> Result<Container, ErrorCode> {
-        let config = ContainerConfig::new(args.command, args.uid, args.mount)?;
-        Ok(Container { config })
+        let (config, sockets) = ContainerConfig::new(args.command, args.uid, args.mount)?;
+        Ok(Container { config, sockets })
     }
 
     pub fn create(&mut self) -> Result<(), ErrorCode> {
@@ -44,6 +49,15 @@ impl Container {
     /// This function will be called every time before the container exits
     pub fn clean_exit(&mut self) -> Result<(), ErrorCode> {
         info!("clean container...");
+        if let Err(e) = close(self.sockets.0) {
+            error!("unable to close write socket: {:?}", e);
+            return Err(ErrorCode::SocketError(3));
+        }
+
+        if let Err(e) = close(self.sockets.1) {
+            error!("unable to close read socket: {:?}", e);
+            return Err(ErrorCode::SocketError(4));
+        }
         Ok(())
     }
 }

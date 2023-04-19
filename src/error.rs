@@ -29,6 +29,7 @@ pub enum ErrorCode {
     ArgumentInvalid(&'static str),
     NotSupported(u8),
     ContainerError(u8),
+    SocketError(u8),
 }
 
 impl fmt::Display for ErrorCode {
@@ -37,6 +38,7 @@ impl fmt::Display for ErrorCode {
             ErrorCode::ArgumentInvalid(element) => write!(f, "Argument Invalid: {}", element),
             ErrorCode::ContainerError(error) => write!(f, "Container Error: {}", error),
             ErrorCode::NotSupported(error) => write!(f, "Not Support: {}", error),
+            Self::SocketError(error) => write!(f, "Socket Error: {}", error),
         }
     }
 }
