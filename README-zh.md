@@ -305,17 +305,83 @@ pub fn clean_exit(&mut self) -> Result<(), ErrorCode> {
 
 由于只是在进程间传递`Bool`值，所以我通过两个函数简化这一行为：
 ```rust
-pub fn send_boolean(fd: RawFd, boolean: bool) -> Result<(), ErrorCode> {
-    ...
-}
+pub fn send_boolean(fd: RawFd, boolean: bool) -> Result<(), ErrorCode> {}
 
-pub fn recv_boolean(fd: RawFd) -> Result<bool, ErrorCode> {
-    ...
+pub fn recv_boolean(fd: RawFd) -> Result<bool, ErrorCode> {}
+```
+
+接下来通过`generate_child_process`配合`child`创建子进程：
+```rust
+fn child(config: ContainerConfig) -> isize {}
+
+pub fn generate_child_process(config: ContainerConfig) -> Result<Pid, ErrorCode> {
+    let mut tmp_stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
+    let mut flags = CloneFlags::empty();
+    match clone(
+        Box::new(|| child(config.clone())),
+        &mut tmp_stack,
+        flags,
+        Some(Signal::SIGCHLD as i32),
+    ) {
+        Ok(pid) => Ok(pid),
+        Err(_) => Err(ErrorCode::ChildProcessError(0)),
+    }
 }
 ```
 
+默认的`STACK_SIZE`是1KiB的
+
+## 命名空间
+> Namespaces are a feature of the Linux kernel that partitions kernel resources such that one set of processes sees one set of resources while another set of processes sees a different set of resources. The feature works by having the same namespace for a set of resources and processes, but those namespaces refer to distinct resources. Resources may exist in multiple spaces. Examples of such resources are process IDs, host-names, user IDs, file names, some names associated with network access, and Inter-process communication. 
+
+命名空间是Linux内核的一个feature，它对内核资源进行分区，使每一个进程看到的环境都是不同且互相不影响的。这个feature的作用是为一组资源和进程提供相同的命名空间，但这些命名空间指的是不同的资源。资源可能存在于多个空间。
+
+在clone子进程的时候，可以传入flags参数， 如果flags参数为`CloneFlags::empty()`，那通常子进程就直接用父进程的命名空间了，所以这里我为子进程设置了几个标志：
+```rust
+
+fn child_flags() -> CloneFlags {
+    let mut flags = CloneFlags::empty();
+
+    // Start the cloned subroutine in a new mounted namespace, initialized with a copy of the parent process's namespace.
+    flags.insert(CloneFlags::CLONE_NEWNS);
+
+    // Start the cloned child process in a new cgroup namespace.
+    flags.insert(CloneFlags::CLONE_NEWCGROUP);
+
+    // Start the cloned child process in a new pid namespace.
+    flags.insert(CloneFlags::CLONE_NEWPID);
+
+    // Start the cloned child process in a new ipc namespace.
+    flags.insert(CloneFlags::CLONE_NEWIPC);
+
+    // Start the cloned subroutine in a new network namespace.
+    flags.insert(CloneFlags::CLONE_NEWNET);
+
+    // Start the cloned child process in a new uts namespace.
+    flags.insert(CloneFlags::CLONE_NEWUTS);
+
+    flags
+}
+
+pub fn generate_child_process(config: ContainerConfig) -> Result<Pid, ErrorCode> {
+    let mut tmp_stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
+
+    match clone(
+        Box::new(|| child(config.clone())),
+        &mut tmp_stack,
+        child_flags(),
+        Some(Signal::SIGCHLD as i32),
+    ) {
+        Ok(pid) => Ok(pid),
+        Err(_) => Err(ErrorCode::ChildProcessError(0)),
+    }
+}
+```
+
+通过命名空间， 我可以把子进程放在异世界， 和操作系统分开来， 子进程随便咋改都不会影响到操作系统的主世界（理论上）。
 
 ## 参考
+- [Linux namespaces](https://en.wikipedia.org/wiki/Linux_namespaces): https://en.wikipedia.org/wiki/Linux_namespaces
 - [rust-colog fork](https://github.com/muqiuhan/rust-colog): https://github.com/muqiuhan/rust-colog
 - [rust-colog](https://github.com/chrivers/rust-colog): https://github.com/chrivers/rust-colog
 - [Docker](https://www.docker.com/): https://www.docker.com/

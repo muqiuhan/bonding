@@ -31,6 +31,7 @@ use std::io::{self, Write};
 #[macro_use]
 extern crate scan_fmt;
 
+mod child;
 mod cli;
 mod config;
 mod container;
@@ -56,6 +57,5 @@ fn main() {
             exit(e.get_retcode());
         }
     }
-
     io::stdout().flush().unwrap();
 }

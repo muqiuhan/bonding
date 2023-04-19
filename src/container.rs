@@ -23,8 +23,10 @@
 
 use std::os::fd::RawFd;
 
-use nix::unistd::close;
+use nix::sys::wait::waitpid;
+use nix::unistd::{close, Pid};
 
+use crate::child::generate_child_process;
 use crate::cli::Args;
 use crate::config::ContainerConfig;
 use crate::env::check_linux_version;
@@ -33,16 +35,24 @@ use crate::error::ErrorCode;
 pub struct Container {
     config: ContainerConfig,
     sockets: (RawFd, RawFd),
+    child_pid: Option<Pid>,
 }
 
 impl Container {
     pub fn new(args: Args) -> Result<Container, ErrorCode> {
         let (config, sockets) = ContainerConfig::new(args.command, args.uid, args.mount)?;
-        Ok(Container { config, sockets })
+        Ok(Container {
+            config,
+            sockets,
+            child_pid: None,
+        })
     }
 
     pub fn create(&mut self) -> Result<(), ErrorCode> {
-        info!("create container...");
+        let pid = generate_child_process(self.config.clone())?;
+        self.child_pid = Some(pid);
+
+        info!("container is created");
         Ok(())
     }
 
@@ -68,9 +78,23 @@ pub fn start(args: Args) -> Result<(), ErrorCode> {
     let mut container = Container::new(args)?;
     if let Err(e) = container.create() {
         container.clean_exit()?;
-        log::error!("error while creating container: {:?}", e);
+        error!("error while creating container: {:?}", e);
         return Err(e);
     }
-    log::info!("exit container...");
+    info!("container child pid: {:?}", container.child_pid);
+
+    wait_child(container.child_pid)?;
+    info!("exit container");
     container.clean_exit()
+}
+
+pub fn wait_child(pid: Option<Pid>) -> Result<(), ErrorCode> {
+    if let Some(child_pid) = pid {
+        info!("waiting for child (pid {}) to finish", child_pid);
+        if let Err(e) = waitpid(child_pid, None) {
+            error!("error while waiting for pid to finish: {:?}", e);
+            return Err(ErrorCode::ContainerError(1));
+        }
+    }
+    Ok(())
 }

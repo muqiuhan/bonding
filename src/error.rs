@@ -30,15 +30,17 @@ pub enum ErrorCode {
     NotSupported(u8),
     ContainerError(u8),
     SocketError(u8),
+    ChildProcessError(u8),
 }
 
 impl fmt::Display for ErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            ErrorCode::ArgumentInvalid(element) => write!(f, "Argument Invalid: {}", element),
-            ErrorCode::ContainerError(error) => write!(f, "Container Error: {}", error),
-            ErrorCode::NotSupported(error) => write!(f, "Not Support: {}", error),
+            Self::ArgumentInvalid(element) => write!(f, "Argument Invalid: {}", element),
+            Self::ContainerError(error) => write!(f, "Container Error: {}", error),
+            Self::NotSupported(error) => write!(f, "Not Support: {}", error),
             Self::SocketError(error) => write!(f, "Socket Error: {}", error),
+            Self::ChildProcessError(error) => write!(f, "Child Process Error: {}", error),
         }
     }
 }
