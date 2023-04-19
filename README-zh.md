@@ -239,6 +239,11 @@ pub fn check_linux_version() -> Result<(), ErrorCode> {
 }
 ```
 
+### 进程
+我使用最简单的Unix Domain Sockets进行IPC， 容器并不需要多复杂的IPC，只需要传输简单的布尔值即可，所以只需要一对socket，一个给子进程，一个给父进程。
+
+
+
 
 ## 参考
 - [rust-colog fork](https://github.com/muqiuhan/rust-colog): https://github.com/muqiuhan/rust-colog
