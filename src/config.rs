@@ -43,6 +43,8 @@ pub struct ContainerConfig {
     pub mount_dir: PathBuf,
 
     pub fd: RawFd,
+
+    pub hostname: String,
 }
 
 impl ContainerConfig {
@@ -50,10 +52,11 @@ impl ContainerConfig {
         command: String,
         uid: u32,
         mount_dir: PathBuf,
+        hostname: String,
     ) -> Result<(ContainerConfig, (RawFd, RawFd)), ErrorCode> {
         let argv: Vec<CString> = command
             .split_ascii_whitespace()
-            .map(|s| CString::new(s).expect("Cannot read arg"))
+            .map(|s| CString::new(s).expect("cannot read arg"))
             .collect();
         let path = argv[0].clone();
         let sockets = generate_socketpair()?;
@@ -64,6 +67,7 @@ impl ContainerConfig {
                 argv,
                 uid,
                 mount_dir,
+                hostname,
                 fd: sockets.1.clone(),
             },
             sockets,

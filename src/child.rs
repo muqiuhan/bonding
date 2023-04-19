@@ -24,6 +24,7 @@
 use crate::config::ContainerConfig;
 use crate::error::ErrorCode;
 
+use crate::hostname::set_container_hostname;
 use nix::sched::clone;
 use nix::sched::CloneFlags;
 use nix::sys::signal::Signal;
@@ -37,7 +38,20 @@ fn child(config: ContainerConfig) -> isize {
         config.path.to_str().unwrap(),
         config.argv
     );
+
+    match setup_container_configurations(&config) {
+        Ok(_) => info!("container setup successfully"),
+        Err(e) => {
+            error!("error while setup container: {:?}", e);
+            return -1;
+        }
+    }
     0
+}
+
+fn setup_container_configurations(config: &ContainerConfig) -> Result<(), ErrorCode> {
+    set_container_hostname(&config.hostname)?;
+    Ok(())
 }
 
 fn child_flags() -> CloneFlags {

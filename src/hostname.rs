@@ -21,41 +21,18 @@
  ** SOFTWARE.
  **/
 
-use std::path::PathBuf;
-use structopt::StructOpt;
-
 use crate::error::ErrorCode;
+use nix::unistd::sethostname;
 
-#[derive(Debug, StructOpt)]
-#[structopt(name = "bonding", about = "crude container")]
-pub struct Args {
-    /// Whether to enable Debug mode
-    #[structopt(long)]
-    debug: bool,
-
-    /// The command with arguments to be executed inside the container
-    #[structopt(long)]
-    pub command: String,
-
-    /// The uid that will be created
-    #[structopt(long)]
-    pub uid: u32,
-
-    /// The hostname
-    #[structopt(long)]
-    pub hostname: String,
-
-    /// An external folder inside the container as root
-    #[structopt(parse(from_os_str), long = "mount-dir")]
-    pub mount: PathBuf,
-}
-
-pub fn parse_args() -> Result<Args, ErrorCode> {
-    let args = Args::from_args();
-
-    if !args.mount.exists() || !args.mount.is_dir() {
-        return Err(ErrorCode::ArgumentInvalid("mount"));
+pub fn set_container_hostname(hostname: &String) -> Result<(), ErrorCode> {
+    match sethostname(hostname) {
+        Ok(_) => {
+            info!("container hostname is now {}", hostname);
+            Ok(())
+        }
+        Err(_) => {
+            error!("annot set hostname {} for container", hostname);
+            Err(ErrorCode::HostnameError(0))
+        }
     }
-
-    Ok(args)
 }

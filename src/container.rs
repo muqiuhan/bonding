@@ -40,7 +40,8 @@ pub struct Container {
 
 impl Container {
     pub fn new(args: Args) -> Result<Container, ErrorCode> {
-        let (config, sockets) = ContainerConfig::new(args.command, args.uid, args.mount)?;
+        let (config, sockets) =
+            ContainerConfig::new(args.command, args.uid, args.mount, args.hostname)?;
         Ok(Container {
             config,
             sockets,

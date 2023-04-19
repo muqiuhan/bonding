@@ -380,6 +380,36 @@ pub fn generate_child_process(config: ContainerConfig) -> Result<Pid, ErrorCode>
 
 通过命名空间， 我可以把子进程放在异世界， 和操作系统分开来， 子进程随便咋改都不会影响到操作系统的主世界（理论上）。
 
+## 容器环境
+主机名可以用来区分当前机器和统一网络中的其他机器， 所以首先从修改主机名开始。
+
+我选择直接从命令行获取，让用户自定义主机名：
+```rust
+#[derive(Debug, StructOpt)]
+#[structopt(name = "bonding", about = "crude container")]
+pub struct Args {
+    /// Whether to enable Debug mode
+    #[structopt(long)]
+    debug: bool,
+
+    /// The command with arguments to be executed inside the container
+    #[structopt(long)]
+    pub command: String,
+
+    /// The uid that will be created
+    #[structopt(long)]
+    pub uid: u32,
+
+    /// The hostname
+    #[structopt(long)]
+    pub hostname: String,
+
+    /// An external folder inside the container as root
+    #[structopt(parse(from_os_str), long = "mount-dir")]
+    pub mount: PathBuf,
+}
+```
+
 ## 参考
 - [Linux namespaces](https://en.wikipedia.org/wiki/Linux_namespaces): https://en.wikipedia.org/wiki/Linux_namespaces
 - [rust-colog fork](https://github.com/muqiuhan/rust-colog): https://github.com/muqiuhan/rust-colog

@@ -37,6 +37,7 @@ mod config;
 mod container;
 mod env;
 mod error;
+mod hostname;
 mod process;
 
 #[macro_use]

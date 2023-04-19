@@ -31,6 +31,7 @@ pub enum ErrorCode {
     ContainerError(u8),
     SocketError(u8),
     ChildProcessError(u8),
+    HostnameError(u8),
 }
 
 impl fmt::Display for ErrorCode {
@@ -41,6 +42,7 @@ impl fmt::Display for ErrorCode {
             Self::NotSupported(error) => write!(f, "Not Support: {}", error),
             Self::SocketError(error) => write!(f, "Socket Error: {}", error),
             Self::ChildProcessError(error) => write!(f, "Child Process Error: {}", error),
+            Self::HostnameError(error) => write!(f, "Hostname Error: {}", error),
         }
     }
 }
