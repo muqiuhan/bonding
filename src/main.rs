@@ -38,6 +38,7 @@ mod container;
 mod env;
 mod error;
 mod hostname;
+mod mount;
 mod process;
 
 #[macro_use]
@@ -54,7 +55,7 @@ fn main() {
             exit_with_code(container::start(args))
         }
         Err(e) => {
-            error!("Error while parsing arguments:\n\t{}", e);
+            error!("error while parsing arguments:\n\t{}", e);
             exit(e.get_retcode());
         }
     }

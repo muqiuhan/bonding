@@ -31,6 +31,7 @@ use crate::cli::Args;
 use crate::config::ContainerConfig;
 use crate::env::check_linux_version;
 use crate::error::ErrorCode;
+use crate::mount::clean_mounts;
 
 pub struct Container {
     config: ContainerConfig,
@@ -69,6 +70,8 @@ impl Container {
             error!("unable to close read socket: {:?}", e);
             return Err(ErrorCode::SocketError(4));
         }
+
+        clean_mounts(&self.config.mount_dir)?;
         Ok(())
     }
 }

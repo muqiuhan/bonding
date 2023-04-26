@@ -21,10 +21,15 @@
  ** SOFTWARE.
  **/
 
+use std::path::PathBuf;
+
 use crate::config::ContainerConfig;
 use crate::error::ErrorCode;
 
 use crate::hostname::set_container_hostname;
+use crate::mount::mount_directory;
+use crate::mount::set_mount_point;
+use nix::mount::MsFlags;
 use nix::sched::clone;
 use nix::sched::CloneFlags;
 use nix::sys::signal::Signal;
@@ -51,6 +56,8 @@ fn child(config: ContainerConfig) -> isize {
 
 fn setup_container_configurations(config: &ContainerConfig) -> Result<(), ErrorCode> {
     set_container_hostname(&config.hostname)?;
+    set_mount_point(&config.mount_dir)?;
+    mount_directory(None, &PathBuf::from("/"), vec![MsFlags::MS_REC, MsFlags::MS_PRIVATE])?;
     Ok(())
 }
 
