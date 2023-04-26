@@ -22,19 +22,20 @@
  **/
 
 use crate::error::ErrorCode;
-use nix::{mount::MsFlags, unistd::{pivot_root, chdir}};
+use nix::{
+    mount::MsFlags,
+    unistd::{chdir, pivot_root},
+};
 use std::{
     fs::create_dir_all,
     path::PathBuf,
     time::{SystemTime, UNIX_EPOCH},
 };
 
-mod wrapper {
-    use std::{path::PathBuf, fs::remove_dir};
+pub mod wrapper {
+    use std::{fs::remove_dir, path::PathBuf};
 
-    use nix::{
-        mount::{mount, MsFlags, MntFlags, umount2},
-    };
+    use nix::mount::{mount, umount2, MntFlags, MsFlags};
 
     use crate::error::ErrorCode;
 
@@ -70,17 +71,21 @@ mod wrapper {
         match umount2(path, MntFlags::MNT_DETACH) {
             Ok(_) => Ok(()),
             Err(e) => {
-                error!("unable to umount {}: {}", path.to_str().unwrap(), e)
+                error!("unable to umount {}: {}", path.to_str().unwrap(), e);
                 Err(ErrorCode::MountsError(0))
             }
         }
     }
 
-    pub fn delete_dir(path: &PathBuf) -> Result<(), ErrorCode>{
-        match remove_dir(path.as_path()){
+    pub fn delete_dir(path: &PathBuf) -> Result<(), ErrorCode> {
+        match remove_dir(path.as_path()) {
             Ok(_) => Ok(()),
             Err(e) => {
-                log::error!("unable to delete directory {}: {}", path.to_str().unwrap(), e);
+                log::error!(
+                    "unable to delete directory {}: {}",
+                    path.to_str().unwrap(),
+                    e
+                );
                 Err(ErrorCode::MountsError(1))
             }
         }
@@ -134,9 +139,9 @@ fn mount_system_root() -> Result<(), ErrorCode> {
     Ok(())
 }
 
-fn mount_user_given_dir_to_temp_dir(mount_dir: &PathBuf) ->  Result<PathBuf, ErrorCode> {
+fn mount_user_given_dir_to_temp_dir(mount_dir: &PathBuf) -> Result<PathBuf, ErrorCode> {
     let new_root = PathBuf::from(format!("/tmp/bonding_{}", random_string(10)));
-    debug!(
+    info!(
         "mounting temp directory {}",
         new_root.as_path().to_str().unwrap()
     );
@@ -147,23 +152,23 @@ fn mount_user_given_dir_to_temp_dir(mount_dir: &PathBuf) ->  Result<PathBuf, Err
         vec![MsFlags::MS_BIND, MsFlags::MS_PRIVATE],
     )?;
     Ok(new_root.clone())
- }
+}
 
- fn root_pivot(new_root: &PathBuf) -> Result<PathBuf, ErrorCode>{
-    debug!("privoting root!");
+fn root_pivot(new_root: &PathBuf) -> Result<PathBuf, ErrorCode> {
+    info!("privoting root...");
     let old_root_tail = PathBuf::from(format!("oldroot_{}", random_string(10)));
-    let put_old = new_root.join(old_root_tail);
+    let put_old = new_root.join(&old_root_tail);
     create_directory(&put_old)?;
 
     if let Err(_) = pivot_root(new_root, &put_old) {
         return Err(ErrorCode::MountsError(4));
     }
 
-    Ok(old_root_tail)
- }
+    Ok(old_root_tail.clone())
+}
 
- fn clean_unnecessary_dir(old_root_tail: &PathBuf) -> Result<(), ErrorCode>{
-    debug!("unmounting old root...");
+fn clean_unnecessary_dir(old_root_tail: &PathBuf) -> Result<(), ErrorCode> {
+    info!("unmounting old root...");
     let old_root = &PathBuf::from(format!("/{}", old_root_tail.to_str().unwrap()));
     if let Err(_) = chdir(&PathBuf::from("/")) {
         return Err(ErrorCode::MountsError(5));
@@ -173,7 +178,7 @@ fn mount_user_given_dir_to_temp_dir(mount_dir: &PathBuf) ->  Result<PathBuf, Err
     wrapper::delete_dir(&old_root)?;
 
     Ok(())
- }
+}
 
 pub fn set_mount_point(mount_dir: &PathBuf) -> Result<(), ErrorCode> {
     mount_system_root()?;

@@ -88,7 +88,7 @@ pub fn start(args: Args) -> Result<(), ErrorCode> {
     info!("container child pid: {:?}", container.child_pid);
 
     wait_child(container.child_pid)?;
-    info!("exit container");
+    info!("exit container...");
     container.clean_exit()
 }
 
