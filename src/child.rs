@@ -29,6 +29,7 @@ use crate::error::ErrorCode;
 use crate::hostname::set_container_hostname;
 use crate::mount;
 use crate::mount::set_mount_point;
+use crate::syscall::setsyscalls;
 use nix::mount::MsFlags;
 use nix::sched::clone;
 use nix::sched::CloneFlags;
@@ -57,11 +58,14 @@ fn child(config: ContainerConfig) -> isize {
 fn setup_container_configurations(config: &ContainerConfig) -> Result<(), ErrorCode> {
     set_container_hostname(&config.hostname)?;
     set_mount_point(&config.mount_dir)?;
+
     mount::wrapper::mount_dir(
         None,
         &PathBuf::from("/"),
         vec![MsFlags::MS_REC, MsFlags::MS_PRIVATE],
     )?;
+
+    setsyscalls()?;
     Ok(())
 }
 

@@ -11,3 +11,5 @@ nix = '0.26.2'
 log = "0.4.17"
 scan_fmt = "0.2.6"
 colog = {git = "https://github.com/muqiuhan/rust-colog"}
+syscallz = "0.16.1"
+libc = "0.2.142"

@@ -40,6 +40,7 @@ mod error;
 mod hostname;
 mod mount;
 mod process;
+mod syscall;
 
 #[macro_use]
 extern crate log;
