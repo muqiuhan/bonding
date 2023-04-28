@@ -76,17 +76,16 @@ fn refuse_syscall(ctx: &mut Context) -> Result<(), ErrorCode> {
     Ok(())
 }
 
-
 fn add_rules(ctx: &mut Context) -> Result<(), ErrorCode> {
     for (sc, ind, biteq) in SYSCALL_REFUSE_IFCOMP.iter() {
-	match ctx.set_rule_for_syscall(
+        match ctx.set_rule_for_syscall(
             Action::Errno(EPERM),
             *sc,
             &[Comparator::new(*ind, Cmp::MaskedEq, *biteq, Some(*biteq))],
-	) {
+        ) {
             Ok(_) => Ok(()),
             Err(_) => Err(ErrorCode::SyscallError(3)),
-	}?;
+        }?;
     }
 
     Ok(())
@@ -98,7 +97,7 @@ pub fn setsyscalls() -> Result<(), ErrorCode> {
     if let Ok(mut ctx) = Context::init_with_action(syscallz::Action::Allow) {
         load_ctx(&ctx)?;
         refuse_syscall(&mut ctx)?;
-	add_rules(&mut ctx)?;
+        add_rules(&mut ctx)?;
         Ok(())
     } else {
         Err(ErrorCode::SyscallError(1))

@@ -29,6 +29,10 @@ use crate::error::ErrorCode;
 #[derive(Debug, StructOpt)]
 #[structopt(name = "bonding", about = "crude container")]
 pub struct Args {
+    /// Mount a dir inside the container
+    #[structopt(parse(from_os_str), long = "add")]
+    pub addpaths: Vec<PathBuf>,
+
     /// Whether to enable Debug mode
     #[structopt(long)]
     debug: bool,
@@ -55,6 +59,10 @@ pub fn parse_args() -> Result<Args, ErrorCode> {
 
     if !args.mount.exists() || !args.mount.is_dir() {
         return Err(ErrorCode::ArgumentInvalid("mount"));
+    }
+
+    if args.command.is_empty() {
+        return Err(ErrorCode::ArgumentInvalid("command"));
     }
 
     Ok(args)

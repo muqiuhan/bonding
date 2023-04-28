@@ -34,7 +34,7 @@ pub enum ErrorCode {
     HostnameError(u8),
     MountsError(u8),
     SyscallError(u8),
-    ResourceError(u8)
+    ResourceError(u8),
 }
 
 impl fmt::Display for ErrorCode {
