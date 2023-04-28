@@ -34,7 +34,9 @@ use nix::mount::MsFlags;
 use nix::sched::clone;
 use nix::sched::CloneFlags;
 use nix::sys::signal::Signal;
+use nix::unistd::execve;
 use nix::unistd::Pid;
+use std::ffi::CString;
 
 const STACK_SIZE: usize = 1024 * 1024;
 
@@ -45,6 +47,14 @@ fn child(config: ContainerConfig) -> isize {
         config.argv
     );
 
+    let retcode = match execve::<CString, CString>(&config.path, &config.argv, &[]) {
+        Ok(_) => 0,
+        Err(e) => {
+            error!("error while trying to perform execve: {:?}", e);
+            -1
+        }
+    };
+
     match setup_container_configurations(&config) {
         Ok(_) => info!("container setup successfully"),
         Err(e) => {
@@ -52,7 +62,8 @@ fn child(config: ContainerConfig) -> isize {
             return -1;
         }
     }
-    0
+
+    retcode
 }
 
 fn setup_container_configurations(config: &ContainerConfig) -> Result<(), ErrorCode> {

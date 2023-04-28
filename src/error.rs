@@ -34,6 +34,7 @@ pub enum ErrorCode {
     HostnameError(u8),
     MountsError(u8),
     SyscallError(u8),
+    ResourceError(u8)
 }
 
 impl fmt::Display for ErrorCode {
@@ -47,6 +48,7 @@ impl fmt::Display for ErrorCode {
             Self::HostnameError(error) => write!(f, "Hostname Error: {}", error),
             Self::MountsError(error) => write!(f, "Mounts Error: {}", error),
             Self::SyscallError(error) => write!(f, "Syscall Error: {}", error),
+            Self::ResourceError(error) => write!(f, "Resource Error: {}", error),
         }
     }
 }

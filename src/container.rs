@@ -32,6 +32,7 @@ use crate::config::ContainerConfig;
 use crate::env::check_linux_version;
 use crate::error::ErrorCode;
 use crate::mount::clean_mounts;
+use crate::resource::{clean_cgroups, restrict_resources};
 
 pub struct Container {
     config: ContainerConfig,
@@ -52,8 +53,8 @@ impl Container {
 
     pub fn create(&mut self) -> Result<(), ErrorCode> {
         let pid = generate_child_process(self.config.clone())?;
+        restrict_resources(&self.config.hostname, &pid)?;
         self.child_pid = Some(pid);
-
         info!("container is created");
         Ok(())
     }
@@ -69,6 +70,11 @@ impl Container {
         if let Err(e) = close(self.sockets.1) {
             error!("unable to close read socket: {:?}", e);
             return Err(ErrorCode::SocketError(4));
+        }
+
+        if let Err(e) = clean_cgroups(&self.config.hostname) {
+            error!("cgroups cleaning failed: {}", e);
+            return Err(e);
         }
 
         clean_mounts(&self.config.mount_dir)?;
