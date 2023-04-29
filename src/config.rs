@@ -45,6 +45,8 @@ pub struct ContainerConfig {
     pub fd: RawFd,
 
     pub hostname: String,
+
+    pub add_paths: Vec<(PathBuf, PathBuf)>,
 }
 
 impl ContainerConfig {
@@ -53,6 +55,7 @@ impl ContainerConfig {
         uid: u32,
         mount_dir: PathBuf,
         hostname: String,
+        add_paths: Vec<(PathBuf, PathBuf)>,
     ) -> Result<(ContainerConfig, (RawFd, RawFd)), ErrorCode> {
         let argv: Vec<CString> = command
             .split_ascii_whitespace()
@@ -68,6 +71,7 @@ impl ContainerConfig {
                 uid,
                 mount_dir,
                 hostname,
+                add_paths,
                 fd: sockets.1.clone(),
             },
             sockets,

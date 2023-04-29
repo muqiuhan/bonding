@@ -180,13 +180,29 @@ fn clean_unnecessary_dir(old_root_tail: &PathBuf) -> Result<(), ErrorCode> {
     Ok(())
 }
 
-pub fn set_mount_point(mount_dir: &PathBuf) -> Result<(), ErrorCode> {
+pub fn set_mount_point(
+    mount_dir: &PathBuf,
+    addpaths: &Vec<(PathBuf, PathBuf)>,
+) -> Result<(), ErrorCode> {
     mount_system_root()?;
 
     let new_root = mount_user_given_dir_to_temp_dir(mount_dir)?;
     let old_root_tail = root_pivot(&new_root)?;
 
     clean_unnecessary_dir(&old_root_tail)?;
+
+    info!("mounting additional paths...");
+    for (inpath, mntpath) in addpaths.iter() {
+        let outpath = new_root.join(mntpath);
+        create_directory(&outpath)?;
+        wrapper::mount_dir(
+            Some(inpath),
+            &outpath,
+            vec![MsFlags::MS_PRIVATE, MsFlags::MS_BIND],
+        )?;
+    }
+
+    info!("privotion root");
 
     Ok(())
 }

@@ -68,7 +68,7 @@ fn child(config: ContainerConfig) -> isize {
 
 fn setup_container_configurations(config: &ContainerConfig) -> Result<(), ErrorCode> {
     set_container_hostname(&config.hostname)?;
-    set_mount_point(&config.mount_dir)?;
+    set_mount_point(&config.mount_dir, &config.add_paths)?;
 
     mount::wrapper::mount_dir(
         None,

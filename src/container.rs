@@ -22,6 +22,7 @@
  **/
 
 use std::os::fd::RawFd;
+use std::path::PathBuf;
 
 use nix::sys::wait::waitpid;
 use nix::unistd::{close, Pid};
@@ -42,8 +43,23 @@ pub struct Container {
 
 impl Container {
     pub fn new(args: Args) -> Result<Container, ErrorCode> {
+        let mut addpaths = vec![];
+        for ap_pair in args.addpaths.iter() {
+            let mut pair = ap_pair.to_str().unwrap().split(":");
+            let frompath = PathBuf::from(pair.next().unwrap())
+                .canonicalize()
+                .expect("Cannot canonicalize path")
+                .to_path_buf();
+            let mntpath = PathBuf::from(pair.next().unwrap())
+                .strip_prefix("/")
+                .expect("Cannot strip prefix from path")
+                .to_path_buf();
+            addpaths.push((frompath, mntpath));
+        }
+
         let (config, sockets) =
-            ContainerConfig::new(args.command, args.uid, args.mount, args.hostname)?;
+            ContainerConfig::new(args.command, args.uid, args.mount, args.hostname, addpaths)?;
+
         Ok(Container {
             config,
             sockets,
