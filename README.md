@@ -46,10 +46,10 @@ OPTIONS:
 
 E.g:
 ```
-$ sudo ./target/debug/bonding --command "/bin/ls -lh"
-                              --hostname MuqiuHan-0
-                              --uid 0
-                              --mount-dir .
+$ sudo ./target/release/bonding --command "/bin/ls -lh" \
+                                --hostname MuqiuHan-0   \
+                                --uid 0                 \
+                                --mount-dir .           \
 ```
 
 # ACKNOWLEDGMENT
