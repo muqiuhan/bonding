@@ -46,7 +46,7 @@ pub fn restrict_resources(hostname: &String, pid: &Pid) -> Result<(), ErrorCode>
         .build(Box::new(V2::new()));
 
     let pid: u64 = pid.as_raw().try_into().unwrap();
-    if let Err(_) = cgs.add_task(CgroupPid::from(pid)) {
+    if let Err(_) = cgs.unwrap().add_task(CgroupPid::from(pid)) {
         return Err(ErrorCode::ResourceError(0));
     };
 
