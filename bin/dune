@@ -1,0 +1,4 @@
+(executable
+ (public_name bonding)
+ (name main)
+ (libraries bonding))

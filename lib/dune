@@ -1,0 +1,3 @@
+(library
+ (name bonding)
+ (libraries core))
