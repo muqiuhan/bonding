@@ -1,8 +1,13 @@
 (** Contains all possible errors in our tool *)
-type t = Argument_invalid of string
+type t =
+  | Argument_invalid of string
+  | Not_supported of int
+  | Container_error of int
 
 let to_string = function
-    | Argument_invalid str -> "Argument invalid : " ^ str
+    | Argument_invalid str -> Format.sprintf "Argument invalid : %s" str
+    | Not_supported code -> Format.sprintf "Not supported : %d" code
+    | Container_error code -> Format.sprintf "Container_error : %d" code
 
 (** Translate an Errcode::X into a number to return (the Unix way) *)
 let get_ret_code (_code : t) : int = 1

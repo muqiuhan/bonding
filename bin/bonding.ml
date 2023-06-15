@@ -3,7 +3,11 @@ open Bonding_lib
 
 (** get the args from the commandline and handle everything from the struct Container creation to the exit. *)
 let start (args : Cli.t) =
-    Result.(Container.make args >>= Container.create >>= Container.clean_exit)
+    Result.(
+      Container.check_linux_version ()
+      >>= (fun _ -> Container.make args)
+      >>= Container.create
+      >>= Container.clean_exit)
 
 let _ =
     Result.iter
