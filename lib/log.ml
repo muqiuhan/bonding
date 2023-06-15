@@ -1,1 +1,1 @@
-include Simlog.Make (Simlog.Default_logger)
+include Simlog.Make (Simlog.Builtin.Logger)
