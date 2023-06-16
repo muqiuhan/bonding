@@ -1,4 +1,5 @@
 open Core
+open Utils
 
 type t = {
   (*  The path of the binary / executable / script to execute inside the container *)
@@ -9,10 +10,14 @@ type t = {
   uid : int;
   (* The path of the directory we want to use as a / root inside our container. *)
   mount_dir : string;
+  file : Unix.File_descr.t;
 }
 (** Output configuration after checking by Cli module *)
 
 let make (command : string) (uid : int) (mount_dir : string) =
     let argv = String.split ~on:' ' command in
     let path = List.hd_exn argv in
-        {path; argv; uid; mount_dir}
+
+    Result.(
+      Cli.generate_socketpair () >>| fun (file, _) ->
+      {path; argv; uid; mount_dir; file})

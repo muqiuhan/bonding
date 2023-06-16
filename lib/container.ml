@@ -6,10 +6,9 @@ type t = {config : Config.t}
 let minimal_kernel_version : string = "6.3.6"
 
 let make (args : Cli.t) =
-    Result.bind
-      ~f:(fun mount_dir ->
-        Ok {config = Config.make args.command args.uid mount_dir})
-      (Cli.check_mount_dir args.mount_dir)
+    Result.(
+      Cli.check_mount_dir args.mount_dir >>= fun mount_dir ->
+      Config.make args.command args.uid mount_dir >>| fun config -> {config})
 
 (* function that will handle the container creation process. *)
 let create (container : t) =
