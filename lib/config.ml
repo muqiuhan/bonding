@@ -10,7 +10,7 @@ type t = {
   uid : int;
   (* The path of the directory we want to use as a / root inside our container. *)
   mount_dir : string;
-  file : Unix.File_descr.t;
+  read : Unix.File_descr.t;
 }
 (** Output configuration after checking by Cli module *)
 
@@ -19,5 +19,5 @@ let make (command : string) (uid : int) (mount_dir : string) =
     let path = List.hd_exn argv in
 
     Result.(
-      Cli.generate_socketpair () >>| fun (file, _) ->
-      {path; argv; uid; mount_dir; file})
+      Cli.generate_socketpair () >>| fun (write, read) ->
+      ({path; argv; uid; mount_dir; read}, (write, read)))

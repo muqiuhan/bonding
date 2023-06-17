@@ -1,6 +1,10 @@
 open Core
+open Utils
 
-type t = {config : Config.t}
+type t = {
+  config : Config.t;
+  sockets : Unix.File_descr.t * Unix.File_descr.t;
+}
 
 (* minimal kernel version *)
 let minimal_kernel_version : string = "6.3.6"
@@ -8,7 +12,8 @@ let minimal_kernel_version : string = "6.3.6"
 let make (args : Cli.t) =
     Result.(
       Cli.check_mount_dir args.mount_dir >>= fun mount_dir ->
-      Config.make args.command args.uid mount_dir >>| fun config -> {config})
+      Config.make args.command args.uid mount_dir >>| fun (config, sockets) ->
+      {config; sockets})
 
 (* function that will handle the container creation process. *)
 let create (container : t) =
@@ -16,10 +21,18 @@ let create (container : t) =
     Ok container
 
 (** function that will be called before each exit to be sure we stay clean. *)
-let clean_exit (_container : t) =
+let clean_exit (container : t) =
     Log.info "Cleaning container";
-    Log.info "Finished, clean & exit";
-    Ok ()
+    let __close_sockets =
+        let write, read = container.sockets in
+            try
+              Unix.close write;
+              Unix.close read
+            with Unix.Unix_error (_, _, file_descr) ->
+              Log.error "Unable to close socket: %s" file_descr
+    in
+        Log.info "Finished, clean & exit";
+        Ok ()
 
 (** check kernel version *)
 let check_linux_version () =
