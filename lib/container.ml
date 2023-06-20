@@ -4,6 +4,7 @@ open Utils
 type t = {
   config : Config.t;
   sockets : Unix.File_descr.t * Unix.File_descr.t;
+  child_pid : int option;
 }
 
 (* minimal kernel version *)
@@ -13,12 +14,13 @@ let make (args : Cli.t) =
     Result.(
       Cli.check_mount_dir args.mount_dir >>= fun mount_dir ->
       Config.make args.command args.uid mount_dir >>| fun (config, sockets) ->
-      {config; sockets})
+      {config; sockets; child_pid = None})
 
 (* function that will handle the container creation process. *)
 let create (container : t) =
     Log.info "Creation finished";
-    Ok container
+    let child_pid = Some (Child.generate_child_process container.config) in
+        Ok {container with child_pid}
 
 (** function that will be called before each exit to be sure we stay clean. *)
 let clean_exit (container : t) =
@@ -56,3 +58,10 @@ let check_linux_version () =
               else
                 Error (Err.Not_supported 0)
         with _ -> Error (Err.Container_error 1)
+
+let start (container : t) =
+    Option.iter container.child_pid ~f:(fun child_pid ->
+        Log.debug "Container child PID : %d" child_pid;
+        Unix.waitpid_exn (Pid.of_int child_pid));
+
+    Ok container

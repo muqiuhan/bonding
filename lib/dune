@@ -1,3 +1,4 @@
 (library
  (name bonding_lib)
- (libraries core core_unix simlog))
+ (libraries core core_unix simlog)
+ (foreign_stubs (language c) (names clone)))
