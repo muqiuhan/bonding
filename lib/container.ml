@@ -7,7 +7,7 @@ type t = {
 }
 
 (* minimal kernel version *)
-let minimal_kernel_version : string = "6.3.6"
+let minimal_kernel_version : string = "6.3.7"
 
 let make (args : Cli.t) =
     Result.(

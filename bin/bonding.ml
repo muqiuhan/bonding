@@ -10,13 +10,5 @@ let start (args : Cli.t) =
       >>= Container.clean_exit)
 
 let _ =
-    Result.iter
-      ~f:(fun _ -> Caml_threads.Thread.delay 2.)
-      (Cli.
-         {
-           debug = true;
-           command = "/bin/bash";
-           uid = 0;
-           mount_dir = "./mountdir";
-         }
-      |> start)
+    Cli.{debug = true; command = "/bin/bash"; uid = 0; mount_dir = "./mountdir"}
+    |> start
