@@ -1,4 +1,0 @@
-(executable
- (public_name bonding)
- (name bonding)
- (libraries bonding_lib))
