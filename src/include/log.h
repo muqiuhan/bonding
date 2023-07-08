@@ -96,30 +96,30 @@ typedef struct
 } log_namespace;
 
 /*
-    Writes output to defined logfile and standard out/err with
-    date/time stamp and associated log level.
+  Writes output to defined logfile and standard out/err with
+  date/time stamp and associated log level.
 
-    Can take formatted string like printf, with a variable sized list of
-    arguments.
+  Can take formatted string like printf, with a variable sized list of
+  arguments.
 
-    Prints errno when appropriate.
+  Prints errno when appropriate.
 
-    Always adds new line to output.
+  Always adds new line to output.
 
-    Logging Levels:
-    -2 : Fatal          - A fatal error has occured: program will exit
-   immediately -1 : Error          - An error has occured: program may not
-   exit 0  : Info           - Nessessary information regarding program
-   operation 1  : Warnings       - Any circumstance that may not affect
-   normal operation 2  : Debug          - Standard debug messages (default)
-    3  : Debug-Verbose  - All debug messages
+  Logging Levels:
+  -2 : Fatal          - A fatal error has occured: program will exit
+  immediately -1 : Error          - An error has occured: program may not
+  exit 0  : Info           - Nessessary information regarding program
+  operation 1  : Warnings       - Any circumstance that may not affect
+  normal operation 2  : Debug          - Standard debug messages (default)
+  3  : Debug-Verbose  - All debug messages
 
-    Input:
-    int loglvl      - The desired output logging level.  See above table for
-   levels. const char* str - The message to be output. This is a format
-   string.
-    ...             - Variable length list of arguments to be used with the
-   format string (optional).
+  Input:
+  int loglvl      - The desired output logging level.  See above table for
+  levels. const char* str - The message to be output. This is a format
+  string.
+  ...             - Variable length list of arguments to be used with the
+  format string (optional).
 */
 void
 writeLog (int loglvl, const char *str, ...)
@@ -306,10 +306,10 @@ writeLog (int loglvl, const char *str, ...)
 }
 
 /*
-    Prints the stacktrace to logs for the current location in the program.
-    Most recent calls appear first.
+  Prints the stacktrace to logs for the current location in the program.
+  Most recent calls appear first.
 
-    Set to a max of 15 lines of the stacktrace for output.
+  Set to a max of 15 lines of the stacktrace for output.
 */
 void
 writeStackTrace ()
@@ -424,16 +424,16 @@ writeStackTrace ()
 }
 
 /*
-    Sets the desired debug level for writing logs.
+  Sets the desired debug level for writing logs.
 
-    Debug Levels:
-    0  : Info           - Nessessary information regarding program operation
-    1  : Warnings       - Any circumstance that may not affect normal
-   operation 2  : Debug          - Standard debug messages (default) 3  :
-   Debug-Verbose  - All debug messages
+  Debug Levels:
+  0  : Info           - Nessessary information regarding program operation
+  1  : Warnings       - Any circumstance that may not affect normal
+  operation 2  : Debug          - Standard debug messages (default) 3  :
+  Debug-Verbose  - All debug messages
 
-    Input:
-    int level - desired debug level
+  Input:
+  int level - desired debug level
 */
 void
 setLogDebugLevel (int level)
@@ -477,10 +477,10 @@ setLogDebugLevel (int level)
 }
 
 /*
-    Sets the filename for log output.
+  Sets the filename for log output.
 
-    Input:
-    const char* file - desired log output file
+  Input:
+  const char* file - desired log output file
 */
 void
 setLogFile (const char *file)
@@ -491,13 +491,13 @@ setLogFile (const char *file)
 }
 
 /*
-    Enables/Disables silent mode.
-    When silent mode is enabled, no output will be written to standard out.
-    Log output will continue normally.
+  Enables/Disables silent mode.
+  When silent mode is enabled, no output will be written to standard out.
+  Log output will continue normally.
 
-    Input:
-    bool silent - Desired state of silent mode: false = Disabled (default),
-   true = Enabled
+  Input:
+  bool silent - Desired state of silent mode: false = Disabled (default),
+  true = Enabled
 */
 void
 setLogSilentMode (bool silent)
@@ -507,13 +507,13 @@ setLogSilentMode (bool silent)
 }
 
 /*
-    Enables/Disables line wrapping.
-    When line wrapping is enabled, lines that are over 80 characters will be
-    wrapped multiple times so that each line is below 80 characters.
+  Enables/Disables line wrapping.
+  When line wrapping is enabled, lines that are over 80 characters will be
+  wrapped multiple times so that each line is below 80 characters.
 
-    Input:
-    bool wrap - Desired state of line wrapping: true = Enabled (default),
-   false = Disabled
+  Input:
+  bool wrap - Desired state of line wrapping: true = Enabled (default),
+  false = Disabled
 */
 void
 setLineWrap (bool wrap)
@@ -523,8 +523,8 @@ setLineWrap (bool wrap)
 }
 
 /*
-    Flushes the contents of the logfile by deleting it and recreating
-    a new empty logfile of the same name.
+  Flushes the contents of the logfile by deleting it and recreating
+  a new empty logfile of the same name.
 */
 void
 flushLog ()
@@ -562,18 +562,18 @@ flushLog ()
 }
 
 /*
-    Loads logger configuration settings from the given config file.
+  Loads logger configuration settings from the given config file.
 
-    Supported settings are:
+  Supported settings are:
 
-    silent  - Enables/disables silent mode (see setLogSilentMode)
-    wrap    - Enables/disables line wrapping (see setLineWrap)
-    flush   - Determines if the log file should be cleared (see flushLog)
-    debug   - Sets the debug level (see setLogDebugLevel)
-    logfile - Sets the path to the log file (see setLogFile)
+  silent  - Enables/disables silent mode (see setLogSilentMode)
+  wrap    - Enables/disables line wrapping (see setLineWrap)
+  flush   - Determines if the log file should be cleared (see flushLog)
+  debug   - Sets the debug level (see setLogDebugLevel)
+  logfile - Sets the path to the log file (see setLogFile)
 
-    Input:
-    const char* config - Logger config file to parse and load settings from
+  Input:
+  const char* config - Logger config file to parse and load settings from
 */
 void
 loadConfig (const char *config)
@@ -710,10 +710,10 @@ loadConfig (const char *config)
 }
 
 /*
-    Gets the current date/time and returns it as a string of the form:
-    [yyyy-mm-dd hh:mm:ss]
+  Gets the current date/time and returns it as a string of the form:
+  [yyyy-mm-dd hh:mm:ss]
 
-    Returned char pointer must be freed.
+  Returned char pointer must be freed.
 */
 static char *
 getDateString ()
@@ -731,16 +731,16 @@ getDateString ()
 }
 
 /*
-    Gets a more human readable version of backtrace with function/file names
-    and line numbers
+  Gets a more human readable version of backtrace with function/file names
+  and line numbers
 
-    Input:
-    void* addresses[]   - array of addresses returned by a call to
-   backtrace() int array_size      - size of the addresses array returned by
-   backtrace();
+  Input:
+  void* addresses[]   - array of addresses returned by a call to
+  backtrace() int array_size      - size of the addresses array returned by
+  backtrace();
 
-    Returns a a list of strings describing the backtrace addresses. This list
-    must be freed by the caller.  On error, NULL is returned.
+  Returns a a list of strings describing the backtrace addresses. This list
+  must be freed by the caller.  On error, NULL is returned.
 */
 static char **
 getPrettyBacktrace (void *addresses[], int array_size)
@@ -757,7 +757,7 @@ getPrettyBacktrace (void *addresses[], int array_size)
 
   // Will hold the command to be used (max size of path + 255)
   char command_string[max_command_string_size]; // set to the maximum
-                                                // possible path size
+  // possible path size
   char exe_path[max_path_size];
 
   // Used to check if an error occured while setting up command
@@ -900,12 +900,12 @@ getPrettyBacktrace (void *addresses[], int array_size)
 }
 
 /*
-    Wraps the message into multiple 80 character lines.
+  Wraps the message into multiple 80 character lines.
 
-    Input:
-    char* msg    - The message variable to wrap
-    int msgSize  - The maximum message size
- */
+  Input:
+  char* msg    - The message variable to wrap
+  int msgSize  - The maximum message size
+*/
 static void
 wrapLines (char *msg, int msgSize)
 {
