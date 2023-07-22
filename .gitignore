@@ -1,5 +1,8 @@
-.vscode/
-obj/
+# Xmake cache
+.xmake/
+build/
 
-bonding
-default.log
+# MacOS Cache
+.DS_Store
+
+.vscode/
