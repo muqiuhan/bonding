@@ -4,62 +4,41 @@
 
 # Bonding
 
-> A simple and crude container implementation in Rust
+> A Minimalism container implementation in C++
 
 </div>
 
-# MOTIVATION
-Mainly to study Docker, accompanied by research on the working principles of Linux security measures, containers, virtualization and other features, and to learn Rust.
+## Build And Run
+> [xmake](https://xmake.io) is a cross-platform build utility based on Lua.
 
-So this is just a trial project for learning and use, please do not use it in any production development environment (`^_^`)
+- build: `xmake build --release`
+- run: `xmake run -- bonding`
 
-# Build And Run
-Bonding can only be used for Linux, and it is also developed on Linux. The Rust version used is: `rustc 1.70.0-nightly (af06dce64 2023-04-08)`
+## USAGE:
 
-- build: `cargo build --release`
-- run: `$ sudo ./target/debug/bonding --help`
-
-USAGE:
 ```
-bonding 0.1.0
-A simple and crude container implementation in Rust
-
-USAGE:
-    bonding [FLAGS] [OPTIONS]
-        --command <command>
-        --hostname <hostname>
-        --mount-dir <mount>
-        --uid <uid>
+USAGE: bonding [FLAGS] [OPTIONS] 
 
 FLAGS:
-        --debug      Whether to enable Debug mode
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -d, --debug
 
 OPTIONS:
-        --add <addpaths>...      Mount a dir inside the container
-        --command <command>      The command with arguments to be executed inside the container
-        --hostname <hostname>    The hostname
-        --mount-dir <mount>      An external folder inside the container as root
-        --uid <uid>              The uid that will be created
+    -c, --command <command>
+    -u, --uid <uid>
+    -m, --mount-dir <mount_dir>
+    -h, --help <help>
+    -v, --version <version>
 ```
 
-E.g:
+e.g:
 ```
-$ sudo ./target/release/bonding --command "/bin/ls -lh" \
-                                --hostname MuqiuHan-0   \
-                                --uid 0                 \
-                                --mount-dir .           \
+xmake run -- bonding --debug
+    --command "/bin/ls -lh"
+    --uid 0
+    --mount_dir .
 ```
 
-# ACKNOWLEDGMENT
-
-These two articles are my main source of inspiration:
-
-- Linux containers in 500 lines of code : [https://blog.lizzie.io/linux-containers-in-500-loc.html](https://blog.lizzie.io/linux-containers-in-500-loc.html)
-- Writing a container in Rust : [https://litchipi.github.io/series/container_in_rust](https://litchipi.github.io/series/container_in_rust)
-
-# REFERENCES
+## REFERENCES
 
 The following are related terms used when reading the above two articles, extended explanations/references of concepts:
 
@@ -85,10 +64,10 @@ The following are related terms used when reading the above two articles, extend
 - New Linux Kernel cgroups Vulnerability Could Let Attackers Escape Container : [https://thehackernews.com/2022/03/new-linux-kernel-cgroups-vulnerability.html](https://thehackernews.com/2022/03/new-linux-kernel-cgroups-vulnerability.html)
 - How to manage cgroups with CPUShares : [https://www.redhat.com/sysadmin/cgroups-part-two](https://www.redhat.com/sysadmin/cgroups-part-two)
 - Limits on resources in Linux : [https://0xax.gitbooks.io/linux-insides/content/SysCall/linux-syscall-6.html](https://0xax.gitbooks.io/linux-insides/content/SysCall/linux-syscall-6.html)
+- Linux containers in 500 lines of code : [https://blog.lizzie.io/linux-containers-in-500-loc.html](https://blog.lizzie.io/linux-containers-in-500-loc.html)
+- Writing a container in Rust : [https://litchipi.github.io/series/container_in_rust](https://litchipi.github.io/series/container_in_rust)
 
 # LICENSE
-> See full license : [LICENSE](./LICENSE)
-
 Copyright (C) 2022 Muqiu Han
 
 This program is free software: you can redistribute it and/or modify
