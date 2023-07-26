@@ -3,21 +3,23 @@
 
 #include <structopt/app.hpp>
 
-namespace bonding::cli {
+namespace bonding::cli
+{
 
-    struct Args {
-        /* Activate debug mode */
-        std::optional<bool> debug = false;
+  struct Args
+  {
+    /* Activate debug mode */
+    std::optional<bool> debug = false;
 
-        /* Command to execute inside the container */
-        std::string command;
+    /* Command to execute inside the container */
+    std::string command;
 
-        /* User ID to create inside the container */
-        std::uint32_t uid;
+    /* User ID to create inside the container */
+    std::uint32_t uid;
 
-        /* Directory to mount as root of the container */
-        std::string mount_dir;
-    };
+    /* Directory to mount as root of the container */
+    std::string mount_dir;
+  };
 
 };
 
