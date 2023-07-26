@@ -1,9 +1,14 @@
+#ifndef __BONDING_RESULT_HPP__
+#define __BONDING_RESULT_HPP__
+
 #include <iostream>
 #include <optional>
 #include <variant>
 
 template <typename T> struct Ok;
 template <typename E> struct Err;
+
+using Unit = int;
 
 /// Result is a type that represents either success (Ok) or failure (Err).
 template <typename T, typename E> struct Result
@@ -346,3 +351,5 @@ template <typename E> struct Err
     return Result<E, E>(*this).and_then(op);
   }
 };
+
+#endif /* __BONDING_RESULT_HPP__ */

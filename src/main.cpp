@@ -2,7 +2,8 @@
 #include "structopt/app.hpp"
 
 #include "include/cli.h"
-#include <string>
+#include "include/config.h"
+#include "include/container.h"
 
 using namespace bonding;
 
@@ -13,17 +14,17 @@ main(int argc, char ** argv)
     {
       auto options = structopt::app("bonding").parse<cli::Args>(argc, argv);
 
-      if (options.debug.value())
-        spdlog::info("Activate debug mode!");
+      if (options.debug.value()) {
+        spdlog::set_level(spdlog::level::debug);
+        spdlog::debug("Activate debug mode!");
+      }
 
-      std::cout << "command: " << options.command << std::endl;
-      std::cout << "uid: " << options.uid << std::endl;
-      std::cout << "mount_dir: " << options.mount_dir << std::endl;
+      container::Container::start(options);
     }
   catch (structopt::exception & e)
     {
-      std::cout << e.what() << "\n";
-      std::cout << e.help();
+      spdlog::error(e.what());
+      spdlog::error(e.help());
     }
   return 0;
 }

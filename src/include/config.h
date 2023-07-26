@@ -1,8 +1,8 @@
 #ifndef __BONDING_CONFIG_H__
 #define __BONDING_CONFIG_H__
 
+#include "result.hpp"
 #include <cstdint>
-#include <result.hpp>
 #include <string>
 #include <vector>
 
@@ -24,7 +24,7 @@ namespace bonding::config
     }
 
    private:
-    static Result<std::vector<std::string>, void> parse_argv(const std::string & argv) noexcept;
+    static Result<std::vector<std::string>, Unit> parse_argv(const std::string & argv) noexcept;
 
    private:
     /* The path of the binary / executable / script to execute inside the container. */

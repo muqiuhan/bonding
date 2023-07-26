@@ -5,7 +5,7 @@
 
 namespace bonding::config
 {
-  Result<std::vector<std::string>, void>
+  Result<std::vector<std::string>, Unit>
   Container_Options::parse_argv(const std::string & argv) noexcept
   {
     std::istringstream argv_stream(argv);

@@ -13,12 +13,17 @@ namespace bonding::error
    public:
     enum class Code
     {
-
+      Undefined
     };
 
    public:
     Err(const Code & code)
       : m_code(code)
+    {
+    }
+
+    Err()
+      : m_code(Code::Undefined)
     {
     }
 
@@ -33,7 +38,7 @@ namespace bonding::error
    ** code. Linux executable returns a number when they exit, which describe how everything went
    ** a return code of 0 means that there was no errors, any other number describe an error and what that error is
    ** (based on the return code value). */
-  void exit_with_return_code(Result<void, const Err &> result) noexcept;
+  void exit_with_return_code(Result<Unit, const Err> result) noexcept;
 
 }
 
