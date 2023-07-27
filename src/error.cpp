@@ -16,7 +16,9 @@ namespace bonding::error
         const Err err = result.unwrap_err();
         const int32_t return_code = err.to_exit_code();
 
-        spdlog::debug("Error on exit:\n\t{}\n\tReturning: {}", err.to_string(), return_code);
+        spdlog::debug("Error on exit:\n\t{}\n\tReturning: {}",
+                      err.to_string(),
+                      return_code);
 
         exit(return_code);
       }

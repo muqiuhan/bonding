@@ -8,13 +8,14 @@
 namespace bonding::error
 {
 
+  enum class Code
+  {
+    Undefined,
+    SocketError
+  };
+
   class Err
   {
-   public:
-    enum class Code
-    {
-      Undefined
-    };
 
    public:
     Err(const Code & code)
@@ -35,8 +36,10 @@ namespace bonding::error
   };
 
   /** Get the result from a function, and exit the process with the correct error
-   ** code. Linux executable returns a number when they exit, which describe how everything went
-   ** a return code of 0 means that there was no errors, any other number describe an error and what that error is
+   ** code. Linux executable returns a number when they exit, which describe how
+   *everything went
+   ** a return code of 0 means that there was no errors, any other number describe an
+   *error and what that error is
    ** (based on the return code value). */
   void exit_with_return_code(Result<Unit, const Err> result) noexcept;
 

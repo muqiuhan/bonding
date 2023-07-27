@@ -23,7 +23,7 @@ namespace bonding::container
     /** called before each exit to be sure we stay clean. */
     Result<Unit, error::Err> clean_and_exit() noexcept;
 
-    /** get the args from the commandline and handle everything 
+    /** get the args from the commandline and handle everything
      ** from the struct Container creation to the exit.
      ** returns a Result that will inform if an error happened during the process. */
     static Result<Unit, error::Err> start(const cli::Args argv) noexcept;
