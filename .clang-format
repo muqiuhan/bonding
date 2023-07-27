@@ -1,8 +1,8 @@
 Language:	Cpp
 BasedOnStyle:	GNU
 AccessModifierOffset:	-1
-BinPackArguments:	true
-BinPackParameters:	true
+BinPackArguments:	false
+BinPackParameters:	false
 BraceWrapping:   
   AfterClass:	true
   AfterControlStatement:	true
@@ -18,7 +18,9 @@ BreakBeforeBinaryOperators:	NonAssignment
 BreakBeforeBraces:	Custom
 BreakBeforeTernaryOperators:	true
 BreakConstructorInitializersBeforeComma:	true
-ColumnLimit: 120
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
+ColumnLimit: 90
 CommentPragmas:	'^ IWYU pragma:'
 ConstructorInitializerAllOnOneLineOrOnePerLine:	false
 ConstructorInitializerIndentWidth:	2
