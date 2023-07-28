@@ -13,6 +13,7 @@
 
 - build: `xmake build --release`
 - run: `xmake run -- bonding`
+- debug: `xmake run -d -- bonding`
 
 ## USAGE:
 
@@ -33,6 +34,14 @@ OPTIONS:
 e.g:
 ```
 xmake run -- bonding --debug
+    --command "/bin/ls -lh"
+    --uid 0
+    --mount_dir .
+```
+
+or run in debugger:
+```
+xmake r -d -- bonding --debug
     --command "/bin/ls -lh"
     --uid 0
     --mount_dir .
