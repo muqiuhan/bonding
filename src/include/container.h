@@ -10,9 +10,32 @@ namespace bonding::container
   class Container
   {
    public:
-    explicit Container(const cli::Args & args)
+    static Result<Container, error::Err>
+    make(const cli::Args & args) noexcept
+    {
       /* creates the ContainerOpts struct from the commandline arguments. */
-      : m_config(config::Container_Options(args.command, args.mount_dir, args.uid))
+      return Ok(
+        Container(config::Container_Options::make(args.command, args.mount_dir, args.uid)
+                    .unwrap()));
+    }
+
+    Container()
+      : m_config(bonding::config::Container_Options())
+      , m_sockets(std::make_pair(-1, -1))
+    {
+      std::terminate();
+    }
+
+   private:
+    explicit Container(
+      std::pair<config::Container_Options, std::pair<int, int>> config_and_sockets)
+      : Container(config_and_sockets.first, config_and_sockets.second)
+    {
+    }
+
+    Container(config::Container_Options config, std::pair<int, int> sockets)
+      : m_config(config)
+      , m_sockets(sockets)
     {
     }
 
@@ -30,6 +53,13 @@ namespace bonding::container
 
    private:
     const config::Container_Options m_config;
+    const std::pair<int, int> m_sockets;
+  };
+
+  class Container_Cleaner
+  {
+   public:
+    static Result<Unit, error::Err> close_socket(const int socket) noexcept;
   };
 };
 

@@ -1,6 +1,7 @@
 #include <structopt/app.hpp>
 
-struct GccOptions {
+struct GccOptions
+{
   std::optional<std::string> std = "c++11";
 
   // flag arguments:
@@ -23,20 +24,25 @@ struct GccOptions {
 };
 STRUCTOPT(GccOptions, std, verbose, Wall, Compile, output, input_file);
 
-int main(int argc, char *argv[]) {
-  try {
-    auto options = structopt::app("gcc").parse<GccOptions>(argc, argv);
+int
+main(int argc, char * argv[])
+{
+  try
+    {
+      auto options = structopt::app("gcc").parse<GccOptions>(argc, argv);
 
-    // Print parsed arguments
+      // Print parsed arguments
 
-    std::cout << "std        : " << options.std.value() << "\n";
-    std::cout << "verbose    : " << std::boolalpha << options.verbose.value() << "\n";
-    std::cout << "Wall       : " << std::boolalpha << options.Wall.value() << "\n";
-    std::cout << "Compile    : " << std::boolalpha << options.Compile.value() << "\n";
-    std::cout << "Output     : " << options.output.value() << "\n";
-    std::cout << "Input file : " << options.input_file << "\n";
-  } catch (structopt::exception &e) {
-    std::cout << e.what() << "\n";
-    std::cout << e.help();
-  }
+      std::cout << "std        : " << options.std.value() << "\n";
+      std::cout << "verbose    : " << std::boolalpha << options.verbose.value() << "\n";
+      std::cout << "Wall       : " << std::boolalpha << options.Wall.value() << "\n";
+      std::cout << "Compile    : " << std::boolalpha << options.Compile.value() << "\n";
+      std::cout << "Output     : " << options.output.value() << "\n";
+      std::cout << "Input file : " << options.input_file << "\n";
+    }
+  catch (structopt::exception & e)
+    {
+      std::cout << e.what() << "\n";
+      std::cout << e.help();
+    }
 }

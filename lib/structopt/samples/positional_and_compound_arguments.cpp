@@ -1,8 +1,9 @@
 #include <structopt/app.hpp>
 
-struct Options {
+struct Options
+{
   // Positional arguments
-  std::array<int, 3> numbers = {0, 0, 0};
+  std::array<int, 3> numbers = { 0, 0, 0 };
 
   // Flag arguments
   std::optional<bool> a = false;
@@ -17,28 +18,35 @@ struct Options {
 };
 STRUCTOPT(Options, numbers, a, b, c, files);
 
-int main(int argc, char *argv[]) {
-  try {
-    auto options = structopt::app("my_app").parse<Options>(argc, argv);
+int
+main(int argc, char * argv[])
+{
+  try
+    {
+      auto options = structopt::app("my_app").parse<Options>(argc, argv);
 
-    // Print parsed arguments:
+      // Print parsed arguments:
 
-    std::cout << "numbers = [" << options.numbers[0] << ", " << options.numbers[1] << ", "
-              << options.numbers[2] << "]\n";
-    std::cout << std::boolalpha << "a = " << options.a.value()
-              << ", b = " << options.b.value() << "\n";
-    if (options.c.has_value()) {
-      std::cout << "c = [" << options.c.value()[0] << ", " << options.c.value()[1]
-                << "]\n";
+      std::cout << "numbers = [" << options.numbers[0] << ", " << options.numbers[1]
+                << ", " << options.numbers[2] << "]\n";
+      std::cout << std::boolalpha << "a = " << options.a.value()
+                << ", b = " << options.b.value() << "\n";
+      if (options.c.has_value())
+        {
+          std::cout << "c = [" << options.c.value()[0] << ", " << options.c.value()[1]
+                    << "]\n";
+        }
+      if (options.files.has_value())
+        {
+          std::cout << "files = ";
+          for (auto & f : options.files.value())
+            std::cout << f << " ";
+          std::cout << "\n";
+        }
     }
-    if (options.files.has_value()) {
-      std::cout << "files = ";
-      for (auto &f : options.files.value())
-        std::cout << f << " ";
-      std::cout << "\n";
+  catch (structopt::exception & e)
+    {
+      std::cout << e.what() << "\n";
+      std::cout << e.help();
     }
-  } catch (structopt::exception &e) {
-    std::cout << e.what() << "\n";
-    std::cout << e.help();
-  }
 }

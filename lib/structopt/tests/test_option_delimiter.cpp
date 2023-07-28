@@ -3,7 +3,8 @@
 
 using doctest::test_suite;
 
-struct GccOptions {
+struct GccOptions
+{
   std::optional<std::string> std = "c++11";
 
   // flag arguments:
@@ -26,9 +27,12 @@ struct GccOptions {
 };
 STRUCTOPT(GccOptions, std, verbose, Wall, Compile, output, input_file);
 
-TEST_CASE("structopt can parse optional args with delimiters like `=` and `:`" * test_suite("option_delimiter")) {
+TEST_CASE("structopt can parse optional args with delimiters like `=` and `:`"
+          * test_suite("option_delimiter"))
+{
   {
-    auto arguments = structopt::app("test").parse<GccOptions>(std::vector<std::string>{"./gcc", "-std=c++17", "main.cpp"});
+    auto arguments = structopt::app("test").parse<GccOptions>(
+      std::vector<std::string>{ "./gcc", "-std=c++17", "main.cpp" });
     REQUIRE(arguments.std.value() == "c++17");
     REQUIRE(arguments.verbose == false);
     REQUIRE(arguments.Wall == false);
@@ -37,7 +41,14 @@ TEST_CASE("structopt can parse optional args with delimiters like `=` and `:`" *
     REQUIRE(arguments.input_file == "main.cpp");
   }
   {
-    auto arguments = structopt::app("test").parse<GccOptions>(std::vector<std::string>{"./gcc", "-v", "-Wall", "-std=c++17", "main.cpp", "-o", "main"});
+    auto arguments =
+      structopt::app("test").parse<GccOptions>(std::vector<std::string>{ "./gcc",
+                                                                         "-v",
+                                                                         "-Wall",
+                                                                         "-std=c++17",
+                                                                         "main.cpp",
+                                                                         "-o",
+                                                                         "main" });
     REQUIRE(arguments.std.value() == "c++17");
     REQUIRE(arguments.verbose == true);
     REQUIRE(arguments.Wall == true);
@@ -46,7 +57,13 @@ TEST_CASE("structopt can parse optional args with delimiters like `=` and `:`" *
     REQUIRE(arguments.input_file == "main.cpp");
   }
   {
-    auto arguments = structopt::app("test").parse<GccOptions>(std::vector<std::string>{"./gcc", "main.cpp", "--verbose", "--Wall", "-std:c++17", "--output:main"});
+    auto arguments = structopt::app("test").parse<GccOptions>(
+      std::vector<std::string>{ "./gcc",
+                                "main.cpp",
+                                "--verbose",
+                                "--Wall",
+                                "-std:c++17",
+                                "--output:main" });
     REQUIRE(arguments.std.value() == "c++17");
     REQUIRE(arguments.verbose == true);
     REQUIRE(arguments.Wall == true);
@@ -55,7 +72,8 @@ TEST_CASE("structopt can parse optional args with delimiters like `=` and `:`" *
     REQUIRE(arguments.input_file == "main.cpp");
   }
   {
-    auto arguments = structopt::app("test").parse<GccOptions>(std::vector<std::string>{"./gcc", "main.cpp", "-v", "-W", "-s=c++17", "-o=main"});
+    auto arguments = structopt::app("test").parse<GccOptions>(
+      std::vector<std::string>{ "./gcc", "main.cpp", "-v", "-W", "-s=c++17", "-o=main" });
     REQUIRE(arguments.std.value() == "c++17");
     REQUIRE(arguments.verbose == true);
     REQUIRE(arguments.Wall == true);

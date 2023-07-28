@@ -33,7 +33,7 @@ namespace bonding::error
   std::string
   Err::to_string() const noexcept
   {
-    return "";
+    return strerror(m_errno);
   }
 
 } // namespace bonding::error
