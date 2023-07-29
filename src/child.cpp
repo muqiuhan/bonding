@@ -22,10 +22,8 @@ namespace bonding::child
   Child::generate_child_process(
     const bonding::config::Container_Options container_options) noexcept
   {
-    uint8_t temp_stack[STACK_SIZE];
-
     const pid_t child_pid = clone(Process::__main,
-                                  &temp_stack,
+                                  &Process::STACK,
                                   CLONE_NEWNS         /* new mount namespace */
                                     | CLONE_NEWCGROUP /* new cgroup namespace */
                                     | CLONE_NEWPID    /* new pid namespace */

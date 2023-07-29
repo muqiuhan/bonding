@@ -38,13 +38,17 @@ namespace bonding::child
    private:
     class Process
     {
+     private:
+      inline static bonding::config::Container_Options container_options;
+      inline static const uint32_t STACK_SIZE = 1024 * 1024;
+
+     public:
+      inline static uint8_t STACK[STACK_SIZE];
+
      public:
       /** Make a copy of bonding::config::Container_Optionsm, instead of using
        ** the reference of the parent process */
       static int __main(void * options) noexcept;
-
-     private:
-      inline static bonding::config::Container_Options container_options;
     };
 
    private:
@@ -52,8 +56,6 @@ namespace bonding::child
       const bonding::config::Container_Options container_options) noexcept;
 
    private:
-    inline static const uint32_t STACK_SIZE = 1024 * 1024;
-
     const bonding::config::Container_Options m_container_options;
 
    public:
