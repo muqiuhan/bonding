@@ -12,7 +12,9 @@ namespace bonding::error
   enum class Code
   {
     Undefined,
-    SocketError
+    SocketError,
+    ChildProcessError,
+    ContainerError
   };
 
   class Err

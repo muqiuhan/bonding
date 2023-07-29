@@ -41,6 +41,12 @@ namespace bonding::config
       std::terminate();
     }
 
+    inline const Container_Options
+    operator=(const Container_Options & container_options) const noexcept
+    {
+      return container_options;
+    }
+
    private:
     Container_Options(const std::vector<std::string> argv,
                       const std::string path,
@@ -59,7 +65,7 @@ namespace bonding::config
     static Result<std::vector<std::string>, Unit>
     parse_argv(const std::string argv) noexcept;
 
-   private:
+   public:
     /** The path of the binary executable script to execute inside the container. */
     const std::string m_path;
 
