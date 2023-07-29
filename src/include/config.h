@@ -38,7 +38,6 @@ namespace bonding::config
       , m_path("")
       , m_raw_fd(0)
     {
-      std::terminate();
     }
 
     inline const Container_Options

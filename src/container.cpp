@@ -5,15 +5,13 @@ namespace bonding::container
   Result<Unit, error::Err>
   Container::create() noexcept
   {
-    spdlog::debug("Creation finished.");
+    spdlog::info("Container is READY!!!");
     return Ok(Unit());
   }
 
   Result<Unit, error::Err>
   Container::clean_and_exit() noexcept
   {
-    spdlog::debug("Cleaning container");
-
     Container_Cleaner::close_socket(m_sockets.first).unwrap();
     Container_Cleaner::close_socket(m_sockets.second).unwrap();
 
@@ -27,7 +25,7 @@ namespace bonding::container
 
     return container.create()
       .and_then([&](const auto _) {
-        spdlog::debug("Finished, clean and exit");
+        spdlog::info("Cleaning and exiting container...");
         container.clean_and_exit();
         return Ok(Unit());
       })
@@ -41,7 +39,7 @@ namespace bonding::container
   Result<Unit, error::Err>
   Container_Cleaner::close_socket(const int socket) noexcept
   {
-    spdlog::debug("Close socket {}", socket);
+    spdlog::debug("Closing socket {}...", socket);
     if (-1 == close(socket))
       {
         spdlog::error("Unable to close socket: {}", socket);

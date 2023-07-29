@@ -4,7 +4,6 @@
 #include "config.h"
 #include "error.h"
 #include "result.hpp"
-#include <spdlog/fmt/bundled/ranges.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
 
@@ -16,11 +15,21 @@ namespace bonding::child
    ** the `cli::Args.m_command` */
   class Child
   {
-   private:
+   public:
     explicit Child(const bonding::config::Container_Options container_options)
       : m_container_options(container_options)
       , m_pid(generate_child_process(container_options).unwrap())
     {
+      spdlog::info("Starting container with command `{}` on process {}",
+                   container_options.m_path,
+                   m_pid);
+    }
+
+    Child()
+      : m_container_options(bonding::config::Container_Options())
+      , m_pid(-1)
+    {
+      std::terminate();
     }
 
    private:
@@ -43,6 +52,8 @@ namespace bonding::child
     inline static const uint32_t STACK_SIZE = 1024 * 1024;
 
     const bonding::config::Container_Options m_container_options;
+
+   public:
     const pid_t m_pid;
   };
 }

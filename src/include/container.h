@@ -1,6 +1,7 @@
 #ifndef __BONDING_CONTAINER_H__
 #define __BONDING_CONTAINER_H__
 
+#include "child.h"
 #include "cli.h"
 #include "config.h"
 #include "error.h"
@@ -22,6 +23,7 @@ namespace bonding::container
     Container()
       : m_config(bonding::config::Container_Options())
       , m_sockets(std::make_pair(-1, -1))
+      , m_child_process(bonding::child::Child())
     {
       std::terminate();
     }
@@ -36,6 +38,7 @@ namespace bonding::container
     Container(config::Container_Options config, std::pair<int, int> sockets)
       : m_config(config)
       , m_sockets(sockets)
+      , m_child_process(bonding::child::Child(config))
     {
     }
 
@@ -54,6 +57,7 @@ namespace bonding::container
    private:
     const config::Container_Options m_config;
     const std::pair<int, int> m_sockets;
+    const child::Child m_child_process;
   };
 
   class Container_Cleaner

@@ -8,7 +8,7 @@ namespace bonding::error
   {
     if (result.is_ok())
       {
-        spdlog::debug("Exit without any error, returning 0");
+        spdlog::info("Exit without any error, returning 0");
         exit(0);
       }
     else
@@ -16,7 +16,7 @@ namespace bonding::error
         const Err err = result.unwrap_err();
         const int32_t return_code = err.to_exit_code();
 
-        spdlog::debug("Error on exit:\n\t{}\n\tReturning: {}",
+        spdlog::error("Error on exit:\n\t{}\n\tReturning: {}",
                       err.to_string(),
                       return_code);
 
@@ -33,7 +33,14 @@ namespace bonding::error
   std::string
   Err::to_string() const noexcept
   {
-    return strerror(m_errno);
+    if (m_code == Code::ChildProcessError)
+      return "Child Process Error: " + std::string(strerror(m_errno));
+    else if (m_code == Code::ContainerError)
+      return "Container Error: " + std::string(strerror(m_errno));
+    else if (m_code == Code::SocketError)
+      return "Socket Error: " + std::string(strerror(m_errno));
+    else
+      return "Undefined Error: " + std::string(strerror(m_errno));
   }
 
 } // namespace bonding::error

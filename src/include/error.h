@@ -29,6 +29,7 @@ namespace bonding::error
       : m_code(code)
       , m_errno(errno)
     {
+      spdlog::error("{}", to_string());
     }
 
     int32_t to_exit_code() const noexcept;
