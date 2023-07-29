@@ -6,6 +6,8 @@ namespace bonding::container
   Container::create() noexcept
   {
     spdlog::info("Container is READY!!!");
+    m_child_process.wait();
+
     return Ok(Unit());
   }
 

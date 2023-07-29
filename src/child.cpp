@@ -2,6 +2,7 @@
 
 #define _GNU_SOURCE
 #include <sched.h>
+#include <sys/wait.h>
 
 namespace bonding::child
 {
@@ -9,7 +10,11 @@ namespace bonding::child
   int
   Child::Process::__main(void * options) noexcept
   {
+    spdlog::info("==========< Child Process Output >==========");
+
     container_options = *((bonding::config::Container_Options *)(options));
+
+    spdlog::info("==========< Child Process Output >==========");
     return 0;
   }
 
@@ -33,5 +38,20 @@ namespace bonding::child
       return Err(bonding::error::Err(bonding::error::Code::ChildProcessError));
 
     return Ok(child_pid);
+  }
+
+  Result<Unit, error::Err>
+  Child::wait() const noexcept
+  {
+    spdlog::debug("Waiting for child process {} finish...", m_pid);
+
+    int child_process_status = 0;
+
+    if (-1 == waitpid(m_pid, &child_process_status, WUNTRACED | WCONTINUED))
+      return Err(bonding::error::Err(bonding::error::Code::ContainerError));
+
+    spdlog::info("Child process exit with code {}, signal {}",
+                 (child_process_status >> 8) & 0xFF,
+                 child_process_status & 0x7F);
   }
 }

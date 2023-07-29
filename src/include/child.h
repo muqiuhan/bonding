@@ -32,6 +32,9 @@ namespace bonding::child
       std::terminate();
     }
 
+    /* Wait for the child to finish. */
+    Result<Unit, error::Err> wait() const noexcept;
+
    private:
     class Process
     {
