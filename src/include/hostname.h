@@ -3,6 +3,7 @@
 
 #include "error.h"
 #include "result.hpp"
+#include <ctime>
 
 namespace bonding::hostname
 {
@@ -19,10 +20,10 @@ namespace bonding::hostname
     static uint32_t __xorshift() noexcept;
 
    private:
-    inline static uint32_t X = 123456789;
-    inline static uint32_t Y = 362436069;
-    inline static uint32_t Z = 521288629;
-    inline static uint32_t W = 88675123;
+    inline static uint32_t X = 123456789 + (clock() / 10);
+    inline static uint32_t Y = 362436069 + (clock() / 10);
+    inline static uint32_t Z = 521288629 + (clock() / 10);
+    inline static uint32_t W = 88675123 + (clock() / 10);
   };
 
   /** A hostname is what identifies our machine compared
