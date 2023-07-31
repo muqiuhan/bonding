@@ -9,8 +9,10 @@ namespace bonding::child
   Result<Unit, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    container_options->m_hostname.set();
+    container_options->m_hostname.set().unwrap();
+    container_options->m_mount.set().unwrap();
 
+    container_options->m_mount.clean().unwrap();
     return Ok(Unit());
   }
 
@@ -29,6 +31,7 @@ namespace bonding::child
         return Err(err);
       })
       .unwrap();
+
     return 0;
   }
 
