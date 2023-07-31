@@ -40,10 +40,10 @@ namespace bonding::child
     {
      private:
       inline static bonding::config::Container_Options container_options;
-      inline static const uint32_t STACK_SIZE = 1024 * 1024;
 
      public:
-      inline static uint8_t STACK[STACK_SIZE];
+      inline static const uint32_t STACK_SIZE = 1024 * 1024;
+      inline static void * STACK = malloc(STACK_SIZE);
 
      public:
       /** Make a copy of bonding::config::Container_Optionsm, instead of using

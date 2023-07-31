@@ -39,13 +39,14 @@ namespace bonding::child
     const bonding::config::Container_Options container_options) noexcept
   {
     const pid_t child_pid = clone(Process::__main,
-                                  &Process::STACK,
+                                  Process::STACK + Process::STACK_SIZE,
                                   CLONE_NEWNS         /* new mount namespace */
                                     | CLONE_NEWCGROUP /* new cgroup namespace */
                                     | CLONE_NEWPID    /* new pid namespace */
                                     | CLONE_NEWIPC    /* new ipc namespace */
                                     | CLONE_NEWNET    /* new network namespace */
-                                    | CLONE_NEWUTS /* new uts namespace */,
+                                    | CLONE_NEWUTS    /* new uts namespace */
+                                    | SIGCHLD,
                                   (void *)&container_options);
 
     if (-1 == child_pid)
