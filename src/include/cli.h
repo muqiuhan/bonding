@@ -22,6 +22,9 @@ namespace bonding::cli
 
     /** Directory to mount as root of the container */
     std::string mount_dir;
+
+    /** Hostname to identifies container */
+    std::string hostname = "";
   };
 
   struct Command_Line_Args
@@ -30,6 +33,7 @@ namespace bonding::cli
     std::optional<std::string> command;
     std::optional<std::uint32_t> uid;
     std::optional<std::string> mount_dir;
+    std::optional<std::string> hostname = "";
 
    public:
     /** This function verifies that the command line arguments are valid

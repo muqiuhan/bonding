@@ -15,9 +15,11 @@ namespace bonding::container
     make(const cli::Args & args) noexcept
     {
       /* creates the ContainerOpts struct from the commandline arguments. */
-      return Ok(
-        Container(config::Container_Options::make(args.command, args.mount_dir, args.uid)
-                    .unwrap()));
+      return Ok(Container(config::Container_Options::make(args.command,
+                                                          args.mount_dir,
+                                                          args.uid,
+                                                          args.hostname)
+                            .unwrap()));
     }
 
     Container()

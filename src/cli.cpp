@@ -16,7 +16,14 @@ namespace bonding::cli
     if (!uid.has_value())
       spdlog::error("The `uid` parameter must be provided!");
 
-    return Args{ debug.value(), command.value(), uid.value(), mount_dir.value() };
+    if (!hostname.has_value())
+      spdlog::info("If hostname is not provided, it will be generated automatically");
+
+    return Args{ debug.value(),
+                 command.value(),
+                 uid.value(),
+                 mount_dir.value(),
+                 hostname.value() };
   }
 
   Result<std::pair<int, int>, error::Err>

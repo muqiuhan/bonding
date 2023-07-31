@@ -3,7 +3,9 @@
 
 #include "cli.h"
 #include "error.h"
+#include "hostname.h"
 #include "result.hpp"
+
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -18,17 +20,27 @@ namespace bonding::config
   {
    public:
     static Result<std::pair<Container_Options, std::pair<int, int>>, error::Err>
-    make(const std::string command,
-         const std::string mount_dir,
-         const uint32_t uid) noexcept
+    make(const std::string & command,
+         const std::string & mount_dir,
+         const uint32_t uid,
+         const std::string & _hostname) noexcept
     {
       const std::pair<int, int> sockets = bonding::cli::generate_socketpair().unwrap();
       const std::vector<std::string> argv =
         parse_argv(command).expect("Cannot parse command arguments");
 
-      return Ok(
-        std::make_pair(Container_Options(argv, argv.at(0), mount_dir, uid, sockets.first),
-                       sockets));
+      const std::string hostname = [&]() {
+        if (_hostname == "")
+          return bonding::hostname::Hostname::generate(10).unwrap();
+        else
+          return _hostname;
+      }();
+
+      spdlog::debug("hostname = {}", hostname);
+
+      return Ok(std::make_pair(
+        Container_Options(argv, argv.at(0), mount_dir, uid, sockets.first, hostname),
+        sockets));
     }
 
     Container_Options()
@@ -37,6 +49,7 @@ namespace bonding::config
       , m_argv({})
       , m_path("")
       , m_raw_fd(0)
+      , m_hostname("")
     {
     }
 
@@ -51,12 +64,14 @@ namespace bonding::config
                       const std::string path,
                       const std::string mount_dir,
                       const uint32_t uid,
-                      const int raw_fd)
+                      const int raw_fd,
+                      const std::string hostname)
       : m_argv(argv)
       , m_path(path)
       , m_mount_dir(mount_dir)
       , m_uid(uid)
       , m_raw_fd(raw_fd)
+      , m_hostname(hostname)
     {
     }
 
@@ -71,14 +86,19 @@ namespace bonding::config
     /** The path of the directory to use as a root inside our container. */
     const std::string m_mount_dir;
 
-    /** The ID of the user inside the container. An ID of 0 means it’s root
-     * (administrator). */
+    /** The ID of the user inside the container.
+     ** An ID of 0 means it’s root (administrator). */
     const uint32_t m_uid;
 
     /** The full arguments passed (including the path option) into the commandline. */
     const std::vector<std::string> m_argv;
 
+    /** socket for IPC */
     const int m_raw_fd;
+
+    /** A hostname is what identifies our machine compared
+     ** to every other living on the same network. */
+    const std::string m_hostname;
   };
 
 };
