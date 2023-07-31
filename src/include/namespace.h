@@ -6,10 +6,9 @@
 
 namespace bonding::ns
 {
-    class Namespace
-    {
-
-    };
+  class Namespace
+  {
+  };
 };
 
 #endif /* __BONDING_NAMESPACE_H__ */

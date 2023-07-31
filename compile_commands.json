@@ -1,0 +1,51 @@
+[
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/main.cpp.o", "src/main.cpp"],
+  "file": "src/main.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/error.cpp.o", "src/error.cpp"],
+  "file": "src/error.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/config.cpp.o", "src/config.cpp"],
+  "file": "src/config.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/cli.cpp.o", "src/cli.cpp"],
+  "file": "src/cli.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/ipc.cpp.o", "src/ipc.cpp"],
+  "file": "src/ipc.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/container.cpp.o", "src/container.cpp"],
+  "file": "src/container.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/hostname.cpp.o", "src/hostname.cpp"],
+  "file": "src/hostname.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/mount.cpp.o", "src/mount.cpp"],
+  "file": "src/mount.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/child.cpp.o", "src/child.cpp"],
+  "file": "src/child.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/namespace.cpp.o", "src/namespace.cpp"],
+  "file": "src/namespace.cpp"
+}]
