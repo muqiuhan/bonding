@@ -17,7 +17,7 @@ namespace bonding::cli
       spdlog::error("The `uid` parameter must be provided!");
 
     if (!hostname.has_value())
-      spdlog::info("If hostname is not provided, it will be generated automatically");
+      spdlog::warn("If hostname is not provided, it will be generated automatically");
 
     return Args{ debug.value(),
                  command.value(),
