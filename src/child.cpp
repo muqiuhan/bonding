@@ -16,8 +16,6 @@ namespace bonding::child
   int
   Child::Process::__main(void * options) noexcept
   {
-    spdlog::info("==========< Child Process Output >==========");
-
     container_options = *((bonding::config::Container_Options *)(options));
     setup_container_configurations()
       .and_then([](const Unit ok) {
@@ -29,8 +27,6 @@ namespace bonding::child
         exit(-1);
         return Err(err);
       });
-
-    spdlog::info("==========< Child Process Output >==========");
     return 0;
   }
 
@@ -45,8 +41,7 @@ namespace bonding::child
                                     | CLONE_NEWPID    /* new pid namespace */
                                     | CLONE_NEWIPC    /* new ipc namespace */
                                     | CLONE_NEWNET    /* new network namespace */
-                                    | CLONE_NEWUTS    /* new uts namespace */
-                                    | SIGCHLD,
+                                    | CLONE_NEWUTS /* new uts namespace */,
                                   (void *)&container_options);
 
     if (-1 == child_pid)
@@ -63,7 +58,7 @@ namespace bonding::child
     int child_process_status = 0;
 
     /** To wait for children produced by clone(), need __WCLONE flag */
-    if (-1 == waitpid(m_pid, &child_process_status, __WCLONE))
+    if (-1 == waitpid(m_pid, &child_process_status, __WALL))
       return Err(bonding::error::Err(bonding::error::Code::ContainerError));
 
     spdlog::info("Child process exit with code {}, signal {}",

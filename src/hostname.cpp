@@ -54,11 +54,11 @@ namespace bonding::hostname
   {
     if (-1 == sethostname(m_hostname.c_str(), m_hostname.size()))
       {
-        spdlog::info("Container hostname is now {}", m_hostname);
-        return Ok(Unit());
+        spdlog::error("Cannot set hostname {} for container", m_hostname);
+        return Err(bonding::error::Err(bonding::error::Code::HostnameError));
       }
 
-    spdlog::error("Cannot set hostname {} for container", m_hostname);
-    return Err(bonding::error::Err(bonding::error::Code::HostnameError));
+    spdlog::info("Container hostname is now {}", m_hostname);
+    return Ok(Unit());
   }
 }
