@@ -3,31 +3,38 @@
 
 using doctest::test_suite;
 
-struct SingleIntArgument {
+struct SingleIntArgument
+{
   int value = 0;
 };
 
-struct SingleNegativeIntArgument {
+struct SingleNegativeIntArgument
+{
   int value = 0;
 };
 
-struct SingleFloatArgument {
+struct SingleFloatArgument
+{
   float value = 0.0f;
 };
 
-struct SingleCharArgument {
+struct SingleCharArgument
+{
   char value = '\0';
 };
 
-struct SingleBoolArgument {
+struct SingleBoolArgument
+{
   bool value = false;
 };
 
-struct SingleStringArgument {
+struct SingleStringArgument
+{
   std::string value = "";
 };
 
-struct SinglePairArgument {
+struct SinglePairArgument
+{
   std::pair<int, float> value = { 0, 0.0f };
 };
 
@@ -39,130 +46,160 @@ STRUCTOPT(SingleBoolArgument, value);
 STRUCTOPT(SingleStringArgument, value);
 STRUCTOPT(SinglePairArgument, value);
 
-TEST_CASE("structopt can parse single positional argument" * test_suite("single_positional")) {
+TEST_CASE("structopt can parse single positional argument"
+          * test_suite("single_positional"))
+{
   // Int
   {
-    auto arguments = structopt::app("test").parse<SingleIntArgument>(std::vector<std::string>{"./main", "5"});
+    auto arguments = structopt::app("test").parse<SingleIntArgument>(
+      std::vector<std::string>{ "./main", "5" });
     REQUIRE(arguments.value == 5);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleIntArgument>(std::vector<std::string>{"./main", "10"});
+    auto arguments = structopt::app("test").parse<SingleIntArgument>(
+      std::vector<std::string>{ "./main", "10" });
     REQUIRE(arguments.value == 10);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleIntArgument>(std::vector<std::string>{"./main", "0x5B"});
+    auto arguments = structopt::app("test").parse<SingleIntArgument>(
+      std::vector<std::string>{ "./main", "0x5B" });
     REQUIRE(arguments.value == 0x5B);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleIntArgument>(std::vector<std::string>{"./main", "051"});
+    auto arguments = structopt::app("test").parse<SingleIntArgument>(
+      std::vector<std::string>{ "./main", "051" });
     REQUIRE(arguments.value == 051);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleIntArgument>(std::vector<std::string>{"./main", "0b0101"});
+    auto arguments = structopt::app("test").parse<SingleIntArgument>(
+      std::vector<std::string>{ "./main", "0b0101" });
     REQUIRE(arguments.value == 0b0101);
   }
 
   // Negative Int
   {
-    auto arguments = structopt::app("test").parse<SingleNegativeIntArgument>(std::vector<std::string>{"./main", "-5"});
+    auto arguments = structopt::app("test").parse<SingleNegativeIntArgument>(
+      std::vector<std::string>{ "./main", "-5" });
     REQUIRE(arguments.value == -5);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleNegativeIntArgument>(std::vector<std::string>{"./main", "+10"});
+    auto arguments = structopt::app("test").parse<SingleNegativeIntArgument>(
+      std::vector<std::string>{ "./main", "+10" });
     REQUIRE(arguments.value == 10);
   }
 
   // Float
   {
-    auto arguments = structopt::app("test").parse<SingleFloatArgument>(std::vector<std::string>{"./main", "3.14"});
+    auto arguments = structopt::app("test").parse<SingleFloatArgument>(
+      std::vector<std::string>{ "./main", "3.14" });
     REQUIRE(arguments.value == 3.14f);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleFloatArgument>(std::vector<std::string>{"./main", "10.25893"});
+    auto arguments = structopt::app("test").parse<SingleFloatArgument>(
+      std::vector<std::string>{ "./main", "10.25893" });
     REQUIRE(arguments.value == 10.25893f);
   }
 
   // Char
   {
-    auto arguments = structopt::app("test").parse<SingleCharArgument>(std::vector<std::string>{"./main", "a"});
+    auto arguments = structopt::app("test").parse<SingleCharArgument>(
+      std::vector<std::string>{ "./main", "a" });
     REQUIRE(arguments.value == 'a');
   }
   {
-    auto arguments = structopt::app("test").parse<SingleCharArgument>(std::vector<std::string>{"./main", "%"});
+    auto arguments = structopt::app("test").parse<SingleCharArgument>(
+      std::vector<std::string>{ "./main", "%" });
     REQUIRE(arguments.value == '%');
   }
 
   // Bool
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "true"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "true" });
     REQUIRE(arguments.value == true);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "on"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "on" });
     REQUIRE(arguments.value == true);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "1"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "1" });
     REQUIRE(arguments.value == true);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "yes"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "yes" });
     REQUIRE(arguments.value == true);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "false"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "false" });
     REQUIRE(arguments.value == false);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "off"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "off" });
     REQUIRE(arguments.value == false);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "no"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "no" });
     REQUIRE(arguments.value == false);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "0"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "0" });
     REQUIRE(arguments.value == false);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "TRUE"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "TRUE" });
     REQUIRE(arguments.value == true);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "ON"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "ON" });
     REQUIRE(arguments.value == true);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "YES"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "YES" });
     REQUIRE(arguments.value == true);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "FALSE"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "FALSE" });
     REQUIRE(arguments.value == false);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "OFF"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "OFF" });
     REQUIRE(arguments.value == false);
   }
   {
-    auto arguments = structopt::app("test").parse<SingleBoolArgument>(std::vector<std::string>{"./main", "NO"});
+    auto arguments = structopt::app("test").parse<SingleBoolArgument>(
+      std::vector<std::string>{ "./main", "NO" });
     REQUIRE(arguments.value == false);
   }
 
   // String
   {
-    auto arguments = structopt::app("test").parse<SingleStringArgument>(std::vector<std::string>{"./main", "foobar"});
+    auto arguments = structopt::app("test").parse<SingleStringArgument>(
+      std::vector<std::string>{ "./main", "foobar" });
     REQUIRE(arguments.value == "foobar");
   }
   {
-    auto arguments = structopt::app("test").parse<SingleStringArgument>(std::vector<std::string>{"./main", "Hello, 世界"});
+    auto arguments = structopt::app("test").parse<SingleStringArgument>(
+      std::vector<std::string>{ "./main", "Hello, 世界" });
     REQUIRE(arguments.value == "Hello, 世界");
   }
 
   // Pair
   {
-    auto arguments = structopt::app("test").parse<SinglePairArgument>(std::vector<std::string>{"./main", "10", "3.14"});
-    REQUIRE(arguments.value == std::pair<int, float>{10, 3.14f});
+    auto arguments = structopt::app("test").parse<SinglePairArgument>(
+      std::vector<std::string>{ "./main", "10", "3.14" });
+    REQUIRE(arguments.value == std::pair<int, float>{ 10, 3.14f });
   }
 }

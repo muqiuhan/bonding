@@ -71,7 +71,7 @@ template<typename Mutex>
 class qt_color_sink : public base_sink<Mutex>
 {
 public:
-    qt_color_sink(QTextEdit *qt_text_edit, int max_lines, bool dark_colors=false)
+    qt_color_sink(QTextEdit *qt_text_edit, int max_lines, bool dark_colors = false)
         : qt_text_edit_(qt_text_edit)
         , max_lines_(max_lines)
     {
