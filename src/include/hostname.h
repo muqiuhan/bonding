@@ -33,12 +33,12 @@ namespace bonding::hostname
   {
    public:
     explicit Hostname(const std::string default_hostname)
-      : m_hostname([&]() {
+      : m_hostname(([&]() {
         if (default_hostname == "")
           return generate(10).unwrap();
         else
-          return default_hostname;
-      }())
+          return "bonding." + default_hostname;
+      }()))
     {
     }
 

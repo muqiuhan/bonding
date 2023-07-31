@@ -46,7 +46,7 @@ namespace bonding::hostname
                                      "The maximum length of Hostname is: "
                                        + std::to_string(MAX_LENGTH)));
 
-    return Ok(Xorshift::generate(MAX_LENGTH));
+    return Ok("bonding." + Xorshift::generate(MAX_LENGTH));
   }
 
   Result<Unit, error::Err>
