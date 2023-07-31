@@ -16,7 +16,8 @@ namespace bonding::error
     ChildProcessError,
     ContainerError,
     HostnameError,
-    MountsError
+    MountsError,
+    CreateDirectoryError
   };
 
   class Err
