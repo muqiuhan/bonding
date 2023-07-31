@@ -27,7 +27,8 @@ OPTIONS:
     -c, --command <command>
     -u, --uid <uid>
     -m, --mount-dir <mount_dir>
-    -h, --help <help>
+    -h, --hostname <hostname>
+    --help <help>
     -v, --version <version>
 ```
 
@@ -37,6 +38,7 @@ xmake run -- bonding --debug
     --command "/bin/ls -lh"
     --uid 0
     --mount_dir .
+    --hostname Test
 ```
 
 or run in debugger:
@@ -45,12 +47,14 @@ xmake r -d -- bonding --debug
     --command "/bin/ls -lh"
     --uid 0
     --mount_dir .
+    --hostname Test
 ```
 
 ## REFERENCES
 
 The following are related terms used when reading the above two articles, extended explanations/references of concepts:
 
+- Book: *The Linux Programming Interface*
 - OS-level virtualization wikipeidia : [https://en.wikipedia.org/wiki/OS-level_virtualization](https://en.wikipedia.org/wiki/OS-level_virtualization)
 - LXC is a userspace interface for the Linux kernel containment features : [https://linuxcontainers.org/lxc/introduction/](https://linuxcontainers.org/lxc/introduction/)
 - Advanced Bash-Scripting Guide - Appendix E. Exit Codes With Special Meanings : [https://tldp.org/LDP/abs/html/exitcodes.html](https://tldp.org/LDP/abs/html/exitcodes.html)
