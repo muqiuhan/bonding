@@ -61,11 +61,14 @@ namespace bonding::child
 
     int child_process_status = 0;
 
-    if (-1 == waitpid(m_pid, &child_process_status, WUNTRACED | WCONTINUED))
+    /** To wait for children produced by clone(), need __WCLONE flag */
+    if (-1 == waitpid(m_pid, &child_process_status, __WCLONE))
       return Err(bonding::error::Err(bonding::error::Code::ContainerError));
 
     spdlog::info("Child process exit with code {}, signal {}",
                  (child_process_status >> 8) & 0xFF,
                  child_process_status & 0x7F);
+
+    return Ok(Unit());
   }
 }
