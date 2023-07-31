@@ -1,5 +1,5 @@
 #include "include/mount.h"
-#include "hostname.h"
+#include "include/hostname.h"
 #include <sys/mount.h>
 #include <sys/stat.h>
 
@@ -44,7 +44,7 @@ namespace bonding::mounts
   }
 
   Result<Unit, error::Err>
-  __create(const std::string & path) noexcept
+  Mount::__create(const std::string & path) noexcept
   {
     const char sep = '/';
     const char * p;

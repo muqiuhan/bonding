@@ -46,6 +46,7 @@ namespace bonding::config
       , m_raw_fd(0)
       , m_hostname(bonding::hostname::Hostname(""))
     {
+      std::terminate();
     }
 
     inline const Container_Options

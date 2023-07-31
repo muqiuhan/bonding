@@ -39,7 +39,7 @@ namespace bonding::child
     class Process
     {
      private:
-      inline static bonding::config::Container_Options container_options;
+      inline static bonding::config::Container_Options * container_options;
 
      public:
       inline static const uint32_t STACK_SIZE = 1024 * 1024;

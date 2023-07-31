@@ -9,14 +9,15 @@ namespace bonding::child
   Result<Unit, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    container_options.m_hostname.set();
+    container_options->m_hostname.set();
     return Ok(Unit());
   }
 
   int
   Child::Process::__main(void * options) noexcept
   {
-    container_options = *((bonding::config::Container_Options *)(options));
+    container_options = ((bonding::config::Container_Options *)(options));
+
     setup_container_configurations()
       .and_then([](const Unit ok) {
         spdlog::info("Container setup successfully");
