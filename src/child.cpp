@@ -6,6 +6,12 @@
 
 namespace bonding::child
 {
+  Result<Unit, error::Err>
+  Child::Process::setup_container_configurations() noexcept
+  {
+    container_options.m_hostname.set();
+    return Ok(Unit());
+  }
 
   int
   Child::Process::__main(void * options) noexcept
@@ -13,6 +19,16 @@ namespace bonding::child
     spdlog::info("==========< Child Process Output >==========");
 
     container_options = *((bonding::config::Container_Options *)(options));
+    setup_container_configurations()
+      .and_then([](const Unit ok) {
+        spdlog::info("Container setup successfully");
+        return Ok(ok);
+      })
+      .or_else([](const error::Err err) {
+        spdlog::error("Error while configuring container: {}", err.to_string());
+        exit(-1);
+        return Err(err);
+      });
 
     spdlog::info("==========< Child Process Output >==========");
     return 0;

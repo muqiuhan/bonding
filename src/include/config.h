@@ -23,24 +23,19 @@ namespace bonding::config
     make(const std::string & command,
          const std::string & mount_dir,
          const uint32_t uid,
-         const std::string & _hostname) noexcept
+         const std::string & hostname) noexcept
     {
       const std::pair<int, int> sockets = bonding::cli::generate_socketpair().unwrap();
       const std::vector<std::string> argv =
         parse_argv(command).expect("Cannot parse command arguments");
 
-      const std::string hostname = [&]() {
-        if (_hostname == "")
-          return bonding::hostname::Hostname::generate(10).unwrap();
-        else
-          return _hostname;
-      }();
-
-      spdlog::debug("hostname = {}", hostname);
-
-      return Ok(std::make_pair(
-        Container_Options(argv, argv.at(0), mount_dir, uid, sockets.first, hostname),
-        sockets));
+      return Ok(std::make_pair(Container_Options(argv,
+                                                 argv.at(0),
+                                                 mount_dir,
+                                                 uid,
+                                                 sockets.first,
+                                                 bonding::hostname::Hostname(hostname)),
+                               sockets));
     }
 
     Container_Options()
@@ -49,7 +44,7 @@ namespace bonding::config
       , m_argv({})
       , m_path("")
       , m_raw_fd(0)
-      , m_hostname("")
+      , m_hostname(bonding::hostname::Hostname(""))
     {
     }
 
@@ -65,7 +60,7 @@ namespace bonding::config
                       const std::string mount_dir,
                       const uint32_t uid,
                       const int raw_fd,
-                      const std::string hostname)
+                      const bonding::hostname::Hostname hostname)
       : m_argv(argv)
       , m_path(path)
       , m_mount_dir(mount_dir)
@@ -98,7 +93,7 @@ namespace bonding::config
 
     /** A hostname is what identifies our machine compared
      ** to every other living on the same network. */
-    const std::string m_hostname;
+    const bonding::hostname::Hostname m_hostname;
   };
 
 };

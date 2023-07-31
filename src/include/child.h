@@ -49,6 +49,8 @@ namespace bonding::child
       /** Make a copy of bonding::config::Container_Optionsm, instead of using
        ** the reference of the parent process */
       static int __main(void * options) noexcept;
+
+      static Result<Unit, error::Err> setup_container_configurations() noexcept;
     };
 
    private:

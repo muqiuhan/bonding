@@ -46,6 +46,9 @@ namespace bonding::error
         return "Undefined Error: " + std::string(strerror(m_errno));
     };
 
+    if (m_custom == "")
+      return original_error();
+
     return original_error() + ("\n\tCustom: " + m_custom);
   }
 
