@@ -14,7 +14,8 @@ namespace bonding::error
     Undefined,
     SocketError,
     ChildProcessError,
-    ContainerError
+    ContainerError,
+    HostnameError
   };
 
   class Err
@@ -32,12 +33,21 @@ namespace bonding::error
       spdlog::error("{}", to_string());
     }
 
+    Err(const Code code, const std::string custom)
+      : m_code(code)
+      , m_errno(errno)
+      , m_custom(std::move(custom))
+    {
+      spdlog::error("{}", to_string());
+    }
+
     int32_t to_exit_code() const noexcept;
     std::string to_string() const noexcept;
 
    private:
     const Code m_code;
     const int m_errno;
+    const std::string m_custom;
   };
 
   /** Get the result from a function, and exit the process with the correct error

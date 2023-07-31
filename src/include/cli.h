@@ -32,7 +32,10 @@ namespace bonding::cli
     std::optional<std::string> mount_dir;
 
    public:
-    /** This function verifies that the command line arguments are valid */
+    /** This function verifies that the command line arguments are valid
+     ** This function is not modified by noexcept in order to throw the
+     ** corresponding exception when the corresponding command parameter
+     ** value cannot be obtained, and print the help information after being caught */
     Args to_args();
   };
 

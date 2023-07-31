@@ -33,14 +33,20 @@ namespace bonding::error
   std::string
   Err::to_string() const noexcept
   {
-    if (m_code == Code::ChildProcessError)
-      return "Child Process Error: " + std::string(strerror(m_errno));
-    else if (m_code == Code::ContainerError)
-      return "Container Error: " + std::string(strerror(m_errno));
-    else if (m_code == Code::SocketError)
-      return "Socket Error: " + std::string(strerror(m_errno));
-    else
-      return "Undefined Error: " + std::string(strerror(m_errno));
+    const auto original_error = [&]() {
+      if (m_code == Code::ChildProcessError)
+        return "Child Process Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::ContainerError)
+        return "Container Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::SocketError)
+        return "Socket Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::HostnameError)
+        return "Hostname Error: " + std::string(strerror(m_errno));
+      else
+        return "Undefined Error: " + std::string(strerror(m_errno));
+    };
+
+    return original_error() + ("\n\tCustom: " + m_custom);
   }
 
 } // namespace bonding::error
