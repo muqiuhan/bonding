@@ -33,6 +33,12 @@ namespace bonding::mounts
 
     /** Create directories recursively based on path */
     static Result<Unit, error::Err> __create(const std::string & path) noexcept;
+
+    /** Achieve isolation with the host system, the
+     ** “old root” has to be unmounted so the contained
+     ** application cannot access to the whole filesystem.*/
+    static Result<Unit, error::Err> __umount(const std::string & path) noexcept;
+    static Result<Unit, error::Err> __delete(const std::string & path) noexcept;
   };
 };
 

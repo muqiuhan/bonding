@@ -1,19 +1,64 @@
 #include "include/mount.h"
 #include "include/hostname.h"
+
 #include <sys/mount.h>
 #include <sys/stat.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 
 namespace bonding::mounts
 {
 
   Result<Unit, error::Err>
+  Mount::__umount(const std::string & path) noexcept
+  {
+    if (-1 == umount2(path.c_str(), MNT_DETACH))
+      {
+        spdlog::error("Unable to umount {}", path);
+        return Err(bonding::error::Err(bonding::error::Code::MountsError));
+      }
+
+    return Ok(Unit());
+  }
+
+  Result<Unit, error::Err>
+  Mount::__delete(const std::string & path) noexcept
+  {
+    if (-1 == remove(path.c_str()))
+      {
+        spdlog::error("Unable to remove {}", path);
+        return Err(bonding::error::Err(bonding::error::Code::MountsError));
+      }
+
+    return Ok(Unit());
+  }
+
+  Result<Unit, error::Err>
   Mount::set() const noexcept
   {
     spdlog::info("Setting mount points...");
-    const std::string new_root = "/tmp/" + bonding::hostname::Xorshift::generate(10);
+    const std::string new_root =
+      "/tmp/bonding." + bonding::hostname::Xorshift::generate(10) + "/";
+    const std::string old_root_tail =
+      "bonding.oldroot." + bonding::hostname::Xorshift::generate(10) + "/";
+    const std::string put_old = new_root + old_root_tail;
 
     __create(new_root).unwrap();
     __mount(m_mount_dir, "/", MS_PRIVATE).unwrap();
+    __create(put_old).unwrap();
+
+    if (-1 == syscall(SYS_pivot_root, new_root.c_str(), put_old.c_str()))
+      return Err(bonding::error::Err(bonding::error::Code::MountsError));
+
+    spdlog::info("Umounting old root...");
+    const std::string old_root = "/" + old_root_tail;
+
+    /* Ensure not inside the directory we want to umount. */
+    if (-1 == chdir("/"))
+      return Err(bonding::error::Err(bonding::error::Code::MountsError));
+
+    __umount(old_root).unwrap();
+    __delete(old_root).unwrap();
 
     return Ok(Unit());
   }
@@ -75,5 +120,6 @@ namespace bonding::mounts
       }
 
     free(temp);
+    return Ok(Unit());
   }
 }
