@@ -15,7 +15,8 @@ namespace bonding::error
     SocketError,
     ChildProcessError,
     ContainerError,
-    HostnameError
+    HostnameError,
+    MountsError
   };
 
   class Err

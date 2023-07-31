@@ -78,7 +78,7 @@ namespace bonding::config
     /** The path of the binary executable script to execute inside the container. */
     const std::string m_path;
 
-    /** The path of the directory to use as a root inside our container. */
+    /** The path of the directory to use as a root inside container. */
     const std::string m_mount_dir;
 
     /** The ID of the user inside the container.
@@ -91,7 +91,7 @@ namespace bonding::config
     /** socket for IPC */
     const int m_raw_fd;
 
-    /** A hostname is what identifies our machine compared
+    /** A hostname is what identifies machine compared
      ** to every other living on the same network. */
     const bonding::hostname::Hostname m_hostname;
   };

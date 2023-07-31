@@ -26,7 +26,7 @@ namespace bonding::hostname
     inline static uint32_t W = 88675123 + (clock() / 10);
   };
 
-  /** A hostname is what identifies our machine compared
+  /** A hostname is what identifies machine compared
    ** to every other living on the same network.
    ** It is used by many different networking softwares. */
   class Hostname
