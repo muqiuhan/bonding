@@ -77,8 +77,6 @@ namespace bonding::ns
       {
         create_map(pid, "uid_map").unwrap();
         create_map(pid, "gid_map").unwrap();
-
-        return Ok(Unit());
       }
     else
       {
