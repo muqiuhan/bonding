@@ -44,6 +44,8 @@ namespace bonding::error
         return "Hostname Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::MountsError)
         return "Mounts Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::NamespaceError)
+        return "Namespace Error: " + std::string(strerror(m_errno));
       else
         return "Undefined Error: " + std::string(strerror(m_errno));
     };
