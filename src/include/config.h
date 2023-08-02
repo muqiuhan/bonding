@@ -5,6 +5,7 @@
 #include "error.h"
 #include "hostname.h"
 #include "mount.h"
+#include "namespace.h"
 #include "result.hpp"
 
 #include <cstdint>
@@ -35,7 +36,7 @@ namespace bonding::config
                                          argv.at(0),
                                          mount_dir,
                                          uid,
-                                         sockets.first,
+                                         sockets.second,
                                          bonding::hostname::Hostname(hostname),
                                          bonding::mounts::Mount(mount_dir, hostname)),
                        sockets));
@@ -49,6 +50,7 @@ namespace bonding::config
       , m_raw_fd(0)
       , m_hostname(bonding::hostname::Hostname(""))
       , m_mount(bonding::mounts::Mount("", ""))
+      , m_namespace(ns::Namespace(-1, -1))
     {
       std::terminate();
     }
@@ -74,6 +76,7 @@ namespace bonding::config
       , m_raw_fd(raw_fd)
       , m_hostname(hostname)
       , m_mount(mount)
+      , m_namespace(ns::Namespace(raw_fd, uid))
     {
     }
 
@@ -103,6 +106,7 @@ namespace bonding::config
     const bonding::hostname::Hostname m_hostname;
 
     const bonding::mounts::Mount m_mount;
+    const bonding::ns::Namespace m_namespace;
   };
 
 };
