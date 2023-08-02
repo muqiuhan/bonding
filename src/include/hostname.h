@@ -42,7 +42,7 @@ namespace bonding::hostname
     {
     }
 
-    Result<Unit, error::Err> set() const noexcept;
+    Result<Unit, error::Err> setup() const noexcept;
 
    private:
     static Result<std::string, error::Err> generate(const uint8_t len) noexcept;

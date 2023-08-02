@@ -1,5 +1,4 @@
 #include "include/mount.h"
-#include "include/hostname.h"
 
 #include <filesystem>
 #include <sys/mount.h>
@@ -34,7 +33,7 @@ namespace bonding::mounts
   }
 
   Result<Unit, error::Err>
-  Mount::set() const noexcept
+  Mount::setup() const noexcept
   {
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();

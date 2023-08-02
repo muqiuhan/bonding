@@ -40,7 +40,7 @@ namespace bonding::ns
     if (-1 == setgroups(1, m_groups))
       return Err(bonding::error::Err(bonding::error::Code::NamespaceError));
 
-    /* set the UID and GID (respectively) of the process. 
+    /* set the UID and GID (respectively) of the process.
      * this will set the real user ID, the effective user ID,
      *  and the saved set-user-ID. */
     if (-1 == setresgid(m_gid, m_gid, m_gid))
@@ -63,7 +63,7 @@ namespace bonding::ns
     const std::string data =
       "0 " + std::to_string(USERNS_OFFSET) + std::to_string(USERNS_COUNT);
 
-    if (-1 == write(fd, data.c_str(), data.size() -1))
+    if (-1 == write(fd, data.c_str(), data.size() - 1))
       return Err(error::Err(error::Code::NamespaceError));
 
     return Ok(Unit());

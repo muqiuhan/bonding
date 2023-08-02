@@ -1,4 +1,5 @@
 #include "include/child.h"
+#include "include/container.h"
 
 #define _GNU_SOURCE
 #include <sched.h>
@@ -9,8 +10,9 @@ namespace bonding::child
   Result<Unit, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    container_options->m_hostname.set().unwrap();
-    container_options->m_mount.set().unwrap();
+    container_options->m_hostname.setup().unwrap();
+    container_options->m_mount.setup().unwrap();
+    container_options->m_namespace.setup().unwrap();
 
     container_options->m_mount.clean().unwrap();
     return Ok(Unit());
@@ -32,6 +34,8 @@ namespace bonding::child
       })
       .unwrap();
 
+    container::Container_Cleaner::close_socket(container_options->m_raw_fd);
+
     return 0;
   }
 
@@ -39,15 +43,16 @@ namespace bonding::child
   Child::generate_child_process(
     const bonding::config::Container_Options container_options) noexcept
   {
-    const pid_t child_pid = clone(Process::__main,
-                                  Process::STACK + Process::STACK_SIZE,
-                                  CLONE_NEWNS         /* new mount namespace */
-                                    | CLONE_NEWCGROUP /* new cgroup namespace */
-                                    | CLONE_NEWPID    /* new pid namespace */
-                                    | CLONE_NEWIPC    /* new ipc namespace */
-                                    | CLONE_NEWNET    /* new network namespace */
-                                    | CLONE_NEWUTS /* new uts namespace */,
-                                  (void *)&container_options);
+    const pid_t child_pid =
+      clone(Process::__main,
+            static_cast<char *>(Process::STACK) + Process::STACK_SIZE,
+            CLONE_NEWNS         /* new mount namespace */
+              | CLONE_NEWCGROUP /* new cgroup namespace */
+              | CLONE_NEWPID    /* new pid namespace */
+              | CLONE_NEWIPC    /* new ipc namespace */
+              | CLONE_NEWNET    /* new network namespace */
+              | CLONE_NEWUTS /* new uts namespace */,
+            (void *)&container_options);
 
     if (-1 == child_pid)
       return Err(bonding::error::Err(bonding::error::Code::ChildProcessError));

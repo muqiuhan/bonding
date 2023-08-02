@@ -1,5 +1,4 @@
 #include "include/cli.h"
-#include "structopt/app.hpp"
 #include <spdlog/spdlog.h>
 
 namespace bonding::cli

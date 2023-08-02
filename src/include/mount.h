@@ -19,7 +19,7 @@ namespace bonding::mounts
 
     /** Mount user-provided m_mount_dir to
      ** the mountpoint /tmp/bonding.<random_letters> */
-    Result<Unit, error::Err> set() const noexcept;
+    Result<Unit, error::Err> setup() const noexcept;
 
     Result<Unit, error::Err> clean() const noexcept;
 

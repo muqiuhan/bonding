@@ -50,7 +50,7 @@ namespace bonding::hostname
   }
 
   Result<Unit, error::Err>
-  Hostname::set() const noexcept
+  Hostname::setup() const noexcept
   {
     if (-1 == sethostname(m_hostname.c_str(), m_hostname.size()))
       {
