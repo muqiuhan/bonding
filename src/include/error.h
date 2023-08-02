@@ -3,6 +3,7 @@
 
 #include "result.hpp"
 #include <cerrno>
+#include <exception>
 #include <spdlog/spdlog.h>
 #include <string>
 
@@ -17,7 +18,7 @@ namespace bonding::error
     ContainerError,
     HostnameError,
     MountsError,
-    CreateDirectoryError
+    NamespaceError
   };
 
   class Err
@@ -33,6 +34,7 @@ namespace bonding::error
       , m_errno(errno)
     {
       spdlog::error("{}", to_string());
+      std::terminate();
     }
 
     Err(const Code code, const std::string custom)

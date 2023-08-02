@@ -1,4 +1,5 @@
 #include "include/container.h"
+#include "include/namespace.h"
 
 namespace bonding::container
 {
@@ -6,6 +7,7 @@ namespace bonding::container
   Container::create() noexcept
   {
     spdlog::info("Container is READY!!!");
+    ns::Namespace::handle_child_uid_map(m_child_process.m_pid, m_sockets.first);
     m_child_process.wait();
 
     return Ok(Unit());
