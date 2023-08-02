@@ -42,7 +42,7 @@ namespace bonding::ns
 
     /* set the UID and GID (respectively) of the process.
      * this will set the real user ID, the effective user ID,
-     *  and the saved set-user-ID. */
+     * and the saved set-user-ID. */
     if (-1 == setresgid(m_gid, m_gid, m_gid))
       return Err(bonding::error::Err(bonding::error::Code::NamespaceError));
 
@@ -56,14 +56,15 @@ namespace bonding::ns
   Namespace::create_map(const int id, const std::string map) noexcept
   {
     const std::string path = "/proc/" + std::to_string(id) + "/" + map;
-    const int fd = creat(path.c_str(), 0777);
+    const int fd =
+      creat(path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
     if (-1 == fd)
       return Err(error::Err(error::Code::NamespaceError));
 
     const std::string data =
-      "0 " + std::to_string(USERNS_OFFSET) + std::to_string(USERNS_COUNT);
+      "0 " + std::to_string(USERNS_OFFSET) + " " + std::to_string(USERNS_COUNT);
 
-    if (-1 == write(fd, data.c_str(), data.size() - 1))
+    if (-1 == write(fd, data.c_str(), data.size()))
       return Err(error::Err(error::Code::NamespaceError));
 
     return Ok(Unit());
