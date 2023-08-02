@@ -2,7 +2,6 @@
 #include "structopt/app.hpp"
 
 #include "include/cli.h"
-#include "include/config.h"
 #include "include/container.h"
 
 using namespace bonding;

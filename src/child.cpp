@@ -1,7 +1,6 @@
 #include "include/child.h"
 #include "include/container.h"
 
-#define _GNU_SOURCE
 #include <sched.h>
 #include <sys/wait.h>
 
