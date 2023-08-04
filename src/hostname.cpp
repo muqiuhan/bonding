@@ -1,4 +1,5 @@
 #include "include/hostname.h"
+#include "include/container.h"
 
 namespace bonding::hostname
 {
