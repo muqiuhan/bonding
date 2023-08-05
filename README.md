@@ -18,13 +18,13 @@
 > [xmake](https://xmake.io) is a cross-platform build utility based on Lua.
 
 ### build
-> `xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`
+__`xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`__
 
-__NOTE:__
-libseccomp may have `seccomp-syscalls.h: No such file or directory` problems, you need to manually change `#include <seccomp-syscalls.h>` in `seccomp.h` to `#include ”seccomp -syscalls.h"`.
+#### NOTE
+- libseccomp may have `seccomp-syscalls.h: No such file or directory` problems, you need to manually change `#include <seccomp-syscalls.h>` in `seccomp.h` to `#include ”seccomp -syscalls.h"`.
 
 ### run
-> `xmake run -- bonding`
+__`xmake run -- bonding`__
   
 ### Debug
 
@@ -75,7 +75,7 @@ xmake r -d -- bonding --debug
 
 ## NOTE
 
-The syscalls we will refuse in our container are:
+The default syscalls will refuse in container are:
 
 - Kernel keyring
   - keyctl
