@@ -8,12 +8,24 @@
 
 </div>
 
+## Dependencies
+- [spdlog (MIT): Fast C++ logging library.](https://github.com/gabime/spdlog)
+- [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
+- [libseccomp (LGPL): The main libseccomp repository](https://github.com/seccomp/libseccomp)
+  > For most Linux distributions, it can be installed through package management, (the package name is like `libseccomp-dev`)
+  
 ## Build And Run
 > [xmake](https://xmake.io) is a cross-platform build utility based on Lua.
 
-- build: `xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`
-- run: `xmake run -- bonding`
+### build
+> `xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`
 
+__NOTE:__
+libseccomp may have `seccomp-syscalls.h: No such file or directory` problems, you need to manually change `#include <seccomp-syscalls.h>` in `seccomp.h` to `#include ”seccomp -syscalls.h"`.
+
+### run
+> `xmake run -- bonding`
+  
 ### Debug
 
 E.g:
