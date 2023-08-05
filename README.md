@@ -4,7 +4,7 @@
 
 # Bonding
 
-> A Minimalism container implementation in C++
+*A Minimalism container implementation in C++*
 
 </div>
 
@@ -81,9 +81,8 @@ The syscalls we will refuse in our container are:
 
 ## REFERENCES
 
-The following are related terms used when reading the above two articles, extended explanations/references of concepts:
-
 - Book: *The Linux Programming Interface*
+- [The Linux Kernel documentation¶](https://www.kernel.org/doc/html/latest/index.html)
 - [OS-level virtualization wikipeidia](https://en.wikipedia.org/wiki/OS-level_virtualization)
 - [LXC is a userspace interface for the Linux kernel containment features](https://linuxcontainers.org/lxc/introduction/)
 - [Advanced Bash-Scripting Guide - Appendix E. Exit Codes With Special Meanings](https://tldp.org/LDP/abs/html/exitcodes.html)
