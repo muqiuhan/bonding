@@ -61,6 +61,24 @@ xmake r -d -- bonding --debug
     --hostname Test
 ```
 
+## NOTE
+
+The syscalls we will refuse in our container are:
+
+- Kernel keyring
+  - keyctl
+  - add_key
+  - request_key
+- NUMA (memory management)
+  - mbind
+  - migrate_pages
+  - move_pages
+  - set_mempoliyc
+- Allow userland to handle memory faults in the kernel
+  - userfaultfd
+- Trace / profile syscalls
+  - perf_event_open
+
 ## REFERENCES
 
 The following are related terms used when reading the above two articles, extended explanations/references of concepts:
