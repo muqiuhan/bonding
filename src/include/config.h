@@ -28,14 +28,9 @@ namespace bonding::config
       const std::vector<std::string> argv =
         parse_argv(command).expect("Cannot parse command arguments");
 
-      return Ok(
-        std::make_pair(Container_Options(argv,
-                                         argv.at(0),
-                                         mount_dir,
-                                         uid,
-                                         sockets.second,
-					 hostname),
-                       sockets));
+      return Ok(std::make_pair(
+        Container_Options(argv, argv.at(0), mount_dir, uid, sockets.second, hostname),
+        sockets));
     }
 
     Container_Options()
@@ -61,7 +56,7 @@ namespace bonding::config
                       const std::string mount_dir,
                       const uint32_t uid,
                       const int raw_fd,
-		      const std::string hostname)
+                      const std::string hostname)
       : m_argv(argv)
       , m_path(path)
       , m_mount_dir(mount_dir)

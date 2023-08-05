@@ -1,19 +1,19 @@
 #ifndef __BONDING_SYSCALL_H__
 #define __BONDING_SYSCALL_H__
 
-#include "result.hpp"
 #include "error.h"
+#include "result.hpp"
 #include <libseccomp/seccomp.h>
 
 namespace bonding::syscall
 {
   class Syscall
   {
-  public:
+   public:
     static Result<Unit, error::Err> setup() noexcept;
     static Result<Unit, error::Err> clean() noexcept;
 
-  private:
+   private:
     inline static scmp_filter_ctx ctx = NULL;
   };
 }

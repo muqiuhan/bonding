@@ -13,7 +13,8 @@ namespace bonding::mounts
    public:
     /** Mount user-provided m_mount_dir to
      ** the mountpoint /tmp/bonding.<random_letters> */
-    static Result<Unit, error::Err> setup(const std::string mount_dir, const std::string hostname) noexcept;
+    static Result<Unit, error::Err> setup(const std::string mount_dir,
+                                          const std::string hostname) noexcept;
 
     static Result<Unit, error::Err> clean() noexcept;
 
@@ -32,7 +33,7 @@ namespace bonding::mounts
     static Result<Unit, error::Err> __umount(const std::string & path) noexcept;
     static Result<Unit, error::Err> __delete(const std::string & path) noexcept;
 
-  private:
+   private:
     inline static std::string root;
   };
 };

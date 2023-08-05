@@ -8,4 +8,6 @@ build/
 .vscode/
 .cache/
 
+.bonding/
+
 test.log

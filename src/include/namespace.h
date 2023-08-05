@@ -24,7 +24,7 @@ namespace bonding::ns
    private:
     /** If that call is successful, then user namespaces are supported. */
     static Result<bool, error::Err> has_user_namespace() noexcept;
-    
+
     static Result<Unit, error::Err> create_map(const int id,
                                                const std::string map) noexcept;
 

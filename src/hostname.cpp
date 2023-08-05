@@ -54,11 +54,11 @@ namespace bonding::hostname
   {
     const std::string hostname = [&]() {
       if (custom == "")
-	return generate(10).unwrap();
+        return generate(10).unwrap();
       else
-	return "bonding." + custom;
+        return "bonding." + custom;
     }();
-    
+
     if (-1 == sethostname(hostname.c_str(), hostname.size()))
       {
         spdlog::error("Cannot set hostname {} for container", hostname);

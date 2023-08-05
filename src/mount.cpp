@@ -39,7 +39,7 @@ namespace bonding::mounts
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
-    root = "/tmp/bonding." + hostname + "/";
+    root = ".bonding/tmp/bonding." + hostname + "/";
     const std::string old_root_tail = "bonding.oldroot." + hostname + "/";
     const std::string put_old = root + old_root_tail;
 
@@ -66,9 +66,10 @@ namespace bonding::mounts
   Result<Unit, error::Err>
   Mount::clean() noexcept
   {
+    spdlog::info("root = {}", root);
     if (-1 == rmdir(root.c_str()))
       return Err(error::Err(error::Code::MountsError));
-    
+
     return Ok(Unit());
   }
 

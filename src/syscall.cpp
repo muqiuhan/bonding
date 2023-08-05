@@ -15,7 +15,7 @@ namespace bonding::syscall
 
     if (0 != seccomp_load(ctx))
       return Err(error::Err(error::Code::SystemcallError, "seccomp_load error"));
-    
+
     return Ok(Unit());
   }
 
