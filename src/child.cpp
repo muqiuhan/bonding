@@ -3,6 +3,7 @@
 #include "include/hostname.h"
 #include "include/mount.h"
 #include "include/namespace.h"
+#include "include/syscall.h"
 
 #include <sched.h>
 #include <sys/wait.h>
@@ -15,6 +16,9 @@ namespace bonding::child
     hostname::Hostname::setup(container_options->m_hostname);
     mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname);
     ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid);
+
+    mounts::Mount::clean();
+    syscall::Syscall::clean();
     return Ok(Unit());
   }
 

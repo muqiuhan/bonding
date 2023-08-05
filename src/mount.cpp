@@ -1,5 +1,6 @@
 #include "include/mount.h"
 
+#include <error.h>
 #include <filesystem>
 #include <sys/mount.h>
 #include <sys/syscall.h>
@@ -38,15 +39,15 @@ namespace bonding::mounts
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
-    const std::string new_root = "/tmp/bonding." + hostname + "/";
+    root = "/tmp/bonding." + hostname + "/";
     const std::string old_root_tail = "bonding.oldroot." + hostname + "/";
-    const std::string put_old = new_root + old_root_tail;
+    const std::string put_old = root + old_root_tail;
 
-    __create(new_root).unwrap();
-    __mount(mount_dir, new_root, MS_BIND | MS_PRIVATE).unwrap();
+    __create(root).unwrap();
+    __mount(mount_dir, root, MS_BIND | MS_PRIVATE).unwrap();
     __create(put_old).unwrap();
 
-    if (-1 == syscall(SYS_pivot_root, new_root.c_str(), put_old.c_str()))
+    if (-1 == syscall(SYS_pivot_root, root.c_str(), put_old.c_str()))
       return Err(bonding::error::Err(bonding::error::Code::MountsError));
 
     spdlog::info("Umounting old root...");
@@ -63,8 +64,11 @@ namespace bonding::mounts
   }
 
   Result<Unit, error::Err>
-  Mount::clean() const noexcept
+  Mount::clean() noexcept
   {
+    if (-1 == rmdir(root.c_str()))
+      return Err(error::Err(error::Code::MountsError));
+    
     return Ok(Unit());
   }
 

@@ -15,7 +15,7 @@ namespace bonding::mounts
      ** the mountpoint /tmp/bonding.<random_letters> */
     static Result<Unit, error::Err> setup(const std::string mount_dir, const std::string hostname) noexcept;
 
-    Result<Unit, error::Err> clean() const noexcept;
+    static Result<Unit, error::Err> clean() noexcept;
 
    private:
     /** Call the mount() system call */
@@ -31,6 +31,9 @@ namespace bonding::mounts
      ** application cannot access to the whole filesystem.*/
     static Result<Unit, error::Err> __umount(const std::string & path) noexcept;
     static Result<Unit, error::Err> __delete(const std::string & path) noexcept;
+
+  private:
+    inline static std::string root;
   };
 };
 

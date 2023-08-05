@@ -3,13 +3,18 @@
 
 #include "result.hpp"
 #include "error.h"
+#include <libseccomp/seccomp.h>
 
 namespace bonding::syscall
 {
   class Syscall
   {
   public:
-    Result<Unit, error::Err> setup() const noexcept;
+    static Result<Unit, error::Err> setup() noexcept;
+    static Result<Unit, error::Err> clean() noexcept;
+
+  private:
+    inline static scmp_filter_ctx ctx = NULL;
   };
 }
 
