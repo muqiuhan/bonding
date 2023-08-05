@@ -10,7 +10,7 @@
 namespace bonding::ns
 {
   Result<bool, error::Err>
-  Namespace::has_user_namespace() const noexcept
+  Namespace::has_user_namespace() noexcept
   {
     /* Unshare the user namespace, so that the calling process is
      * moved into a new user namespace which is not shared with
@@ -22,13 +22,14 @@ namespace bonding::ns
   }
 
   Result<Unit, error::Err>
-  Namespace::setup() const noexcept
+  Namespace::setup(const int socket, const uid_t uid) noexcept
   {
-    spdlog::debug("Setting up user namespace with UID {}", m_uid);
+    spdlog::debug("Setting up user namespace with UID {}", uid);
     const bool has_userns = has_user_namespace().unwrap();
+    const gid_t gid = uid;
 
-    ipc::IPC::send_boolean(m_socket, has_userns).unwrap();
-    if (ipc::IPC::recv_boolean(m_socket).unwrap())
+    ipc::IPC::send_boolean(socket, has_userns).unwrap();
+    if (ipc::IPC::recv_boolean(socket).unwrap())
       return Err(bonding::error::Err(bonding::error::Code::NamespaceError));
 
     if (has_userns)
@@ -37,16 +38,16 @@ namespace bonding::ns
       spdlog::warn("User namespace not supported, continuting...");
 
     /* set the list of groups the process is part of */
-    if (-1 == setgroups(1, m_groups))
+    if (-1 == setgroups(1, groups))
       return Err(bonding::error::Err(bonding::error::Code::NamespaceError));
 
     /* set the UID and GID (respectively) of the process.
      * this will set the real user ID, the effective user ID,
      * and the saved set-user-ID. */
-    if (-1 == setresgid(m_gid, m_gid, m_gid))
+    if (-1 == setresgid(gid, gid, gid))
       return Err(bonding::error::Err(bonding::error::Code::NamespaceError));
 
-    if (-1 == setresuid(m_uid, m_uid, m_uid))
+    if (-1 == setresuid(uid, uid, uid))
       return Err(bonding::error::Err(bonding::error::Code::NamespaceError));
 
     return Ok(Unit());

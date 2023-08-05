@@ -18,7 +18,8 @@ namespace bonding::error
     ContainerError,
     HostnameError,
     MountsError,
-    NamespaceError
+    NamespaceError,
+    SystemcallError
   };
 
   class Err

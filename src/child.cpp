@@ -1,5 +1,8 @@
 #include "include/child.h"
 #include "include/container.h"
+#include "include/hostname.h"
+#include "include/mount.h"
+#include "include/namespace.h"
 
 #include <sched.h>
 #include <sys/wait.h>
@@ -9,11 +12,9 @@ namespace bonding::child
   Result<Unit, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    container_options->m_hostname.setup().unwrap();
-    container_options->m_mount.setup().unwrap();
-    container_options->m_namespace.setup().unwrap();
-
-    container_options->m_mount.clean().unwrap();
+    hostname::Hostname::setup(container_options->m_hostname);
+    mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname);
+    ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid);
     return Ok(Unit());
   }
 

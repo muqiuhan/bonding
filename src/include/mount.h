@@ -11,21 +11,11 @@ namespace bonding::mounts
   class Mount
   {
    public:
-    explicit Mount(const std::string mount_dir, const std::string hostname)
-      : m_mount_dir(std::move(mount_dir))
-      , m_hostname(hostname)
-    {
-    }
-
     /** Mount user-provided m_mount_dir to
      ** the mountpoint /tmp/bonding.<random_letters> */
-    Result<Unit, error::Err> setup() const noexcept;
+    static Result<Unit, error::Err> setup(const std::string mount_dir, const std::string hostname) noexcept;
 
     Result<Unit, error::Err> clean() const noexcept;
-
-   private:
-    const std::string m_mount_dir;
-    const std::string m_hostname;
 
    private:
     /** Call the mount() system call */

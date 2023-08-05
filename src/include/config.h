@@ -3,9 +3,6 @@
 
 #include "cli.h"
 #include "error.h"
-#include "hostname.h"
-#include "mount.h"
-#include "namespace.h"
 #include "result.hpp"
 
 #include <cstdint>
@@ -37,8 +34,7 @@ namespace bonding::config
                                          mount_dir,
                                          uid,
                                          sockets.second,
-                                         bonding::hostname::Hostname(hostname),
-                                         bonding::mounts::Mount(mount_dir, hostname)),
+					 hostname),
                        sockets));
     }
 
@@ -48,9 +44,7 @@ namespace bonding::config
       , m_argv({})
       , m_path("")
       , m_raw_fd(0)
-      , m_hostname(bonding::hostname::Hostname(""))
-      , m_mount(bonding::mounts::Mount("", ""))
-      , m_namespace(ns::Namespace(-1, -1))
+      , m_hostname("")
     {
       std::terminate();
     }
@@ -67,16 +61,13 @@ namespace bonding::config
                       const std::string mount_dir,
                       const uint32_t uid,
                       const int raw_fd,
-                      const bonding::hostname::Hostname hostname,
-                      const bonding::mounts::Mount mount)
+		      const std::string hostname)
       : m_argv(argv)
       , m_path(path)
       , m_mount_dir(mount_dir)
       , m_uid(uid)
       , m_raw_fd(raw_fd)
       , m_hostname(hostname)
-      , m_mount(mount)
-      , m_namespace(ns::Namespace(raw_fd, uid))
     {
     }
 
@@ -101,12 +92,8 @@ namespace bonding::config
     /** socket for IPC */
     const int m_raw_fd;
 
-    /** A hostname is what identifies machine compared
-     ** to every other living on the same network. */
-    const bonding::hostname::Hostname m_hostname;
-
-    const bonding::mounts::Mount m_mount;
-    const bonding::ns::Namespace m_namespace;
+    /** identifies machine */
+    const std::string m_hostname;
   };
 
 };

@@ -33,17 +33,17 @@ namespace bonding::mounts
   }
 
   Result<Unit, error::Err>
-  Mount::setup() const noexcept
+  Mount::setup(const std::string mount_dir, const std::string hostname) noexcept
   {
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
-    const std::string new_root = "/tmp/bonding." + m_hostname + "/";
-    const std::string old_root_tail = "bonding.oldroot." + m_hostname + "/";
+    const std::string new_root = "/tmp/bonding." + hostname + "/";
+    const std::string old_root_tail = "bonding.oldroot." + hostname + "/";
     const std::string put_old = new_root + old_root_tail;
 
     __create(new_root).unwrap();
-    __mount(m_mount_dir, new_root, MS_BIND | MS_PRIVATE).unwrap();
+    __mount(mount_dir, new_root, MS_BIND | MS_PRIVATE).unwrap();
     __create(put_old).unwrap();
 
     if (-1 == syscall(SYS_pivot_root, new_root.c_str(), put_old.c_str()))

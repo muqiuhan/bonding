@@ -32,17 +32,7 @@ namespace bonding::hostname
   class Hostname
   {
    public:
-    explicit Hostname(const std::string default_hostname)
-      : m_hostname(([&]() {
-        if (default_hostname == "")
-          return generate(10).unwrap();
-        else
-          return "bonding." + default_hostname;
-      }()))
-    {
-    }
-
-    Result<Unit, error::Err> setup() const noexcept;
+    static Result<Unit, error::Err> setup(const std::string custom) noexcept;
 
    private:
     static Result<std::string, error::Err> generate(const uint8_t len) noexcept;
