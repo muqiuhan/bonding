@@ -60,7 +60,7 @@ namespace bonding::error
    ** everything went a return code of 0 means that there was no errors, any
    ** other number describe an error and what that error is
    ** (based on the return code value). */
-  void exit_with_return_code(Result<Unit, const Err> result) noexcept;
+  void exit_with_return_code(Result<Void, const Err> result) noexcept;
 
 }
 

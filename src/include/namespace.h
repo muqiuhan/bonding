@@ -15,17 +15,17 @@ namespace bonding::ns
   {
    public:
     /** Executed by the child process during its configuration. */
-    static Result<Unit, error::Err> setup(const int socket, const uid_t uid) noexcept;
+    static Result<Void, error::Err> setup(const int socket, const uid_t uid) noexcept;
 
     /** Called by the container when it will perform UID / GID mapping. */
-    static Result<Unit, error::Err> handle_child_uid_map(const pid_t pid,
+    static Result<Void, error::Err> handle_child_uid_map(const pid_t pid,
                                                          const int socket) noexcept;
 
    private:
     /** If that call is successful, then user namespaces are supported. */
     static Result<bool, error::Err> has_user_namespace() noexcept;
 
-    static Result<Unit, error::Err> create_map(const int id,
+    static Result<Void, error::Err> create_map(const int id,
                                                const std::string map) noexcept;
 
    private:

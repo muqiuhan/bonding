@@ -67,7 +67,7 @@ namespace bonding::config
     }
 
    private:
-    static Result<std::vector<std::string>, Unit>
+    static Result<std::vector<std::string>, Void>
     parse_argv(const std::string argv) noexcept;
 
    public:

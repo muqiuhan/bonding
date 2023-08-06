@@ -33,7 +33,7 @@ namespace bonding::child
     }
 
     /* Wait for the child to finish. */
-    Result<Unit, error::Err> wait() const noexcept;
+    Result<Void, error::Err> wait() const noexcept;
 
    private:
     class Process
@@ -50,7 +50,7 @@ namespace bonding::child
        ** the reference of the parent process */
       static int __main(void * options) noexcept;
 
-      static Result<Unit, error::Err> setup_container_configurations() noexcept;
+      static Result<Void, error::Err> setup_container_configurations() noexcept;
     };
 
    private:

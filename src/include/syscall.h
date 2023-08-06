@@ -15,15 +15,15 @@ namespace bonding::syscall
   class Syscall
   {
    public:
-    static Result<Unit, error::Err> setup() noexcept;
-    static Result<Unit, error::Err> clean() noexcept;
+    static Result<Void, error::Err> setup() noexcept;
+    static Result<Void, error::Err> clean() noexcept;
 
    private:
     /** Totally deny any attempt to call that syscall in the child process. */
-    static Result<Unit, error::Err> refuse_syscall() noexcept;
+    static Result<Void, error::Err> refuse_syscall() noexcept;
 
     /** Takes a value and return wether the permission should be set or not. */
-    static Result<Unit, error::Err> refuse_if_comp() noexcept;
+    static Result<Void, error::Err> refuse_if_comp() noexcept;
 
    private:
     inline static scmp_filter_ctx ctx = NULL;

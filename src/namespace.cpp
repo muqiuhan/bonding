@@ -21,7 +21,7 @@ namespace bonding::ns
     return Ok(true);
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Namespace::setup(const int socket, const uid_t uid) noexcept
   {
     spdlog::debug("Setting up user namespace with UID {}", uid);
@@ -50,10 +50,10 @@ namespace bonding::ns
     if (-1 == setresuid(uid, uid, uid))
       return Err(bonding::error::Err(bonding::error::Code::NamespaceError));
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Namespace::create_map(const int id, const std::string map) noexcept
   {
     const std::string path = "/proc/" + std::to_string(id) + "/" + map;
@@ -68,10 +68,10 @@ namespace bonding::ns
     if (-1 == write(fd, data.c_str(), data.size()))
       return Err(error::Err(error::Code::NamespaceError));
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Namespace::handle_child_uid_map(const pid_t pid, const int socket) noexcept
   {
     if (ipc::IPC::recv_boolean(socket).unwrap())
@@ -82,13 +82,13 @@ namespace bonding::ns
     else
       {
         spdlog::warn("No user namespace set up from child process");
-        return Ok(Unit());
+        return Ok(Void());
       }
 
     spdlog::debug("Child UID/GID map done, sending signal to child to continue...");
     ipc::IPC::send_boolean(socket, false);
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
 }

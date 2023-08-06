@@ -32,7 +32,7 @@ namespace bonding::hostname
   class Hostname
   {
    public:
-    static Result<Unit, error::Err> setup(const std::string custom) noexcept;
+    static Result<Void, error::Err> setup(const std::string custom) noexcept;
 
    private:
     static Result<std::string, error::Err> generate(const uint8_t len) noexcept;

@@ -10,7 +10,7 @@
 
 namespace bonding::child
 {
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
     hostname::Hostname::setup(container_options->m_hostname).unwrap();
@@ -21,7 +21,7 @@ namespace bonding::child
 
     // mounts::Mount::clean();
     syscall::Syscall::Syscall::clean().unwrap();
-    return Ok(Unit());
+    return Ok(Void());
   }
 
   int
@@ -30,7 +30,7 @@ namespace bonding::child
     container_options = static_cast<bonding::config::Container_Options *>(options);
 
     setup_container_configurations()
-      .and_then([](const Unit ok) {
+      .and_then([](const Void ok) {
         spdlog::info("Container setup successfully");
         return Ok(ok);
       })
@@ -66,7 +66,7 @@ namespace bonding::child
     return Ok(child_pid);
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Child::wait() const noexcept
   {
     spdlog::debug("Waiting for child process {} finish...", m_pid);
@@ -81,6 +81,6 @@ namespace bonding::child
                  (child_process_status >> 8) & 0xFF,
                  child_process_status & 0x7F);
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 }

@@ -49,7 +49,7 @@ namespace bonding::hostname
     return Ok("bonding." + Xorshift::generate(MAX_LENGTH));
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Hostname::setup(const std::string custom) noexcept
   {
     const std::string hostname = [&]() {
@@ -66,6 +66,6 @@ namespace bonding::hostname
       }
 
     spdlog::info("Container hostname is now {}", hostname);
-    return Ok(Unit());
+    return Ok(Void());
   }
 }

@@ -9,7 +9,7 @@
 namespace bonding::mounts
 {
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__umount(const std::string & path) noexcept
   {
     if (-1 == umount2(path.c_str(), MNT_DETACH))
@@ -18,10 +18,10 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__delete(const std::string & path) noexcept
   {
     if (-1 == remove(path.c_str()))
@@ -30,10 +30,10 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::setup(const std::string mount_dir, const std::string hostname) noexcept
   {
     spdlog::info("Setting mount points...");
@@ -60,20 +60,20 @@ namespace bonding::mounts
     __umount(old_root).unwrap();
     __delete(old_root).unwrap();
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::clean() noexcept
   {
     spdlog::info("root = {}", root);
     if (-1 == rmdir(root.c_str()))
       return Err(error::Err(error::Code::MountsError));
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__mount(const std::string & path,
                  const std::string & mount_point,
                  unsigned long flags) noexcept
@@ -89,10 +89,10 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__create(const std::string & path) noexcept
   {
     try
@@ -109,6 +109,6 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 }

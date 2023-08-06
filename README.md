@@ -11,6 +11,7 @@
 ## Dependencies
 - [spdlog (MIT): Fast C++ logging library.](https://github.com/gabime/spdlog)
 - [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
+- [structopt (MIT): Parse command line arguments by defining a struct](https://github.com/p-ranav/structopt)
 - [libseccomp (LGPL): The main libseccomp repository](https://github.com/seccomp/libseccomp)
   > For most Linux distributions, it can be installed through package management, (the package name is like `libseccomp-dev`)
 - [libponci (LGPL): Poor mans cgroup interface](https://github.com/caps-tum/libponci)
