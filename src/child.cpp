@@ -16,6 +16,7 @@ namespace bonding::child
     hostname::Hostname::setup(container_options->m_hostname);
     mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname);
     ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid);
+    syscall::Syscall::setup();
 
     // mounts::Mount::clean();
     syscall::Syscall::Syscall::clean();

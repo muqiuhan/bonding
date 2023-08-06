@@ -14,6 +14,11 @@ namespace bonding::syscall
     static Result<Unit, error::Err> clean() noexcept;
 
    private:
+    /** Totally deny any attempt to call that syscall in the child process. */
+    static Result<Unit, error::Err> refuse_syscall(scmp_filter_ctx & ctx,
+                                                   const int syscall) noexcept;
+
+   private:
     inline static scmp_filter_ctx ctx = NULL;
   };
 }
