@@ -1,61 +1,71 @@
 [
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/child.cpp.o", "src/child.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fPIC", "-O3", "-std=c++20", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/libponci/linux/x86_64/release/lib/libponci/src/ponci.cpp.o", "lib/libponci/src/ponci.cpp"],
+  "file": "lib/libponci/src/ponci.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fPIC", "-O3", "-std=c++20", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/libponci/linux/x86_64/release/lib/libponci/src/ponri.cpp.o", "lib/libponci/src/ponri.cpp"],
+  "file": "lib/libponci/src/ponri.cpp"
+},
+{
+  "directory": "/home/muqiu-han/Workspace/bonding",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/child.cpp.o", "src/child.cpp"],
   "file": "src/child.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o", "src/cli.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o", "src/cli.cpp"],
   "file": "src/cli.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/config.cpp.o", "src/config.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/config.cpp.o", "src/config.cpp"],
   "file": "src/config.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/container.cpp.o", "src/container.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/container.cpp.o", "src/container.cpp"],
   "file": "src/container.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/error.cpp.o", "src/error.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/error.cpp.o", "src/error.cpp"],
   "file": "src/error.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o", "src/hostname.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o", "src/hostname.cpp"],
   "file": "src/hostname.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o", "src/ipc.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o", "src/ipc.cpp"],
   "file": "src/ipc.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/main.cpp.o", "src/main.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/main.cpp.o", "src/main.cpp"],
   "file": "src/main.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/mount.cpp.o", "src/mount.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/mount.cpp.o", "src/mount.cpp"],
   "file": "src/mount.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/namespace.cpp.o", "src/namespace.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/namespace.cpp.o", "src/namespace.cpp"],
   "file": "src/namespace.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/resource.cpp.o", "src/resource.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/resource.cpp.o", "src/resource.cpp"],
   "file": "src/resource.cpp"
 },
 {
   "directory": "/home/muqiu-han/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/syscall.cpp.o", "src/syscall.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-Ilib/libponci/include", "-DNDEBUG", "-o", "build/.objs/bonding/linux/x86_64/release/src/syscall.cpp.o", "src/syscall.cpp"],
   "file": "src/syscall.cpp"
 }]
