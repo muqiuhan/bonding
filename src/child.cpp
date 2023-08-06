@@ -13,13 +13,14 @@ namespace bonding::child
   Result<Unit, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    hostname::Hostname::setup(container_options->m_hostname);
-    mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname);
-    ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid);
-    syscall::Syscall::setup();
+    hostname::Hostname::setup(container_options->m_hostname).unwrap();
+    mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname)
+      .unwrap();
+    ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid).unwrap();
+    syscall::Syscall::setup().unwrap();
 
     // mounts::Mount::clean();
-    syscall::Syscall::Syscall::clean();
+    syscall::Syscall::Syscall::clean().unwrap();
     return Ok(Unit());
   }
 

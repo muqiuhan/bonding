@@ -7,10 +7,26 @@
 namespace bonding::syscall
 {
   Result<Unit, error::Err>
-  Syscall::refuse_syscall(scmp_filter_ctx & ctx, const int syscall) noexcept
+  Syscall::refuse_if_comp() noexcept
   {
-    if (0 != seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 0))
-      return Err(error::Err(error::Code::SystemcallError, "seccomp_rule_add error"));
+    for (const auto [syscall, ind, biteq] : default_refuse_if_comp_syscalls)
+      {
+        const scmp_arg_cmp cmp = { ind, SCMP_CMP_MASKED_EQ, biteq, biteq };
+
+        if (0 != seccomp_rule_add_array(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 1, &cmp))
+          return Err(
+            error::Err(error::Code::SystemcallError, "seccomp_rule_add_array error"));
+      }
+
+    return Ok(Unit());
+  }
+
+  Result<Unit, error::Err>
+  Syscall::refuse_syscall() noexcept
+  {
+    for (const int syscall : default_refuse_syscalls)
+      if (0 != seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 0))
+        return Err(error::Err(error::Code::SystemcallError, "seccomp_rule_add error"));
 
     return Ok(Unit());
   }
@@ -25,18 +41,11 @@ namespace bonding::syscall
     if (NULL == ctx)
       return Err(error::Err(error::Code::SystemcallError, "seccomp_init error"));
 
+    refuse_syscall().unwrap();
+    refuse_if_comp().unwrap();
+
     if (0 != seccomp_load(ctx))
       return Err(error::Err(error::Code::SystemcallError, "seccomp_load error"));
-
-    const std::array<int, 10> refuse_syscalls = {
-      SCMP_SYS(keyctl),         SCMP_SYS(add_key),       SCMP_SYS(request_key),
-      SCMP_SYS(mbind),          SCMP_SYS(migrate_pages), SCMP_SYS(move_pages),
-      SCMP_SYS(move_pages),     SCMP_SYS(set_mempolicy), SCMP_SYS(userfaultfd),
-      SCMP_SYS(perf_event_open)
-    };
-
-    for (const int syscall : refuse_syscalls)
-      refuse_syscall(ctx, syscall).unwrap();
 
     return Ok(Unit());
   }
