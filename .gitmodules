@@ -1,0 +1,12 @@
+[submodule "lib/libseccomp"]
+	path = lib/libseccomp
+	url = https://github.com/seccomp/libseccomp
+[submodule "lib/result"]
+	path = lib/result
+	url = https://github.com/p-ranav/result
+[submodule "lib/spdlog"]
+	path = lib/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "lib/structopt"]
+	path = lib/structopt
+	url = https://github.com/p-ranav/structopt

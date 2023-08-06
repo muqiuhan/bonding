@@ -11,36 +11,30 @@ namespace bonding::mounts
   class Mount
   {
    public:
-    explicit Mount(const std::string mount_dir, const std::string hostname)
-      : m_mount_dir(std::move(mount_dir))
-      , m_hostname(hostname)
-    {
-    }
-
     /** Mount user-provided m_mount_dir to
      ** the mountpoint /tmp/bonding.<random_letters> */
-    Result<Unit, error::Err> setup() const noexcept;
+    static Result<Void, error::Err> setup(const std::string mount_dir,
+                                          const std::string hostname) noexcept;
 
-    Result<Unit, error::Err> clean() const noexcept;
-
-   private:
-    const std::string m_mount_dir;
-    const std::string m_hostname;
+    static Result<Void, error::Err> clean() noexcept;
 
    private:
     /** Call the mount() system call */
-    static Result<Unit, error::Err> __mount(const std::string & path,
+    static Result<Void, error::Err> __mount(const std::string & path,
                                             const std::string & mount_point,
                                             unsigned long flags) noexcept;
 
     /** Create directories recursively based on path */
-    static Result<Unit, error::Err> __create(const std::string & path) noexcept;
+    static Result<Void, error::Err> __create(const std::string & path) noexcept;
 
     /** Achieve isolation with the host system, the
      ** “old root” has to be unmounted so the contained
      ** application cannot access to the whole filesystem.*/
-    static Result<Unit, error::Err> __umount(const std::string & path) noexcept;
-    static Result<Unit, error::Err> __delete(const std::string & path) noexcept;
+    static Result<Void, error::Err> __umount(const std::string & path) noexcept;
+    static Result<Void, error::Err> __delete(const std::string & path) noexcept;
+
+   private:
+    inline static std::string root;
   };
 };
 

@@ -3,7 +3,7 @@
 
 namespace bonding::ipc
 {
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   IPC::send_boolean(const int socket, const bool data) noexcept
   {
     const uint8_t buf[1] = { data };
@@ -14,7 +14,7 @@ namespace bonding::ipc
         spdlog::error("Cannot send boolean through socket: {}", socket);
         return Err(bonding::error::Err(bonding::error::Code::SocketError));
       }
-    return Ok(Unit());
+    return Ok(Void());
   }
 
   Result<bool, error::Err>

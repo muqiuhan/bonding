@@ -3,26 +3,26 @@
 
 namespace bonding::container
 {
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Container::create() noexcept
   {
     spdlog::info("Container is READY!!!");
     ns::Namespace::handle_child_uid_map(m_child_process.m_pid, m_sockets.first);
     m_child_process.wait();
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Container::clean_and_exit() noexcept
   {
     Container_Cleaner::close_socket(m_sockets.first).unwrap();
     Container_Cleaner::close_socket(m_sockets.second).unwrap();
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Container::start(const cli::Args argv) noexcept
   {
     Container container = Container::make(argv).unwrap();
@@ -31,7 +31,7 @@ namespace bonding::container
       .and_then([&](const auto _) {
         spdlog::info("Cleaning and exiting container...");
         container.clean_and_exit();
-        return Ok(Unit());
+        return Ok(Void());
       })
       .or_else([&](const error::Err e) {
         container.clean_and_exit();
@@ -40,7 +40,7 @@ namespace bonding::container
       });
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Container_Cleaner::close_socket(const int socket) noexcept
   {
     spdlog::debug("Closing socket {}...", socket);
@@ -49,6 +49,6 @@ namespace bonding::container
         spdlog::error("Unable to close socket: {}", socket);
         return Err(error::Err(bonding::error::Code::SocketError));
       }
-    return Ok(Unit());
+    return Ok(Void());
   }
 }

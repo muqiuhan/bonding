@@ -14,32 +14,22 @@ namespace bonding::ns
   class Namespace
   {
    public:
-    Namespace(const int socket, const uid_t uid)
-      : m_socket(socket)
-      , m_uid(uid)
-      , m_gid(uid)
-      , m_groups(uid)
-    {
-    }
-
     /** Executed by the child process during its configuration. */
-    Result<Unit, error::Err> setup() const noexcept;
+    static Result<Void, error::Err> setup(const int socket, const uid_t uid) noexcept;
 
     /** Called by the container when it will perform UID / GID mapping. */
-    static Result<Unit, error::Err> handle_child_uid_map(const pid_t pid,
+    static Result<Void, error::Err> handle_child_uid_map(const pid_t pid,
                                                          const int socket) noexcept;
 
    private:
     /** If that call is successful, then user namespaces are supported. */
-    Result<bool, error::Err> has_user_namespace() const noexcept;
-    static Result<Unit, error::Err> create_map(const int id,
+    static Result<bool, error::Err> has_user_namespace() noexcept;
+
+    static Result<Void, error::Err> create_map(const int id,
                                                const std::string map) noexcept;
 
    private:
-    const int m_socket;
-    const uid_t m_uid;
-    const gid_t m_gid;
-    const gid_t m_groups[1];
+    inline static gid_t groups[1];
 
     /** mapped by the system to a real UID >10000,
      ** and it can manage its users and groups

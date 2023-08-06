@@ -46,15 +46,15 @@ namespace bonding::container
 
    public:
     /** handle the container creation process. */
-    Result<Unit, error::Err> create() noexcept;
+    Result<Void, error::Err> create() noexcept;
 
     /** called before each exit to be sure we stay clean. */
-    Result<Unit, error::Err> clean_and_exit() noexcept;
+    Result<Void, error::Err> clean_and_exit() noexcept;
 
     /** get the args from the commandline and handle everything
      ** from the struct Container creation to the exit.
      ** returns a Result that will inform if an error happened during the process. */
-    static Result<Unit, error::Err> start(const cli::Args argv) noexcept;
+    static Result<Void, error::Err> start(const cli::Args argv) noexcept;
 
    private:
     const config::Container_Options m_config;
@@ -65,7 +65,7 @@ namespace bonding::container
   class Container_Cleaner
   {
    public:
-    static Result<Unit, error::Err> close_socket(const int socket) noexcept;
+    static Result<Void, error::Err> close_socket(const int socket) noexcept;
   };
 };
 

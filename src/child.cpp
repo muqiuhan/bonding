@@ -1,20 +1,27 @@
 #include "include/child.h"
 #include "include/container.h"
+#include "include/hostname.h"
+#include "include/mount.h"
+#include "include/namespace.h"
+#include "include/syscall.h"
 
 #include <sched.h>
 #include <sys/wait.h>
 
 namespace bonding::child
 {
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    container_options->m_hostname.setup().unwrap();
-    container_options->m_mount.setup().unwrap();
-    container_options->m_namespace.setup().unwrap();
+    hostname::Hostname::setup(container_options->m_hostname).unwrap();
+    mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname)
+      .unwrap();
+    ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid).unwrap();
+    syscall::Syscall::setup().unwrap();
 
-    container_options->m_mount.clean().unwrap();
-    return Ok(Unit());
+    // mounts::Mount::clean();
+    syscall::Syscall::Syscall::clean().unwrap();
+    return Ok(Void());
   }
 
   int
@@ -23,7 +30,7 @@ namespace bonding::child
     container_options = static_cast<bonding::config::Container_Options *>(options);
 
     setup_container_configurations()
-      .and_then([](const Unit ok) {
+      .and_then([](const Void ok) {
         spdlog::info("Container setup successfully");
         return Ok(ok);
       })
@@ -59,7 +66,7 @@ namespace bonding::child
     return Ok(child_pid);
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Child::wait() const noexcept
   {
     spdlog::debug("Waiting for child process {} finish...", m_pid);
@@ -74,6 +81,6 @@ namespace bonding::child
                  (child_process_status >> 8) & 0xFF,
                  child_process_status & 0x7F);
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 }

@@ -4,7 +4,7 @@ namespace bonding::error
 {
 
   void
-  exit_with_return_code(Result<Unit, const Err> result) noexcept
+  exit_with_return_code(Result<Void, const Err> result) noexcept
   {
     if (result.is_ok())
       {

@@ -49,16 +49,23 @@ namespace bonding::hostname
     return Ok("bonding." + Xorshift::generate(MAX_LENGTH));
   }
 
-  Result<Unit, error::Err>
-  Hostname::setup() const noexcept
+  Result<Void, error::Err>
+  Hostname::setup(const std::string custom) noexcept
   {
-    if (-1 == sethostname(m_hostname.c_str(), m_hostname.size()))
+    const std::string hostname = [&]() {
+      if (custom == "")
+        return generate(10).unwrap();
+      else
+        return "bonding." + custom;
+    }();
+
+    if (-1 == sethostname(hostname.c_str(), hostname.size()))
       {
-        spdlog::error("Cannot set hostname {} for container", m_hostname);
+        spdlog::error("Cannot set hostname {} for container", hostname);
         return Err(bonding::error::Err(bonding::error::Code::HostnameError));
       }
 
-    spdlog::info("Container hostname is now {}", m_hostname);
-    return Ok(Unit());
+    spdlog::info("Container hostname is now {}", hostname);
+    return Ok(Void());
   }
 }

@@ -107,7 +107,8 @@
 #    define SPDLOG_TRY try
 #    define SPDLOG_THROW(ex) throw(ex)
 #    define SPDLOG_CATCH_STD                                                                                                               \
-        catch (const std::exception &) {}
+        catch (const std::exception &)                                                                                                     \
+        {}
 #endif
 
 namespace spdlog {

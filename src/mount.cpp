@@ -1,5 +1,6 @@
 #include "include/mount.h"
 
+#include <error.h>
 #include <filesystem>
 #include <sys/mount.h>
 #include <sys/syscall.h>
@@ -8,7 +9,7 @@
 namespace bonding::mounts
 {
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__umount(const std::string & path) noexcept
   {
     if (-1 == umount2(path.c_str(), MNT_DETACH))
@@ -17,10 +18,10 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__delete(const std::string & path) noexcept
   {
     if (-1 == remove(path.c_str()))
@@ -29,24 +30,24 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
-  Mount::setup() const noexcept
+  Result<Void, error::Err>
+  Mount::setup(const std::string mount_dir, const std::string hostname) noexcept
   {
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
-    const std::string new_root = "/tmp/bonding." + m_hostname + "/";
-    const std::string old_root_tail = "bonding.oldroot." + m_hostname + "/";
-    const std::string put_old = new_root + old_root_tail;
+    root = ".bonding/tmp/bonding." + hostname + "/";
+    const std::string old_root_tail = "bonding.oldroot." + hostname + "/";
+    const std::string put_old = root + old_root_tail;
 
-    __create(new_root).unwrap();
-    __mount(m_mount_dir, new_root, MS_BIND | MS_PRIVATE).unwrap();
+    __create(root).unwrap();
+    __mount(mount_dir, root, MS_BIND | MS_PRIVATE).unwrap();
     __create(put_old).unwrap();
 
-    if (-1 == syscall(SYS_pivot_root, new_root.c_str(), put_old.c_str()))
+    if (-1 == syscall(SYS_pivot_root, root.c_str(), put_old.c_str()))
       return Err(bonding::error::Err(bonding::error::Code::MountsError));
 
     spdlog::info("Umounting old root...");
@@ -59,16 +60,20 @@ namespace bonding::mounts
     __umount(old_root).unwrap();
     __delete(old_root).unwrap();
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
-  Mount::clean() const noexcept
+  Result<Void, error::Err>
+  Mount::clean() noexcept
   {
-    return Ok(Unit());
+    spdlog::info("root = {}", root);
+    if (-1 == rmdir(root.c_str()))
+      return Err(error::Err(error::Code::MountsError));
+
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__mount(const std::string & path,
                  const std::string & mount_point,
                  unsigned long flags) noexcept
@@ -84,10 +89,10 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 
-  Result<Unit, error::Err>
+  Result<Void, error::Err>
   Mount::__create(const std::string & path) noexcept
   {
     try
@@ -104,6 +109,6 @@ namespace bonding::mounts
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
-    return Ok(Unit());
+    return Ok(Void());
   }
 }
