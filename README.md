@@ -19,6 +19,8 @@
 ## Build And Run
 > [xmake](https://xmake.io) is a cross-platform build utility based on Lua.
 
+Download with `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
+
 ### build
 __`xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`__
 
