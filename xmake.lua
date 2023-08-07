@@ -1,8 +1,6 @@
 add_rules("mode.debug", "mode.release")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
 
-includes("lib/libponci")
-
 package("spdlog")
     add_deps("cmake")
     set_sourcedir(path.join(os.scriptdir(), "lib/spdlog"))
