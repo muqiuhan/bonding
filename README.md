@@ -14,7 +14,6 @@
 - [structopt (MIT): Parse command line arguments by defining a struct](https://github.com/p-ranav/structopt)
 - [libseccomp (LGPL): The main libseccomp repository](https://github.com/seccomp/libseccomp)
   > For most Linux distributions, it can be installed through package management, (the package name is like `libseccomp-dev`)
-- [libponci (LGPL): Poor mans cgroup interface](https://github.com/caps-tum/libponci)
   
 ## Build And Run
 > [xmake](https://xmake.io) is a cross-platform build utility based on Lua.

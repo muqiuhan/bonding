@@ -10,6 +10,3 @@
 [submodule "lib/structopt"]
 	path = lib/structopt
 	url = https://github.com/p-ranav/structopt
-[submodule "lib/libponci"]
-	path = lib/libponci
-	url = https://github.com/muqiuhan/libponci

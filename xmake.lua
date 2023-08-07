@@ -45,6 +45,5 @@ target("bonding")
                     "lib/structopt/include", 
                     "lib/result/include",
                     "lib/libponci/include")
-    add_packages("spdlog", "structopt", "result", "libponci")
+    add_packages("spdlog", "structopt", "result")
     add_links("seccomp")
-    add_deps("libponci")
