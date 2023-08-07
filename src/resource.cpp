@@ -3,7 +3,6 @@
 #include <fcntl.h>
 #include <filesystem>
 #include <format>
-#include <fstream>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -42,22 +41,16 @@ namespace bonding::resource
         for (const Cgroups::Control::Setting & setting : cgroup.settings)
           {
             const std::string path = std::format("{}/{}", dir, setting.name);
+            int fd = 0;
 
             spdlog::debug("Setting {} -> {}", setting.value, path);
-
-            // write setting to path
-            spdlog::debug("open file");
-            std::ofstream file(path);
-            if (file.is_open())
-              {
-                spdlog::debug("start writting");
-                file << setting.value;
-                file.close();
-                spdlog::debug("write successfully");
-              }
-            else {
+            if (-1 == open(path.c_str(), O_WRONLY | O_CREAT))
               return Err(error::Err(error::Code::CgroupsError));
-            }
+
+            if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
+              return Err(error::Err(error::Code::CgroupsError));
+
+            close(fd);
           }
       }
 
