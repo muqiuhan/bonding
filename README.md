@@ -32,18 +32,18 @@ __`xmake run -- bonding`__
 ### Debug
 
 E.g:
-```
+```shell
 sudo lldb ./build/linux/x86_64/debug/bonding -- \
     --command "sleep 3" \
     --uid 0 \
     --mount_dir . \
     --hostname Test \
-    --debug \
+    --debug
 ```
 
 ## USAGE:
 
-```
+```shell
 USAGE: bonding [FLAGS] [OPTIONS] 
 
 FLAGS:
@@ -59,20 +59,20 @@ OPTIONS:
 ```
 
 e.g:
-```
-xmake run -- bonding --debug
-    --command "/bin/ls -lh"
-    --uid 0
-    --mount_dir .
+```shell
+xmake run -- bonding --debug \
+    --command "/bin/ls -lh" \
+    --uid 0 \
+    --mount_dir . \
     --hostname Test
 ```
 
 or run in debugger:
-```
-xmake r -d -- bonding --debug
-    --command "/bin/ls -lh"
-    --uid 0
-    --mount_dir .
+```shell
+xmake r -d -- bonding --debug \
+    --command "/bin/ls -lh" \
+    --uid 0 \
+    --mount_dir . \
     --hostname Test
 ```
 

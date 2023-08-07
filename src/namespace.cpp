@@ -56,8 +56,9 @@ namespace bonding::ns
   Result<Void, error::Err>
   Namespace::create_map(const int id, const std::string map) noexcept
   {
-    const std::string path = std::format("/proc/{}/{}", std::to_string(id), map);
-    const std::string data = std::format("0 {} {}", USERNS_OFFSET, USERNS_COUNT);
+    const std::string path = "/proc/" + std::to_string(id) + "/" + map;
+    const std::string data =
+      "0 " + std::to_string(USERNS_OFFSET) + " " + std::to_string(USERNS_COUNT);
 
     const int fd =
       creat(path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);

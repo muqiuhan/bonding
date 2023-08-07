@@ -1,5 +1,4 @@
 #include "include/error.h"
-#include <format>
 
 namespace bonding::error
 {
@@ -36,27 +35,27 @@ namespace bonding::error
   {
     const auto original_error = [&]() {
       if (m_code == Code::ChildProcessError)
-        return std::format("Child Process Error: {}", strerror(m_errno));
+        return "Child Process Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::ContainerError)
-        return std::format("Container Error: {}", strerror(m_errno));
+        return "Container Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::SocketError)
-        return std::format("Socket Error: {}", strerror(m_errno));
+        return "Socket Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::HostnameError)
-        return std::format("Hostname Error: {}", strerror(m_errno));
+        return "Hostname Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::MountsError)
-        return std::format("Mounts Error: {}", strerror(m_errno));
+        return "Mounts Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::NamespaceError)
-        return std::format("Namespace Error: {}", strerror(m_errno));
+        return "Namespace Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::CgroupsError)
-        return std::format("Cgroups Error: {}", strerror(m_errno));
+        return "Cgroups Error: " + std::string(strerror(m_errno));
       else
-        return std::format("Undefined Error: {}", strerror(m_errno));
+        return "Undefined Error: " + std::string(strerror(m_errno));
     };
 
     if (m_custom == "")
       return original_error();
 
-    return std::format("{}\n\t\tCustom: {}", original_error(), m_custom);
+    return original_error() + "\n\t\tCustom: " + m_custom;
   }
 
 } // namespace bonding::error
