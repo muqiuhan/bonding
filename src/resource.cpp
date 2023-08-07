@@ -2,7 +2,6 @@
 #include <error.h>
 #include <fcntl.h>
 #include <filesystem>
-#include <format>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -26,8 +25,7 @@ namespace bonding::resource
 
     for (const Cgroups::Control & cgroup : cgroups)
       {
-        const std::string dir =
-          std::format("/sys/fs/cgroup/{}/{}", cgroup.control, hostname);
+        const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
 
         try
           {
@@ -40,7 +38,7 @@ namespace bonding::resource
 
         for (const Cgroups::Control::Setting & setting : cgroup.settings)
           {
-            const std::string path = std::format("{}/{}", dir, setting.name);
+            const std::string path = dir + "/" + setting.name;
             int fd = 0;
 
             spdlog::debug("Setting {} -> {}", setting.value, path);
