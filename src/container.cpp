@@ -1,16 +1,17 @@
 #include "include/container.h"
 #include "include/namespace.h"
+#include "include/resource.h"
 
 namespace bonding::container
 {
   Result<Void, error::Err>
   Container::create() noexcept
   {
-    spdlog::info("Container is READY!!!");
     ns::Namespace::handle_child_uid_map(m_child_process.m_pid, m_sockets.first);
-    m_child_process.wait();
 
-    return Ok(Void());
+    resource::Resource::setup(m_config.m_hostname);
+
+    return m_child_process.wait();
   }
 
   Result<Void, error::Err>

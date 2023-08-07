@@ -25,7 +25,6 @@ namespace bonding::resource
 
     for (const Cgroups::Control & cgroup : cgroups)
       {
-        spdlog::debug("Setting {}", cgroup.control);
         const std::string dir =
           std::format("/sys/fs/cgroup/{}/{}", cgroup.control, hostname);
 
@@ -37,6 +36,7 @@ namespace bonding::resource
             const std::string path = std::format("{}/{}", dir, setting.name);
             int fd = 0;
 
+            spdlog::debug("Setting {} -> {}", setting.value, path);
             if (-1 == open(path.c_str(), O_WRONLY))
               return Err(error::Err(error::Code::CgroupsError));
 
