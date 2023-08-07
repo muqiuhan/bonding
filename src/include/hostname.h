@@ -33,12 +33,7 @@ namespace bonding::hostname
   {
    public:
     static Result<Void, error::Err> setup(const std::string custom) noexcept;
-
-   private:
     static Result<std::string, error::Err> generate(const uint8_t len) noexcept;
-
-   private:
-    const std::string m_hostname;
 
    private:
     inline static const uint8_t MAX_LENGTH = 10;

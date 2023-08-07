@@ -1,4 +1,5 @@
 #include "include/hostname.h"
+#include "spdlog/spdlog.h"
 
 namespace bonding::hostname
 {
@@ -46,19 +47,12 @@ namespace bonding::hostname
                                      "The maximum length of Hostname is: "
                                        + std::to_string(MAX_LENGTH)));
 
-    return Ok("bonding." + Xorshift::generate(MAX_LENGTH));
+    return Ok(Xorshift::generate(MAX_LENGTH));
   }
 
   Result<Void, error::Err>
-  Hostname::setup(const std::string custom) noexcept
+  Hostname::setup(const std::string hostname) noexcept
   {
-    const std::string hostname = [&]() {
-      if (custom == "")
-        return generate(10).unwrap();
-      else
-        return "bonding." + custom;
-    }();
-
     if (-1 == sethostname(hostname.c_str(), hostname.size()))
       {
         spdlog::error("Cannot set hostname {} for container", hostname);
