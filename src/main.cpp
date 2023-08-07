@@ -15,10 +15,13 @@ main(int argc, char ** argv)
     {
       auto options = app.parse<cli::Command_Line_Args>(argc, argv);
 
+      spdlog::set_pattern("%H:%M:%S.%f %^>%$ %v");
+
       if (options.debug.value())
         {
           spdlog::set_level(spdlog::level::debug);
           spdlog::debug("Activate debug mode!");
+          spdlog::enable_backtrace(32);
         }
 
       container::Container::start(options.to_args());

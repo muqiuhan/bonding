@@ -1,4 +1,5 @@
 #include "include/cli.h"
+#include "include/hostname.h"
 #include <spdlog/spdlog.h>
 
 namespace bonding::cli
@@ -15,14 +16,15 @@ namespace bonding::cli
     if (!uid.has_value())
       spdlog::error("The `uid` parameter must be provided!");
 
-    if (!hostname.has_value())
+    if (hostname.value() == "")
       spdlog::warn("If hostname is not provided, it will be generated automatically");
 
     return Args{ debug.value(),
                  command.value(),
                  uid.value(),
                  mount_dir.value(),
-                 hostname.value() };
+                 hostname.value() == "" ? hostname::Hostname::generate(10).unwrap()
+                                        : hostname.value() };
   }
 
   Result<std::pair<int, int>, error::Err>

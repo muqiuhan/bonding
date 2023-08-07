@@ -39,6 +39,8 @@ target("bonding")
     set_languages("c++20")
 
     add_files("src/*.cpp")
-    add_includedirs("lib/spdlog/include", "lib/structopt/include", "lib/result/include")
+    add_includedirs("lib/spdlog/include", 
+                    "lib/structopt/include", 
+                    "lib/result/include")
     add_packages("spdlog", "structopt", "result")
     add_links("seccomp")
