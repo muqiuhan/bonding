@@ -19,7 +19,8 @@ namespace bonding::error
     HostnameError,
     MountsError,
     NamespaceError,
-    SystemcallError
+    SystemcallError,
+    CgroupsError
   };
 
   class Err

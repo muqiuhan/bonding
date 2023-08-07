@@ -39,8 +39,8 @@ namespace bonding::mounts
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
-    root = ".bonding/tmp/bonding." + hostname + "/";
-    const std::string old_root_tail = "bonding.oldroot." + hostname + "/";
+    root = std::format(".bonding/tmp/bonding.{}/", hostname);
+    const std::string old_root_tail = std::format("bonding.oldroot.{}/", hostname);
     const std::string put_old = root + old_root_tail;
 
     __create(root).unwrap();
