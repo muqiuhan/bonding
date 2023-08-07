@@ -1,6 +1,7 @@
 #include "include/resource.h"
 #include <error.h>
 #include <fcntl.h>
+#include <filesystem>
 #include <format>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -28,8 +29,14 @@ namespace bonding::resource
         const std::string dir =
           std::format("/sys/fs/cgroup/{}/{}", cgroup.control, hostname);
 
-        if (-1 == mkdir(dir.c_str(), S_IRUSR | S_IWUSR | S_IXUSR))
-          return Err(error::Err(error::Code::CgroupsError));
+        try
+          {
+            std::filesystem::create_directories(dir);
+          }
+        catch (const std::filesystem::filesystem_error & e)
+          {
+            return Err(error::Err(error::Code::CgroupsError, e.what()));
+          }
 
         for (const Cgroups::Control::Setting & setting : cgroup.settings)
           {
@@ -37,7 +44,7 @@ namespace bonding::resource
             int fd = 0;
 
             spdlog::debug("Setting {} -> {}", setting.value, path);
-            if (-1 == open(path.c_str(), O_WRONLY))
+            if (-1 == open(path.c_str(), O_WRONLY | O_CREAT))
               return Err(error::Err(error::Code::CgroupsError));
 
             if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
