@@ -20,8 +20,6 @@ namespace bonding::child
     ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid).unwrap();
     syscall::Syscall::setup().unwrap();
 
-    // mounts::Mount::clean();
-    syscall::Syscall::Syscall::clean().unwrap();
     return Ok(Void());
   }
 
@@ -44,8 +42,6 @@ namespace bonding::child
     int ret_code = 0;
     if (exec::Execve::call(container_options->m_path, container_options->m_argv).is_err())
       ret_code = -1;
-
-    container::Container_Cleaner::close_socket(container_options->m_raw_fd);
 
     return ret_code;
   }
