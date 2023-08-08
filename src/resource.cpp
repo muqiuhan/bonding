@@ -58,7 +58,10 @@ namespace bonding::resource
 
             int fd = open(path.c_str(), O_WRONLY);
             if (-1 == fd)
-              return Err(error::Err(error::Code::CgroupsError));
+              {
+                close(fd);
+                return Err(error::Err(error::Code::CgroupsError));
+              }
 
             if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
               return Err(error::Err(error::Code::CgroupsError));
@@ -77,18 +80,27 @@ namespace bonding::resource
 
     for (const Control & cgroup : CONFIG)
       {
-        try
-          {
-            const std::string dir = std::filesystem::canonical(
-              "/sys/fs/cgroup/" + cgroup.control + "/" + hostname);
+        const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
+        const std::string task = "/sys/fs/cgroup/" + cgroup.control + "/tasks";
 
-            for (const Control::Setting & setting : cgroup.settings)
-              if (-1 == rmdir(dir.c_str()))
-                return Err(error::Err(error::Code::CgroupsError));
-          }
-        catch (const std::exception & e)
+        for (const Control::Setting & setting : cgroup.settings)
           {
-            return Err(error::Err(error::Code::CgroupsError, e.what()));
+            const std::string path = dir + "/" + setting.name;
+
+            int taskfd = open(task.c_str(), O_WRONLY);
+            if (-1 == taskfd)
+              return Err(error::Err(error::Code::CgroupsError));
+
+            if (-1 == write(taskfd, "0", 2))
+              {
+                close(taskfd);
+                return Err(error::Err(error::Code::CgroupsError));
+              }
+
+            close(taskfd);
+
+            if (-1 == rmdir(dir.c_str()))
+              return Err(error::Err(error::Code::CgroupsError));
           }
       }
 
