@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <sys/resource.h>
+
 namespace bonding::resource
 {
   Result<Void, error::Err>
@@ -12,18 +14,28 @@ namespace bonding::resource
   {
     spdlog::debug("Restricting resources for hostname {}", hostname);
 
-    Cgroups::setup(hostname, cgroups);
+    CgroupsV1::setup(hostname).unwrap();
+    Rlimit::setup().unwrap();
 
     return Ok(Void());
   }
 
   Result<Void, error::Err>
-  Cgroups::setup(const std::string hostname,
-                 const std::vector<Cgroups::Control> & cgroups) noexcept
+  Rlimit::setup() noexcept
+  {
+    const rlimit rlim = rlimit{ .rlim_cur = NOFILE, .rlim_max = NOFILE };
+    if (-1 == setrlimit(RLIMIT_NOFILE, &rlim))
+      return Err(error::Err(error::Code::CgroupsError));
+
+    return Ok(Void());
+  }
+
+  Result<Void, error::Err>
+  CgroupsV1::setup(const std::string hostname) noexcept
   {
     spdlog::debug("Setting cgroups...");
 
-    for (const Cgroups::Control & cgroup : cgroups)
+    for (const Control & cgroup : CONFIG)
       {
         const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
 
@@ -36,7 +48,7 @@ namespace bonding::resource
             return Err(error::Err(error::Code::CgroupsError, e.what()));
           }
 
-        for (const Cgroups::Control::Setting & setting : cgroup.settings)
+        for (const Control::Setting & setting : cgroup.settings)
           {
             const std::string path = dir + "/" + setting.name;
             spdlog::debug("Setting {} -> {}", setting.value, path);
