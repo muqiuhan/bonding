@@ -83,25 +83,20 @@ namespace bonding::resource
         const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
         const std::string task = "/sys/fs/cgroup/" + cgroup.control + "/tasks";
 
-        for (const Control::Setting & setting : cgroup.settings)
+        int taskfd = open(task.c_str(), O_WRONLY);
+        if (-1 == taskfd)
+          return Err(error::Err(error::Code::CgroupsError));
+
+        if (-1 == write(taskfd, "0", 2))
           {
-            const std::string path = dir + "/" + setting.name;
-
-            int taskfd = open(task.c_str(), O_WRONLY);
-            if (-1 == taskfd)
-              return Err(error::Err(error::Code::CgroupsError));
-
-            if (-1 == write(taskfd, "0", 2))
-              {
-                close(taskfd);
-                return Err(error::Err(error::Code::CgroupsError));
-              }
-
             close(taskfd);
-
-            if (-1 == rmdir(dir.c_str()))
-              return Err(error::Err(error::Code::CgroupsError));
+            return Err(error::Err(error::Code::CgroupsError));
           }
+
+        close(taskfd);
+
+        if (-1 == rmdir(dir.c_str()))
+          return Err(error::Err(error::Code::CgroupsError));
       }
 
     return Ok(Void());
