@@ -7,6 +7,10 @@
 
 namespace bonding::resource
 {
+  /** Cgroups is a mechanism introduced in Linux v2.6.4 which allows to “allocate”
+   ** ressources for a group of processes. As this feature has been reworked, two versions
+   ** coexist in the Linux kernel. The main difference for us is that the v2 groups all
+   ** the configuration for a given group under the same directory. */
   class CgroupsV1
   {
    private:
@@ -30,6 +34,11 @@ namespace bonding::resource
     };
 
     static Result<Void, error::Err> setup(const std::string hostname) noexcept;
+
+    /** After the child process exited, container need to clean
+     ** all the cgroups restriction added.
+     ** NOTE: This is very simple as cgroups v2 centralises everything in a directory
+     **       under /sys/fs/cgroup/<groupname>/ */
     static Result<Void, error::Err> clean(const std::string hostname) noexcept;
 
    private:
@@ -65,12 +74,17 @@ namespace bonding::resource
     };
   };
 
+  /** Rlimit is a system used to restrict a single process.
+   ** It’s focus is more centered around what this process can do than what realtime
+   ** system ressources it consumes. */
   class Rlimit
   {
    public:
     static Result<Void, error::Err> setup() noexcept;
 
    private:
+    /** The file descriptor number, like the number of pids, is per-user, and  prevent
+     ** in-container process from occupying all of them. */
     inline static const uint64_t NOFILE = 64;
   };
 
