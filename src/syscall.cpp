@@ -2,7 +2,12 @@
 #include <algorithm>
 #include <array>
 #include <asm-generic/errno-base.h>
-#include <libseccomp/seccomp.h>
+
+#if __has_include(<libseccomp/seccomp.h>)
+  #include <libseccomp/seccomp.h>
+#else
+  #include <seccomp.h>
+#endif
 
 namespace bonding::syscall
 {

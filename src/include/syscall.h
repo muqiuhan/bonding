@@ -6,9 +6,14 @@
 #include <asm-generic/ioctls.h>
 #include <cstdint>
 #include <fcntl.h>
-#include <libseccomp/seccomp.h>
 #include <sched.h>
 #include <tuple>
+
+#if __has_include(<libseccomp/seccomp.h>)
+  #include <libseccomp/seccomp.h>
+#else
+  #include <seccomp.h>
+#endif
 
 namespace bonding::syscall
 {
