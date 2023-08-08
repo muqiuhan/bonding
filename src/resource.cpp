@@ -40,8 +40,8 @@ namespace bonding::resource
           {
             const std::string path = dir + "/" + setting.name;
             spdlog::debug("Setting {} -> {}", setting.value, path);
-            
-            int fd = open(path.c_str(), O_WRONLY | O_CREAT);
+
+            int fd = open(path.c_str(), O_WRONLY);
             if (-1 == fd)
               return Err(error::Err(error::Code::CgroupsError));
 
