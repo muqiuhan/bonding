@@ -20,7 +20,8 @@ namespace bonding::error
     MountsError,
     NamespaceError,
     SystemcallError,
-    CgroupsError
+    CgroupsError,
+    ExecError
   };
 
   class Err
@@ -36,7 +37,6 @@ namespace bonding::error
       , m_errno(errno)
     {
       spdlog::error("{}", to_string());
-      std::terminate();
     }
 
     Err(const Code code, const std::string custom)

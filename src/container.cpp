@@ -29,11 +29,11 @@ namespace bonding::container
     return container.create()
       .and_then([&](const auto _) {
         spdlog::info("Cleaning and exiting container...");
-        container.clean_and_exit();
+        container.clean_and_exit().unwrap();
         return Ok(Void());
       })
       .or_else([&](const error::Err e) {
-        container.clean_and_exit();
+        container.clean_and_exit().unwrap();
         spdlog::error("Error while creating container: {}", e.to_string());
         return Err(e);
       });

@@ -24,7 +24,7 @@ main(int argc, char ** argv)
           spdlog::enable_backtrace(32);
         }
 
-      container::Container::start(options.to_args());
+      container::Container::start(options.to_args()).unwrap();
     }
   catch (structopt::exception & e)
     {

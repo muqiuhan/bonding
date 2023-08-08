@@ -1,5 +1,6 @@
 #include "include/child.h"
 #include "include/container.h"
+#include "include/exec.h"
 #include "include/hostname.h"
 #include "include/mount.h"
 #include "include/namespace.h"
@@ -40,9 +41,13 @@ namespace bonding::child
       })
       .unwrap();
 
+    int ret_code = 0;
+    if (exec::Execve::call(container_options->m_path, container_options->m_argv).is_err())
+      ret_code = -1;
+
     container::Container_Cleaner::close_socket(container_options->m_raw_fd);
 
-    return 0;
+    return ret_code;
   }
 
   Result<pid_t, error::Err>

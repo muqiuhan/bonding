@@ -1,15 +1,22 @@
 #ifndef __BONDING_EXEC_H__
 #define __BONDING_EXEC_H__
 
-#include "errno.h"
+#include "error.h"
 #include "result.hpp"
+#include <vector>
 
 namespace bonding::exec
 {
 
-  /** The execve systemcall wrapper */
   class Execve
   {
+   public:
+    /** The execve systemcall wrapper */
+    static Result<Void, error::Err> call(const std::string & path,
+                                         const std::vector<std::string> & argv) noexcept;
+
+   private:
+    inline static std::vector<char *> args;
   };
 
 };

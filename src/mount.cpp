@@ -1,6 +1,7 @@
 #include "include/mount.h"
 
 #include <error.h>
+#include <exception>
 #include <filesystem>
 #include <sys/mount.h>
 #include <sys/syscall.h>
@@ -50,7 +51,7 @@ namespace bonding::mounts
     if (-1 == syscall(SYS_pivot_root, root.c_str(), put_old.c_str()))
       return Err(bonding::error::Err(bonding::error::Code::MountsError));
 
-    spdlog::info("Umounting old root...");
+    spdlog::debug("Umounting old root...");
     const std::string old_root = "/" + old_root_tail;
 
     /* Ensure not inside the directory we want to umount. */
@@ -66,7 +67,6 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::clean() noexcept
   {
-    spdlog::info("root = {}", root);
     if (-1 == rmdir(root.c_str()))
       return Err(error::Err(error::Code::MountsError));
 
@@ -99,13 +99,9 @@ namespace bonding::mounts
       {
         std::filesystem::create_directories(path);
       }
-    catch (const std::filesystem::filesystem_error & err)
+    catch (const std::exception & err)
       {
         spdlog::error("Cannot create direcotry {}: {}", path, err.what());
-        return Err(bonding::error::Err(bonding::error::Code::MountsError));
-      }
-    catch (...)
-      {
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 
