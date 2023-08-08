@@ -71,21 +71,35 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  Resource::clean(const std::string hostname) noexcept
+  CgroupsV1::clean(const std::string hostname) noexcept
   {
     spdlog::debug("Cleaning cgroups-v1 settings...");
-    try
-      {
-        const std::string path =
-          std::filesystem::canonical("/sys/fs/cgroup/" + hostname + "/");
 
-        if (-1 == rmdir(path.c_str()))
-          return Err(error::Err(error::Code::CgroupsError));
-      }
-    catch (const std::exception & e)
+    for (const Control & cgroup : CONFIG)
       {
-        return Err(error::Err(error::Code::CgroupsError, e.what()));
+        try
+          {
+            const std::string dir = std::filesystem::canonical(
+              "/sys/fs/cgroup/" + cgroup.control + "/" + hostname);
+
+            for (const Control::Setting & setting : cgroup.settings)
+              if (-1 == rmdir(dir.c_str()))
+                return Err(error::Err(error::Code::CgroupsError));
+          }
+        catch (const std::exception & e)
+          {
+            return Err(error::Err(error::Code::CgroupsError, e.what()));
+          }
       }
+
+    return Ok(Void());
+  }
+
+  Result<Void, error::Err>
+  Resource::clean(const std::string hostname) noexcept
+  {
+    CgroupsV1::clean(hostname).unwrap();
+
     return Ok(Void());
   }
 }

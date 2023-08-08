@@ -30,6 +30,7 @@ namespace bonding::resource
     };
 
     static Result<Void, error::Err> setup(const std::string hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string hostname) noexcept;
 
    private:
     inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
