@@ -1,5 +1,6 @@
 #include "include/resource.h"
 #include <error.h>
+#include <exception>
 #include <fcntl.h>
 #include <filesystem>
 #include <sys/stat.h>
@@ -12,9 +13,12 @@ namespace bonding::resource
   Result<Void, error::Err>
   Resource::setup(const std::string hostname) noexcept
   {
-    spdlog::debug("Restricting resources for hostname {}", hostname);
+    spdlog::info("Restricting resources for hostname {}", hostname);
 
+    spdlog::debug("Restriction resources by cgroup-v1...");
     CgroupsV1::setup(hostname).unwrap();
+
+    spdlog::debug("Restriction resources by rlimit...");
     Rlimit::setup().unwrap();
 
     return Ok(Void());
@@ -51,7 +55,6 @@ namespace bonding::resource
         for (const Control::Setting & setting : cgroup.settings)
           {
             const std::string path = dir + "/" + setting.name;
-            spdlog::debug("Setting {} -> {}", setting.value, path);
 
             int fd = open(path.c_str(), O_WRONLY);
             if (-1 == fd)
@@ -64,6 +67,25 @@ namespace bonding::resource
           }
       }
 
+    return Ok(Void());
+  }
+
+  Result<Void, error::Err>
+  Resource::clean(const std::string hostname) noexcept
+  {
+    spdlog::debug("Cleaning cgroups-v1 settings...");
+    try
+      {
+        const std::string path =
+          std::filesystem::canonical("/sys/fs/cgroup/" + hostname + "/");
+
+        if (-1 == rmdir(path.c_str()))
+          return Err(error::Err(error::Code::CgroupsError));
+      }
+    catch (const std::exception & e)
+      {
+        return Err(error::Err(error::Code::CgroupsError, e.what()));
+      }
     return Ok(Void());
   }
 }

@@ -8,9 +8,7 @@ namespace bonding::container
   Container::create() noexcept
   {
     ns::Namespace::handle_child_uid_map(m_child_process.m_pid, m_sockets.first);
-
     resource::Resource::setup(m_config.m_hostname);
-
     return m_child_process.wait();
   }
 
@@ -19,7 +17,7 @@ namespace bonding::container
   {
     Container_Cleaner::close_socket(m_sockets.first).unwrap();
     Container_Cleaner::close_socket(m_sockets.second).unwrap();
-
+    resource::Resource::clean(m_config.m_hostname);
     return Ok(Void());
   }
 

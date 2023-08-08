@@ -77,6 +77,7 @@ namespace bonding::resource
   {
    public:
     static Result<Void, error::Err> setup(const std::string hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string hostname) noexcept;
   };
 };
 
