@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #ifndef __BONDING_ERROR_H__
 #define __BONDING_ERROR_H__
 
@@ -20,7 +22,9 @@ namespace bonding::error
     MountsError,
     NamespaceError,
     SystemcallError,
-    CgroupsError
+    CgroupsError,
+    ExecError,
+    CapabilitiesError
   };
 
   class Err
@@ -36,7 +40,6 @@ namespace bonding::error
       , m_errno(errno)
     {
       spdlog::error("{}", to_string());
-      std::terminate();
     }
 
     Err(const Code code, const std::string custom)
@@ -45,6 +48,8 @@ namespace bonding::error
       , m_custom(std::move(custom))
     {
       spdlog::error("{}", to_string());
+      spdlog::dump_backtrace();
+      std::terminate();
     }
 
     int32_t to_exit_code() const noexcept;

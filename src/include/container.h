@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #ifndef __BONDING_CONTAINER_H__
 #define __BONDING_CONTAINER_H__
 

@@ -1,6 +1,9 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/mount.h"
 
 #include <error.h>
+#include <exception>
 #include <filesystem>
 #include <sys/mount.h>
 #include <sys/syscall.h>
@@ -12,6 +15,7 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::__umount(const std::string & path) noexcept
   {
+    spdlog::debug("Umount {}", path);
     if (-1 == umount2(path.c_str(), MNT_DETACH))
       {
         spdlog::error("Unable to umount {}", path);
@@ -24,6 +28,7 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::__delete(const std::string & path) noexcept
   {
+    spdlog::debug("Remove {}", path);
     if (-1 == remove(path.c_str()))
       {
         spdlog::error("Unable to remove {}", path);
@@ -39,8 +44,8 @@ namespace bonding::mounts
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
-    root = ".bonding/tmp/bonding." + hostname + "/";
-    const std::string old_root_tail = "bonding.oldroot." + hostname + "/";
+    root = ".bonding/tmp/" + hostname + "/";
+    const std::string old_root_tail = "oldroot." + hostname + "/";
     const std::string put_old = root + old_root_tail;
 
     __create(root).unwrap();
@@ -50,7 +55,6 @@ namespace bonding::mounts
     if (-1 == syscall(SYS_pivot_root, root.c_str(), put_old.c_str()))
       return Err(bonding::error::Err(bonding::error::Code::MountsError));
 
-    spdlog::info("Umounting old root...");
     const std::string old_root = "/" + old_root_tail;
 
     /* Ensure not inside the directory we want to umount. */
@@ -66,7 +70,6 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::clean() noexcept
   {
-    spdlog::info("root = {}", root);
     if (-1 == rmdir(root.c_str()))
       return Err(error::Err(error::Code::MountsError));
 
@@ -78,6 +81,7 @@ namespace bonding::mounts
                  const std::string & mount_point,
                  unsigned long flags) noexcept
   {
+    spdlog::debug("mount {}", path);
     if (-1
         == mount((path == "" ? NULL : path.c_str()),
                  mount_point.c_str(),
@@ -95,17 +99,14 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::__create(const std::string & path) noexcept
   {
+    spdlog::debug("Create {}", path);
     try
       {
         std::filesystem::create_directories(path);
       }
-    catch (const std::filesystem::filesystem_error & err)
-      {
-        spdlog::error("Cannot create direcotry {}: {}", path, err.what());
-        return Err(bonding::error::Err(bonding::error::Code::MountsError));
-      }
     catch (...)
       {
+        spdlog::error("Cannot create direcotry {}");
         return Err(bonding::error::Err(bonding::error::Code::MountsError));
       }
 

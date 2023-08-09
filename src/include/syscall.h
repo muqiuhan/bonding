@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #ifndef __BONDING_SYSCALL_H__
 #define __BONDING_SYSCALL_H__
 
@@ -6,12 +8,20 @@
 #include <asm-generic/ioctls.h>
 #include <cstdint>
 #include <fcntl.h>
-#include <libseccomp/seccomp.h>
 #include <sched.h>
 #include <tuple>
 
+#if __has_include(<libseccomp/seccomp.h>)
+#include <libseccomp/seccomp.h>
+#else
+#include <seccomp.h>
+#endif
+
 namespace bonding::syscall
 {
+  /** Restrict system call by seccomp,
+   ** seccomp (short for secure computing mode) is a computer security facility in the
+   ** Linux kernel. */
   class Syscall
   {
    public:
@@ -35,6 +45,7 @@ namespace bonding::syscall
       SCMP_SYS(perf_event_open)
     };
 
+    /** Syscalls can be restricted when a particular condition is met. */
     inline static const std::array<std::tuple<unsigned int, unsigned int, scmp_datum_t>,
                                    9>
       default_refuse_if_comp_syscalls = {

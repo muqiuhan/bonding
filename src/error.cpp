@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/error.h"
 
 namespace bonding::error
@@ -48,6 +50,10 @@ namespace bonding::error
         return "Namespace Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::CgroupsError)
         return "Cgroups Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::ExecError)
+        return "Exec Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::CapabilitiesError)
+        return "Capabilities Error: " + std::string(strerror(m_errno));
       else
         return "Undefined Error: " + std::string(strerror(m_errno));
     };

@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "spdlog/spdlog.h"
 #include "structopt/app.hpp"
 
@@ -24,7 +26,7 @@ main(int argc, char ** argv)
           spdlog::enable_backtrace(32);
         }
 
-      container::Container::start(options.to_args());
+      container::Container::start(options.to_args()).unwrap();
     }
   catch (structopt::exception & e)
     {

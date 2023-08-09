@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #ifndef __BONDING_NAMESPACE_H__
 #define __BONDING_NAMESPACE_H__
 

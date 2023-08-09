@@ -1,9 +1,14 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/child.h"
+#include "include/capabilities.h"
 #include "include/container.h"
+#include "include/exec.h"
 #include "include/hostname.h"
 #include "include/mount.h"
 #include "include/namespace.h"
 #include "include/syscall.h"
+#include "spdlog/spdlog.h"
 
 #include <sched.h>
 #include <sys/wait.h>
@@ -13,14 +18,14 @@ namespace bonding::child
   Result<Void, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
+    spdlog::enable_backtrace(32);
     hostname::Hostname::setup(container_options->m_hostname).unwrap();
     mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname)
       .unwrap();
     ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid).unwrap();
+    capabilities::Capabilities::setup().unwrap();
     syscall::Syscall::setup().unwrap();
 
-    // mounts::Mount::clean();
-    syscall::Syscall::Syscall::clean().unwrap();
     return Ok(Void());
   }
 
@@ -40,9 +45,11 @@ namespace bonding::child
       })
       .unwrap();
 
-    container::Container_Cleaner::close_socket(container_options->m_raw_fd);
+    int ret_code = 0;
+    if (exec::Execve::call(container_options->m_path, container_options->m_argv).is_err())
+      ret_code = -1;
 
-    return 0;
+    return ret_code;
   }
 
   Result<pid_t, error::Err>

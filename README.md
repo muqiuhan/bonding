@@ -12,34 +12,26 @@
 - [spdlog (MIT): Fast C++ logging library.](https://github.com/gabime/spdlog)
 - [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
 - [structopt (MIT): Parse command line arguments by defining a struct](https://github.com/p-ranav/structopt)
-- [libseccomp (LGPL): The main libseccomp repository](https://github.com/seccomp/libseccomp)
-  > For most Linux distributions, it can be installed through package management, (the package name is like `libseccomp-dev`)
+- [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
+- [libcap (BSD 3-clause and GPL v2.0)](https://git.kernel.org/pub/scm/libs/libcap/libcap.git/)
   
 ## Build And Run
 > [xmake](https://xmake.io) is a cross-platform build utility based on Lua.
 
 Download with `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
 
-### build
-__`xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`__
-
-#### NOTE
-- libseccomp may have `seccomp-syscalls.h: No such file or directory` problems, you need to manually change `#include <seccomp-syscalls.h>` in `seccomp.h` to `#include ”seccomp -syscalls.h"`.
-
-### run
-__`xmake run -- bonding`__
-  
-### Debug
-
-E.g:
-```shell
-sudo lldb ./build/linux/x86_64/debug/bonding -- \
-    --command "sleep 3" \
-    --uid 0 \
-    --mount_dir . \
-    --hostname Test \
-    --debug
-```
+- build: `xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`
+- run: `xmake run -- bonding`
+- debug
+  E.g:
+  ```shell
+  sudo lldb ./build/linux/x86_64/debug/bonding -- \
+      --command "sleep 3"                          \
+      --uid 0                                       \
+      --mount_dir .                                 \
+      --hostname Test                               \
+      --debug
+  ```
 
 ## USAGE:
 
@@ -58,41 +50,26 @@ OPTIONS:
     -v, --version <version>
 ```
 
-e.g:
+E.g:
 ```shell
 xmake run -- bonding --debug \
-    --command "/bin/ls -lh" \
-    --uid 0 \
-    --mount_dir . \
+    --command "/bin/ls -lh"   \
+    --uid 0                    \
+    --mount_dir .              \
     --hostname Test
 ```
 
 or run in debugger:
 ```shell
 xmake r -d -- bonding --debug \
-    --command "/bin/ls -lh" \
-    --uid 0 \
-    --mount_dir . \
+    --command "/bin/ls -lh"    \
+    --uid 0                     \
+    --mount_dir .               \
     --hostname Test
 ```
 
-## NOTE
-
-The default syscalls will refuse in container are:
-
-- Kernel keyring
-  - keyctl
-  - add_key
-  - request_key
-- NUMA (memory management)
-  - mbind
-  - migrate_pages
-  - move_pages
-  - set_mempoliyc
-- Allow userland to handle memory faults in the kernel
-  - userfaultfd
-- Trace / profile syscalls
-  - perf_event_open
+## FAQ
+1. libseccomp may have `seccomp-syscalls.h: No such file or directory` problems, you need to manually change `#include <seccomp-syscalls.h>` in `seccomp.h` to `#include ”seccomp -syscalls.h"`.
 
 ## REFERENCES
 
@@ -123,11 +100,11 @@ The default syscalls will refuse in container are:
 - [Writing a container in Rust](https://litchipi.github.io/series/container_in_rust)
 
 # LICENSE
-Copyright (C) 2022 Muqiu Han
+Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com>
 
-This program is free software: you can redistribute it and/or modify
+This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
+the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -135,5 +112,6 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.

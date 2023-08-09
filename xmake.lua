@@ -1,5 +1,7 @@
 add_rules("mode.debug", "mode.release")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
+add_requires("libcap", {system = true})
+add_requires("libseccomp", {system = true})
 
 package("spdlog")
     add_deps("cmake")
@@ -43,4 +45,4 @@ target("bonding")
                     "lib/structopt/include", 
                     "lib/result/include")
     add_packages("spdlog", "structopt", "result")
-    add_links("seccomp")
+    add_links("seccomp", "cap")
