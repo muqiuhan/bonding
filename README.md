@@ -68,9 +68,6 @@ xmake r -d -- bonding --debug \
     --hostname Test
 ```
 
-## FAQ
-1. libseccomp may have `seccomp-syscalls.h: No such file or directory` problems, you need to manually change `#include <seccomp-syscalls.h>` in `seccomp.h` to `#include ”seccomp -syscalls.h"`.
-
 ## REFERENCES
 
 - Book: *The Linux Programming Interface*
