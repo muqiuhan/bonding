@@ -45,9 +45,9 @@ namespace bonding::hostname
   Hostname::generate(const uint8_t len) noexcept
   {
     if (len > MAX_LENGTH)
-      return Err(bonding::error::Err(bonding::error::Code::HostnameError,
-                                     "The maximum length of Hostname is: "
-                                       + std::to_string(MAX_LENGTH)));
+      return Err(
+        error::Err(error::Code::HostnameError,
+                   "The maximum length of Hostname is: " + std::to_string(MAX_LENGTH)));
 
     return Ok(Xorshift::generate(MAX_LENGTH));
   }
@@ -58,7 +58,7 @@ namespace bonding::hostname
     if (-1 == sethostname(hostname.c_str(), hostname.size()))
       {
         spdlog::error("Cannot set hostname {} for container", hostname);
-        return Err(bonding::error::Err(bonding::error::Code::HostnameError));
+        return Err(error::Err(error::Code::HostnameError));
       }
 
     spdlog::info("Container hostname is now {}", hostname);

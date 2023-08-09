@@ -22,7 +22,7 @@ This is currently the only way to use bonding. Fortunately, xmake can solve most
 
 Bonding's [xmake.lua](./xmake.lua) will automatically generate Ninja, Makefile, CMake, Visual Studio project files, and Xcode project files after the first build, and you can also generate other builds directly through it before using xmake to build this project Tool related files:
 
-```
+```e
 xmake project -k ninja
 xmake project -k cmake
 xmake project -k make

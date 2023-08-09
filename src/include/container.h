@@ -26,9 +26,9 @@ namespace bonding::container
     }
 
     Container()
-      : m_config(bonding::config::Container_Options())
+      : m_config(config::Container_Options())
       , m_sockets(std::make_pair(-1, -1))
-      , m_child_process(bonding::child::Child())
+      , m_child_process(child::Child())
     {
       std::terminate();
     }
@@ -43,7 +43,7 @@ namespace bonding::container
     Container(config::Container_Options config, std::pair<int, int> sockets)
       : m_config(config)
       , m_sockets(sockets)
-      , m_child_process(bonding::child::Child(config))
+      , m_child_process(child::Child(config))
     {
     }
 

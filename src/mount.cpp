@@ -19,7 +19,7 @@ namespace bonding::mounts
     if (-1 == umount2(path.c_str(), MNT_DETACH))
       {
         spdlog::error("Unable to umount {}", path);
-        return Err(bonding::error::Err(bonding::error::Code::MountsError));
+        return Err(error::Err(error::Code::MountsError));
       }
 
     return Ok(Void());
@@ -32,7 +32,7 @@ namespace bonding::mounts
     if (-1 == remove(path.c_str()))
       {
         spdlog::error("Unable to remove {}", path);
-        return Err(bonding::error::Err(bonding::error::Code::MountsError));
+        return Err(error::Err(error::Code::MountsError));
       }
 
     return Ok(Void());
@@ -63,13 +63,13 @@ namespace bonding::mounts
       }
 
     if (-1 == syscall(SYS_pivot_root, root.c_str(), put_old.c_str()))
-      return Err(bonding::error::Err(bonding::error::Code::MountsError));
+      return Err(error::Err(error::Code::MountsError));
 
     const std::string old_root = "/" + old_root_tail;
 
     /* Ensure not inside the directory we want to umount. */
     if (-1 == chdir("/"))
-      return Err(bonding::error::Err(bonding::error::Code::MountsError));
+      return Err(error::Err(error::Code::MountsError));
 
     __umount(old_root).unwrap();
     __delete(old_root).unwrap();
@@ -100,7 +100,7 @@ namespace bonding::mounts
                  NULL))
       {
         spdlog::error("Cannot mount {} to {}", path, mount_point);
-        return Err(bonding::error::Err(bonding::error::Code::MountsError));
+        return Err(error::Err(error::Code::MountsError));
       }
 
     return Ok(Void());
@@ -117,7 +117,7 @@ namespace bonding::mounts
     catch (...)
       {
         spdlog::error("Cannot create direcotry {}");
-        return Err(bonding::error::Err(bonding::error::Code::MountsError));
+        return Err(error::Err(error::Code::MountsError));
       }
 
     return Ok(Void());

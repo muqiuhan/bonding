@@ -14,7 +14,7 @@ namespace bonding::ipc
     if (-1 == send(socket, &buf, 1, 0))
       {
         spdlog::error("Cannot send boolean through socket: {}", socket);
-        return Err(bonding::error::Err(bonding::error::Code::SocketError));
+        return Err(error::Err(error::Code::SocketError));
       }
     return Ok(Void());
   }
@@ -28,7 +28,7 @@ namespace bonding::ipc
     if (-1 == recv(socket, &buf, 1, 0))
       {
         spdlog::error("Cannot recevie boolean from socket {}", socket);
-        return Err(bonding::error::Err(bonding::error::Code::SocketError));
+        return Err(error::Err(error::Code::SocketError));
       }
 
     return Ok(static_cast<bool>(buf[0]));

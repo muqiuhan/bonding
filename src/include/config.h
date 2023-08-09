@@ -28,7 +28,7 @@ namespace bonding::config
          const std::string & hostname,
          const std::vector<std::pair<std::string, std::string>> & mounts) noexcept
     {
-      const std::pair<int, int> sockets = bonding::cli::generate_socketpair().unwrap();
+      const std::pair<int, int> sockets = cli::generate_socketpair().unwrap();
       const std::vector<std::string> argv =
         parse_argv(command).expect("Cannot parse command arguments");
 
