@@ -19,7 +19,6 @@ namespace bonding::child
   Result<Void, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    spdlog::enable_backtrace(32);
     hostname::Hostname::setup(container_options->m_hostname).unwrap();
     mounts::Mount::setup(container_options->m_mount_dir,
                          container_options->m_hostname,
@@ -71,7 +70,7 @@ namespace bonding::child
             (void *)&container_options);
 
     if (-1 == child_pid)
-      return Err(error::Err(error::Code::ChildProcessError));
+      return ERR(error::Code::ChildProcessError);
 
     return Ok(child_pid);
   }
@@ -85,7 +84,7 @@ namespace bonding::child
 
     /** To wait for children produced by clone(), need __WCLONE flag */
     if (-1 == waitpid(m_pid, &child_process_status, __WALL))
-      return Err(error::Err(error::Code::ContainerError));
+      return ERR(error::Code::ContainerError);
 
     spdlog::info("Child process exit with code {}, signal {}",
                  (child_process_status >> 8) & 0xFF,

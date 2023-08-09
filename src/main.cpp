@@ -23,7 +23,6 @@ main(int argc, char ** argv)
         {
           spdlog::set_level(spdlog::level::debug);
           spdlog::debug("Activate debug mode!");
-          spdlog::enable_backtrace(32);
         }
 
       container::Container::start(options.to_args()).unwrap();

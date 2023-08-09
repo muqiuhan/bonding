@@ -50,7 +50,7 @@ namespace bonding::container
     if (-1 == close(socket))
       {
         spdlog::error("Unable to close socket: {}", socket);
-        return Err(error::Err(error::Code::SocketError));
+        return ERR(error::Code::SocketError);
       }
     return Ok(Void());
   }

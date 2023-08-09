@@ -32,7 +32,7 @@ namespace bonding::ns
 
     ipc::IPC::send_boolean(socket, has_userns).unwrap();
     if (ipc::IPC::recv_boolean(socket).unwrap())
-      return Err(error::Err(error::Code::NamespaceError));
+      return ERR(error::Code::NamespaceError);
 
     if (has_userns)
       spdlog::info("User namespace setup...");
@@ -41,16 +41,16 @@ namespace bonding::ns
 
     /* set the list of groups the process is part of */
     if (-1 == setgroups(1, groups))
-      return Err(error::Err(error::Code::NamespaceError));
+      return ERR(error::Code::NamespaceError);
 
     /* set the UID and GID (respectively) of the process.
      * this will set the real user ID, the effective user ID,
      * and the saved set-user-ID. */
     if (-1 == setresgid(gid, gid, gid))
-      return Err(error::Err(error::Code::NamespaceError));
+      return ERR(error::Code::NamespaceError);
 
     if (-1 == setresuid(uid, uid, uid))
-      return Err(error::Err(error::Code::NamespaceError));
+      return ERR(error::Code::NamespaceError);
 
     return Ok(Void());
   }
@@ -66,10 +66,10 @@ namespace bonding::ns
       creat(path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 
     if (-1 == fd)
-      return Err(error::Err(error::Code::NamespaceError));
+      return ERR(error::Code::NamespaceError);
 
     if (-1 == write(fd, data.c_str(), data.size()))
-      return Err(error::Err(error::Code::NamespaceError));
+      return ERR(error::Code::NamespaceError);
 
     return Ok(Void());
   }

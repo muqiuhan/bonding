@@ -31,7 +31,7 @@ namespace bonding::resource
   {
     const rlimit rlim = rlimit{ .rlim_cur = NOFILE, .rlim_max = NOFILE };
     if (-1 == setrlimit(RLIMIT_NOFILE, &rlim))
-      return Err(error::Err(error::Code::CgroupsError));
+      return ERR(error::Code::CgroupsError);
 
     return Ok(Void());
   }
@@ -51,7 +51,7 @@ namespace bonding::resource
           }
         catch (const std::filesystem::filesystem_error & e)
           {
-            return Err(error::Err(error::Code::CgroupsError, e.what()));
+            return ERR_MSG(error::Code::CgroupsError, e.what());
           }
 
         for (const Control::Setting & setting : cgroup.settings)
@@ -62,11 +62,11 @@ namespace bonding::resource
             if (-1 == fd)
               {
                 close(fd);
-                return Err(error::Err(error::Code::CgroupsError));
+                return ERR(error::Code::CgroupsError);
               }
 
             if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
-              return Err(error::Err(error::Code::CgroupsError));
+              return ERR(error::Code::CgroupsError);
 
             close(fd);
           }
@@ -87,18 +87,18 @@ namespace bonding::resource
 
         int taskfd = open(task.c_str(), O_WRONLY);
         if (-1 == taskfd)
-          return Err(error::Err(error::Code::CgroupsError));
+          return ERR(error::Code::CgroupsError);
 
         if (-1 == write(taskfd, "0", 2))
           {
             close(taskfd);
-            return Err(error::Err(error::Code::CgroupsError));
+            return ERR(error::Code::CgroupsError);
           }
 
         close(taskfd);
 
         if (-1 == rmdir(dir.c_str()))
-          return Err(error::Err(error::Code::CgroupsError));
+          return ERR(error::Code::CgroupsError);
       }
 
     return Ok(Void());

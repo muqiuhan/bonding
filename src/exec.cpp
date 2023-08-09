@@ -22,7 +22,7 @@ namespace bonding::exec
 
     const auto x = &args[0];
     if (-1 == execve(path.c_str(), static_cast<char * const *>(&args[0]), NULL))
-      return Err(error::Err(error::Code::ExecError));
+      return ERR(error::Code::ExecError);
 
     return Ok(Void());
   }
