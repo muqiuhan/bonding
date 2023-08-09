@@ -15,8 +15,10 @@ namespace bonding::mounts
    public:
     /** Mount user-provided m_mount_dir to
      ** the mountpoint /tmp/bonding.<random_letters> */
-    static Result<Void, error::Err> setup(const std::string mount_dir,
-                                          const std::string hostname) noexcept;
+    static Result<Void, error::Err>
+    setup(const std::string & mount_dir,
+          const std::string & hostname,
+          const std::vector<std::pair<std::string, std::string>> & mounts_paths) noexcept;
 
     static Result<Void, error::Err> clean() noexcept;
 

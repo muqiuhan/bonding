@@ -39,7 +39,10 @@ namespace bonding::mounts
   }
 
   Result<Void, error::Err>
-  Mount::setup(const std::string mount_dir, const std::string hostname) noexcept
+  Mount::setup(
+    const std::string & mount_dir,
+    const std::string & hostname,
+    const std::vector<std::pair<std::string, std::string>> & mounts_paths) noexcept
   {
     spdlog::info("Setting mount points...");
     __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
@@ -51,6 +54,13 @@ namespace bonding::mounts
     __create(root).unwrap();
     __mount(mount_dir, root, MS_BIND | MS_PRIVATE).unwrap();
     __create(put_old).unwrap();
+
+    for (const auto & [real_path, mount_path] : mounts_paths)
+      {
+        const std::string mount_dir = root + "/" + mount_path;
+        __create(mount_dir).unwrap();
+        __mount(real_path, mount_dir, MS_BIND | MS_PRIVATE).unwrap();
+      }
 
     if (-1 == syscall(SYS_pivot_root, root.c_str(), put_old.c_str()))
       return Err(bonding::error::Err(bonding::error::Code::MountsError));
