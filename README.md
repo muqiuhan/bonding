@@ -26,10 +26,10 @@ Download with `git clone https://github.com/muqiuhan/bonding --recurse-submodule
   E.g:
   ```shell
   sudo lldb ./build/linux/x86_64/debug/bonding -- \
-      --command "sleep 3" \
-      --uid 0 \
-      --mount_dir . \
-      --hostname Test \
+      --command "sleep 3"                          \
+      --uid 0                                       \
+      --mount_dir .                                 \
+      --hostname Test                               \
       --debug
   ```
 
@@ -53,18 +53,18 @@ OPTIONS:
 E.g:
 ```shell
 xmake run -- bonding --debug \
-    --command "/bin/ls -lh" \
-    --uid 0 \
-    --mount_dir . \
+    --command "/bin/ls -lh"   \
+    --uid 0                    \
+    --mount_dir .              \
     --hostname Test
 ```
 
 or run in debugger:
 ```shell
 xmake r -d -- bonding --debug \
-    --command "/bin/ls -lh" \
-    --uid 0 \
-    --mount_dir . \
+    --command "/bin/ls -lh"    \
+    --uid 0                     \
+    --mount_dir .               \
     --hostname Test
 ```
 
