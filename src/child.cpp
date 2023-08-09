@@ -10,6 +10,7 @@
 #include "include/syscall.h"
 #include "spdlog/spdlog.h"
 
+#include <cstdio>
 #include <sched.h>
 #include <sys/wait.h>
 
@@ -20,7 +21,9 @@ namespace bonding::child
   {
     spdlog::enable_backtrace(32);
     hostname::Hostname::setup(container_options->m_hostname).unwrap();
-    mounts::Mount::setup(container_options->m_mount_dir, container_options->m_hostname)
+    mounts::Mount::setup(container_options->m_mount_dir,
+                         container_options->m_hostname,
+                         container_options->m_mounts)
       .unwrap();
     ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid).unwrap();
     capabilities::Capabilities::setup().unwrap();

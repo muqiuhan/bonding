@@ -20,7 +20,8 @@ namespace bonding::container
       return Ok(Container(config::Container_Options::make(args.command,
                                                           args.mount_dir,
                                                           args.uid,
-                                                          args.hostname)
+                                                          args.hostname,
+                                                          args.mounts)
                             .unwrap()));
     }
 
