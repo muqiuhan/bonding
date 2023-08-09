@@ -43,4 +43,4 @@ target("bonding")
                     "lib/structopt/include", 
                     "lib/result/include")
     add_packages("spdlog", "structopt", "result")
-    add_links("seccomp")
+    add_links("seccomp", "cap")

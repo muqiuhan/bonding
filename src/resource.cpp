@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/resource.h"
 #include <error.h>
 #include <exception>

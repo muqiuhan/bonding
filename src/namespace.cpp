@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/namespace.h"
 #include "include/ipc.h"
 #include <fcntl.h>

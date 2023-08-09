@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/cli.h"
 #include "include/hostname.h"
 #include <spdlog/spdlog.h>
@@ -23,8 +25,9 @@ namespace bonding::cli
                  command.value(),
                  uid.value(),
                  mount_dir.value(),
-                 hostname.value() == "" ? hostname::Hostname::generate(10).unwrap()
-                                        : hostname.value() };
+                 "bonding."
+                   + (hostname.value() == "" ? hostname::Hostname::generate(10).unwrap()
+                                             : hostname.value()) };
   }
 
   Result<std::pair<int, int>, error::Err>

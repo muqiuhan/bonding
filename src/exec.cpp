@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/exec.h"
 #include "spdlog/fmt/bundled/format.h"
 #include <algorithm>

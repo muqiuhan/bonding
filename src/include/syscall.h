@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #ifndef __BONDING_SYSCALL_H__
 #define __BONDING_SYSCALL_H__
 
@@ -10,9 +12,9 @@
 #include <tuple>
 
 #if __has_include(<libseccomp/seccomp.h>)
-  #include <libseccomp/seccomp.h>
+#include <libseccomp/seccomp.h>
 #else
-  #include <seccomp.h>
+#include <seccomp.h>
 #endif
 
 namespace bonding::syscall

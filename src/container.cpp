@@ -1,3 +1,5 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/container.h"
 #include "include/namespace.h"
 #include "include/resource.h"

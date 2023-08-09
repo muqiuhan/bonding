@@ -1,12 +1,14 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/syscall.h"
 #include <algorithm>
 #include <array>
 #include <asm-generic/errno-base.h>
 
 #if __has_include(<libseccomp/seccomp.h>)
-  #include <libseccomp/seccomp.h>
+#include <libseccomp/seccomp.h>
 #else
-  #include <seccomp.h>
+#include <seccomp.h>
 #endif
 
 namespace bonding::syscall
