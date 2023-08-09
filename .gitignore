@@ -12,4 +12,10 @@ build/
 
 test.log
 
-mount_dir
+mount_dir/
+
+CMakeLists.txt
+build.ninja
+makefile
+Makefile
+compile_commands.json
