@@ -15,57 +15,83 @@
 - [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
 - [libcap (BSD 3-clause and GPL v2.0)](https://git.kernel.org/pub/scm/libs/libcap/libcap.git/)
   
-## Build And Run
-> [xmake](https://xmake.io) is a cross-platform build utility based on Lua.
+## Build from source
+> This project is built using [xmake](https://xmake.io).
 
-Download with `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
+This is currently the only way to use bonding. Fortunately, xmake can solve most of the build problems, so don't hesitate to use it!
 
-- build: `xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`
-- run: `xmake run -- bonding`
-- debug
-  E.g:
-  ```shell
-  sudo lldb ./build/linux/x86_64/debug/bonding -- \
-      --command "sleep 3"                         \
-      --uid 0                                     \
-      --mount_dir .                               \
-      --hostname Test                             \
-      --debug
-  ```
+Bonding's [xmake.lua](./xmake.lua) will automatically generate Ninja, Makefile, CMake, Visual Studio project files, and Xcode project files after the first build, and you can also generate other builds directly through it before using xmake to build this project Tool related files:
 
-## USAGE:
+```
+xmake project -k ninja
+xmake project -k cmake
+xmake project -k make
+xmake project -k vs
+xmake project -k xcode
+```
+
+1. clone the source: `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
+2. build it: `xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`
+
+## Install
+
+- The easiest is `xmake install --admin`, it will try to request administrator permission to install
+
+Other install options: 
+- `xmake -o INSTALLDIR` to set the install directory.
+    >
+    > e.g. `xmake install -o /usr/local`
+    >
+    > or   `DESTDIR=/usr/local xmake install`
+    >
+    > or   `INSTALLDIR=/usr/local xmake install`
+
+- `xmake -g GROUP` to install  all targets of the given group. It support path pattern matching.
+    > e.g.   `xmake install -g test`
+    > 
+    > or     `xmake install -g test_*`
+    > 
+    > or     `xmake install --group=benchmark/*`
+
+## Debug
+Bonding need advanced permissions to create, such as restricting resources through cgroups, restricting system calls through seccomp, etc. So they must be debug with sudo. For example:
 
 ```shell
+sudo lldb ./build/linux/x86_64/debug/bonding -- \
+    --command "sleep 3"                         \
+    --uid 0                                     \
+    --mount_dir .                               \
+    --hostname Test                             \
+    --debug
+```
+
+## USAGE:
+```
 USAGE: bonding [FLAGS] [OPTIONS] 
 
 FLAGS:
-    -d, --debug
+    -d, --debug Active debug mode
 
 OPTIONS:
-    -c, --command <command>
-    -u, --uid <uid>
-    -m, --mount-dir <mount_dir>
-    -h, --hostname <hostname>
-    --help <help>
-    -v, --version <version>
+    -c, --command Command to execute inside the container
+    -u, --uid <uid> User ID to create inside the container
+    -m, --mount-dir <mount_dir> Directory to mount as root of the container
+    -h, --hostname <hostname> Hostname to identifies container
+    -m, --mounts <mounts>  Additional mount path
+    --help <help> Show this message
+    -v, --version <version> Show version of bonding
 ```
 
-E.g:
-```shell
-xmake run -- bonding --debug \
-    --command "/bin/ls -lh"  \
-    --uid 0                  \
-    --mount_dir .            \
-    --hostname Test
-```
+- `-h --hostname`: If the hostname is not explicitly provided, bonding will randomly generate a random hostname, with a length of 10, consisting of English uppercase and lowercase letters and numbers, e.g `bonding.0wusbvmdos`.
 
-or run in debugger:
-```shell
-xmake r -d -- bonding --debug \
-    --command "/bin/ls -lh    \
-    --uid 0                   \
-    --mount_dir .             \
-    --hostname Test
+- `-m --mounts`: If no additional mount path is explicitly provided, two system dynamic library directories will be mounted by default: `/lib64`, `/lib`.
+
+For example:
+```
+sudo bonding --command "/bin/bash" \
+             --uid 0               \
+             --mount_dir mount_dir \
+             --hostname bash       \
 ```
 
 ## REFERENCES

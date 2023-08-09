@@ -28,7 +28,7 @@ namespace bonding::cli
     /** Hostname to identifies container */
     std::string hostname;
 
-    /** Additional mount path  */
+    /** Additional mount path */
     std::vector<std::pair<std::string, std::string>> mounts;
   };
 
