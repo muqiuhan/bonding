@@ -66,6 +66,4 @@ target("bonding")
         
         task.run("project", {kind = "makefile", outputdir = "."})
         task.run("project", {kind = "ninja", outputdir = "."})
-        task.run("project", {kind = "cmakelists", outputdir = "."})
-        task.run("project", {kind = "xcode", outputdir = "."})
     end)
