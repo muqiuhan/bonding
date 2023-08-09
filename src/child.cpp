@@ -19,7 +19,6 @@ namespace bonding::child
   Result<Void, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    spdlog::enable_backtrace(32);
     hostname::Hostname::setup(container_options->m_hostname).unwrap();
     mounts::Mount::setup(container_options->m_mount_dir,
                          container_options->m_hostname,
@@ -35,7 +34,7 @@ namespace bonding::child
   int
   Child::Process::__main(void * options) noexcept
   {
-    container_options = static_cast<bonding::config::Container_Options *>(options);
+    container_options = static_cast<config::Container_Options *>(options);
 
     setup_container_configurations()
       .and_then([](const Void ok) {
@@ -57,7 +56,7 @@ namespace bonding::child
 
   Result<pid_t, error::Err>
   Child::generate_child_process(
-    const bonding::config::Container_Options container_options) noexcept
+    const config::Container_Options container_options) noexcept
   {
     const pid_t child_pid =
       clone(Process::__main,
@@ -71,7 +70,7 @@ namespace bonding::child
             (void *)&container_options);
 
     if (-1 == child_pid)
-      return Err(bonding::error::Err(bonding::error::Code::ChildProcessError));
+      return ERR(error::Code::ChildProcessError);
 
     return Ok(child_pid);
   }
@@ -85,7 +84,7 @@ namespace bonding::child
 
     /** To wait for children produced by clone(), need __WCLONE flag */
     if (-1 == waitpid(m_pid, &child_process_status, __WALL))
-      return Err(bonding::error::Err(bonding::error::Code::ContainerError));
+      return ERR(error::Code::ContainerError);
 
     spdlog::info("Child process exit with code {}, signal {}",
                  (child_process_status >> 8) & 0xFF,

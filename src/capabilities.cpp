@@ -15,7 +15,7 @@ namespace bonding::capabilities
 
     for (const int drop_caps : DROP)
       if (-1 == prctl(PR_CAPBSET_DROP, drop_caps, 0, 0, 0))
-        return Err(error::Err(error::Code::CapabilitiesError));
+        return ERR(error::Code::CapabilitiesError);
 
     cap_t caps = NULL;
     if (!(caps = cap_get_proc())
@@ -25,7 +25,7 @@ namespace bonding::capabilities
         if (NULL != caps)
           cap_free(caps);
 
-        return Err(error::Err(error::Code::CapabilitiesError));
+        return ERR(error::Code::CapabilitiesError);
       }
 
     cap_free(caps);

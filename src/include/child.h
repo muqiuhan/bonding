@@ -18,7 +18,7 @@ namespace bonding::child
   class Child
   {
    public:
-    explicit Child(const bonding::config::Container_Options container_options)
+    explicit Child(const config::Container_Options container_options)
       : m_container_options(container_options)
       , m_pid(generate_child_process(container_options).unwrap())
     {
@@ -28,7 +28,7 @@ namespace bonding::child
     }
 
     Child()
-      : m_container_options(bonding::config::Container_Options())
+      : m_container_options(config::Container_Options())
       , m_pid(-1)
     {
       std::terminate();
@@ -41,14 +41,14 @@ namespace bonding::child
     class Process
     {
      private:
-      inline static bonding::config::Container_Options * container_options;
+      inline static config::Container_Options * container_options;
 
      public:
       inline static const uint32_t STACK_SIZE = 1024 * 1024;
       inline static void * STACK = malloc(STACK_SIZE);
 
      public:
-      /** Make a copy of bonding::config::Container_Optionsm, instead of using
+      /** Make a copy of config::Container_Optionsm, instead of using
        ** the reference of the parent process */
       static int __main(void * options) noexcept;
 
@@ -56,11 +56,11 @@ namespace bonding::child
     };
 
    private:
-    static Result<pid_t, error::Err> generate_child_process(
-      const bonding::config::Container_Options container_options) noexcept;
+    static Result<pid_t, error::Err>
+    generate_child_process(const config::Container_Options container_options) noexcept;
 
    private:
-    const bonding::config::Container_Options m_container_options;
+    const config::Container_Options m_container_options;
 
    public:
     const pid_t m_pid;

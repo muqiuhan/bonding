@@ -54,6 +54,8 @@ namespace bonding::error
         return "Exec Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::CapabilitiesError)
         return "Capabilities Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::UnixError)
+        return "Unix Error: " + std::string(strerror(m_errno));
       else
         return "Undefined Error: " + std::string(strerror(m_errno));
     };
@@ -61,7 +63,7 @@ namespace bonding::error
     if (m_custom == "")
       return original_error();
 
-    return original_error() + "\n\t\tCustom: " + m_custom;
+    return original_error() + "\n\t\t  Help: " + m_custom;
   }
 
 } // namespace bonding::error

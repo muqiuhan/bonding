@@ -47,7 +47,7 @@ namespace bonding::cli
     /* creating a Unix domain socket, and socket will use a communication semantic with
      * packets and fixed length datagrams.*/
     if (-1 == socketpair(AF_UNIX, SOCK_SEQPACKET, 0, __fds))
-      return Err(bonding::error::Err(error::Code::SocketError));
+      return ERR(error::Code::SocketError);
 
     return Ok(std::make_pair(__fds[0], __fds[1]));
   }
