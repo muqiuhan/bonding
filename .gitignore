@@ -13,3 +13,8 @@ build/
 test.log
 
 mount_dir/
+
+build.ninja
+CMakeLists.txt
+makefile
+compile_commands.json
