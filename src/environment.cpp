@@ -1,4 +1,7 @@
 #include "include/environment.h"
+#include <cstring>
+#include <dirent.h>
+#include <string>
 #include <unistd.h>
 #include <utility>
 
@@ -25,18 +28,36 @@ namespace bonding::environment
 
     for (const std::string controller_name : controllers)
       {
-        std::string controller_path = PATH;
+
         std::string::size_type index = controller_name.find('.');
 
         if (std::string::npos == index)
-          controller_path += controller_name;
+          {
+            const std::string controller_path = PATH + controller_name;
+            if (-1 == access(controller_path.c_str(), F_OK))
+              supported_controllers.insert(std::make_pair(controller_name, false));
+            else
+              supported_controllers.insert(std::make_pair(controller_name, true));
+          }
         else
-          controller_path += controller_name.substr(0, index) + "/" + controller_name;
+          {
+            const std::string controller_path = PATH + controller_name.substr(0, index);
+            supported_controllers.insert(std::make_pair(controller_name, false));
 
-        if (-1 == access(controller_path.c_str(), F_OK))
-          supported_controllers.insert(std::make_pair(controller_name, false));
-        else
-          supported_controllers.insert(std::make_pair(controller_name, true));
+            DIR * d = opendir(controller_path.c_str());
+            struct dirent * dir = NULL;
+            if (NULL != d)
+              {
+                while (NULL != (dir = readdir(d)))
+                  if (std::string::npos != std::string(dir->d_name).find(controller_name))
+                    {
+                      supported_controllers.insert_or_assign(controller_name, true);
+                      break;
+                    }
+
+                closedir(d);
+              }
+          }
       }
 
     return Ok(supported_controllers);

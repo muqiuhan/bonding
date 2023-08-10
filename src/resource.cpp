@@ -18,10 +18,14 @@ namespace bonding::resource
   {
     spdlog::info("Restricting resources for hostname {}", hostname);
 
-    spdlog::debug("Restriction resources by cgroups-v1...");
+    for (const auto [controller, available] :
+         environment::CgroupsV1::supported_controllers)
+      spdlog::debug("{} controllers is {}",
+                    controller,
+                    available ? "available" : "unavailable");
+
     CgroupsV1::setup(hostname).unwrap();
 
-    spdlog::debug("Restriction resources by rlimit...");
     Rlimit::setup().unwrap();
 
     return Ok(Void());
@@ -41,14 +45,6 @@ namespace bonding::resource
   CgroupsV1::setup(const std::string hostname) noexcept
   {
     spdlog::debug("Setting cgroups via cgroups-v1...");
-    
-    for (const auto [controller, available] : environment::CgroupsV1::supported_controllers)
-      {
-        if (available) 
-          spdlog::debug("{} controllers is available", controller);
-        else
-          spdlog::debug("{} controllers is unavailable", controller);
-      }
 
     for (const Control & cgroup : CONFIG)
       {

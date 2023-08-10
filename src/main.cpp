@@ -12,7 +12,7 @@ int
 main(int argc, char ** argv)
 {
   spdlog::set_pattern("%H:%M:%S.%f %^>%$ %v");
-  
+
   auto app = structopt::app("bonding");
 
   try
