@@ -9,25 +9,13 @@ rule gen
  description = regenerating ninja files
 
 # rules for compiler
-rule mxx
- command = /usr/bin/ccache /usr/bin/gcc-12 $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = ccache compiling.debug $in
-
 rule as
  command = /usr/bin/ccache /usr/bin/gcc-12 $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
  description = ccache compiling.debug $in
 
-rule cxx
- command = /usr/bin/ccache /usr/bin/gcc-12 $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = ccache compiling.debug $in
-
-rule mm
+rule mxx
  command = /usr/bin/ccache /usr/bin/gcc-12 $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
@@ -39,8 +27,24 @@ rule cc
  depfile = $out.d
  description = ccache compiling.debug $in
 
+rule mm
+ command = /usr/bin/ccache /usr/bin/gcc-12 $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = ccache compiling.debug $in
+
+rule cxx
+ command = /usr/bin/ccache /usr/bin/gcc-12 $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = ccache compiling.debug $in
+
 
 # rules for linker
+rule ar
+ command = /usr/bin/ar $ARGS $out $in
+ description = archiving.debug $out
+
 rule ld
  command = /usr/bin/g++-12 -o $out $in $ARGS
  description = linking.debug $out
@@ -48,10 +52,6 @@ rule ld
 rule sh
  command = /usr/bin/g++-12 -o $out $in $ARGS
  description = linking.debug $out
-
-rule ar
- command = /usr/bin/ar $ARGS $out $in
- description = archiving.debug $out
 
 
 # build targets
