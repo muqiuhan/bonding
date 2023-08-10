@@ -76,6 +76,6 @@
 },
 {
   "directory": "/home/xfri_public/Workspace/bonding",
-  "arguments": ["/usr/bin/gcc-12", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/check.cpp.o", "src/check.cpp"],
-  "file": "src/check.cpp"
+  "arguments": ["/usr/bin/gcc-12", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Ilib/spdlog/include", "-Ilib/structopt/include", "-Ilib/result/include", "-o", "build/.objs/bonding/linux/x86_64/debug/src/environment.cpp.o", "src/environment.cpp"],
+  "file": "src/environment.cpp"
 }]

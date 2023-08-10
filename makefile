@@ -7,20 +7,20 @@ VV=@
 endif
 
 CCACHE=/usr/bin/ccache
+MXX=/usr/bin/gcc-12
 MM=/usr/bin/gcc-12
 CC=/usr/bin/gcc-12
 AS=/usr/bin/gcc-12
-MXX=/usr/bin/gcc-12
 CXX=/usr/bin/gcc-12
 
-AR=/usr/bin/ar
-SH=/usr/bin/g++-12
 LD=/usr/bin/g++-12
+SH=/usr/bin/g++-12
+AR=/usr/bin/ar
 
 
 bonding_CXXFLAGS=-m64 -g -O0 -std=c++20 -Ilib/spdlog/include -Ilib/structopt/include -Ilib/result/include
 bonding_CXXFLAGS=-m64 -g -O0 -std=c++20 -Ilib/spdlog/include -Ilib/structopt/include -Ilib/result/include
-bonding_LDFLAGS=-m64 -lseccomp -lcap
+bonding_LDFLAGS=-m64 -lseccomp -lcap -lcgroup
 
 default:  bonding
 
@@ -29,10 +29,10 @@ all:  bonding
 .PHONY: default all  bonding
 
 bonding: build/linux/x86_64/debug/bonding
-build/linux/x86_64/debug/bonding: build/.objs/bonding/linux/x86_64/debug/src/config.cpp.o build/.objs/bonding/linux/x86_64/debug/src/unix.cpp.o build/.objs/bonding/linux/x86_64/debug/src/capabilities.cpp.o build/.objs/bonding/linux/x86_64/debug/src/child.cpp.o build/.objs/bonding/linux/x86_64/debug/src/cli.cpp.o build/.objs/bonding/linux/x86_64/debug/src/container.cpp.o build/.objs/bonding/linux/x86_64/debug/src/error.cpp.o build/.objs/bonding/linux/x86_64/debug/src/exec.cpp.o build/.objs/bonding/linux/x86_64/debug/src/hostname.cpp.o build/.objs/bonding/linux/x86_64/debug/src/ipc.cpp.o build/.objs/bonding/linux/x86_64/debug/src/main.cpp.o build/.objs/bonding/linux/x86_64/debug/src/mount.cpp.o build/.objs/bonding/linux/x86_64/debug/src/namespace.cpp.o build/.objs/bonding/linux/x86_64/debug/src/resource.cpp.o build/.objs/bonding/linux/x86_64/debug/src/syscall.cpp.o build/.objs/bonding/linux/x86_64/debug/src/check.cpp.o
+build/linux/x86_64/debug/bonding: build/.objs/bonding/linux/x86_64/debug/src/config.cpp.o build/.objs/bonding/linux/x86_64/debug/src/unix.cpp.o build/.objs/bonding/linux/x86_64/debug/src/capabilities.cpp.o build/.objs/bonding/linux/x86_64/debug/src/child.cpp.o build/.objs/bonding/linux/x86_64/debug/src/cli.cpp.o build/.objs/bonding/linux/x86_64/debug/src/container.cpp.o build/.objs/bonding/linux/x86_64/debug/src/error.cpp.o build/.objs/bonding/linux/x86_64/debug/src/exec.cpp.o build/.objs/bonding/linux/x86_64/debug/src/hostname.cpp.o build/.objs/bonding/linux/x86_64/debug/src/ipc.cpp.o build/.objs/bonding/linux/x86_64/debug/src/main.cpp.o build/.objs/bonding/linux/x86_64/debug/src/mount.cpp.o build/.objs/bonding/linux/x86_64/debug/src/namespace.cpp.o build/.objs/bonding/linux/x86_64/debug/src/resource.cpp.o build/.objs/bonding/linux/x86_64/debug/src/syscall.cpp.o build/.objs/bonding/linux/x86_64/debug/src/environment.cpp.o
 	@echo linking.debug bonding
 	@mkdir -p build/linux/x86_64/debug
-	$(VV)$(LD) -o build/linux/x86_64/debug/bonding build/.objs/bonding/linux/x86_64/debug/src/config.cpp.o build/.objs/bonding/linux/x86_64/debug/src/unix.cpp.o build/.objs/bonding/linux/x86_64/debug/src/capabilities.cpp.o build/.objs/bonding/linux/x86_64/debug/src/child.cpp.o build/.objs/bonding/linux/x86_64/debug/src/cli.cpp.o build/.objs/bonding/linux/x86_64/debug/src/container.cpp.o build/.objs/bonding/linux/x86_64/debug/src/error.cpp.o build/.objs/bonding/linux/x86_64/debug/src/exec.cpp.o build/.objs/bonding/linux/x86_64/debug/src/hostname.cpp.o build/.objs/bonding/linux/x86_64/debug/src/ipc.cpp.o build/.objs/bonding/linux/x86_64/debug/src/main.cpp.o build/.objs/bonding/linux/x86_64/debug/src/mount.cpp.o build/.objs/bonding/linux/x86_64/debug/src/namespace.cpp.o build/.objs/bonding/linux/x86_64/debug/src/resource.cpp.o build/.objs/bonding/linux/x86_64/debug/src/syscall.cpp.o build/.objs/bonding/linux/x86_64/debug/src/check.cpp.o $(bonding_LDFLAGS)
+	$(VV)$(LD) -o build/linux/x86_64/debug/bonding build/.objs/bonding/linux/x86_64/debug/src/config.cpp.o build/.objs/bonding/linux/x86_64/debug/src/unix.cpp.o build/.objs/bonding/linux/x86_64/debug/src/capabilities.cpp.o build/.objs/bonding/linux/x86_64/debug/src/child.cpp.o build/.objs/bonding/linux/x86_64/debug/src/cli.cpp.o build/.objs/bonding/linux/x86_64/debug/src/container.cpp.o build/.objs/bonding/linux/x86_64/debug/src/error.cpp.o build/.objs/bonding/linux/x86_64/debug/src/exec.cpp.o build/.objs/bonding/linux/x86_64/debug/src/hostname.cpp.o build/.objs/bonding/linux/x86_64/debug/src/ipc.cpp.o build/.objs/bonding/linux/x86_64/debug/src/main.cpp.o build/.objs/bonding/linux/x86_64/debug/src/mount.cpp.o build/.objs/bonding/linux/x86_64/debug/src/namespace.cpp.o build/.objs/bonding/linux/x86_64/debug/src/resource.cpp.o build/.objs/bonding/linux/x86_64/debug/src/syscall.cpp.o build/.objs/bonding/linux/x86_64/debug/src/environment.cpp.o $(bonding_LDFLAGS)
 
 build/.objs/bonding/linux/x86_64/debug/src/config.cpp.o: src/config.cpp
 	@echo ccache compiling.debug src/config.cpp
@@ -109,10 +109,10 @@ build/.objs/bonding/linux/x86_64/debug/src/syscall.cpp.o: src/syscall.cpp
 	@mkdir -p build/.objs/bonding/linux/x86_64/debug/src
 	$(VV)$(CXX) -c $(bonding_CXXFLAGS) -o build/.objs/bonding/linux/x86_64/debug/src/syscall.cpp.o src/syscall.cpp
 
-build/.objs/bonding/linux/x86_64/debug/src/check.cpp.o: src/check.cpp
-	@echo ccache compiling.debug src/check.cpp
+build/.objs/bonding/linux/x86_64/debug/src/environment.cpp.o: src/environment.cpp
+	@echo ccache compiling.debug src/environment.cpp
 	@mkdir -p build/.objs/bonding/linux/x86_64/debug/src
-	$(VV)$(CXX) -c $(bonding_CXXFLAGS) -o build/.objs/bonding/linux/x86_64/debug/src/check.cpp.o src/check.cpp
+	$(VV)$(CXX) -c $(bonding_CXXFLAGS) -o build/.objs/bonding/linux/x86_64/debug/src/environment.cpp.o src/environment.cpp
 
 clean:  clean_bonding
 
@@ -134,5 +134,5 @@ clean_bonding:
 	@rm -rf build/.objs/bonding/linux/x86_64/debug/src/namespace.cpp.o
 	@rm -rf build/.objs/bonding/linux/x86_64/debug/src/resource.cpp.o
 	@rm -rf build/.objs/bonding/linux/x86_64/debug/src/syscall.cpp.o
-	@rm -rf build/.objs/bonding/linux/x86_64/debug/src/check.cpp.o
+	@rm -rf build/.objs/bonding/linux/x86_64/debug/src/environment.cpp.o
 

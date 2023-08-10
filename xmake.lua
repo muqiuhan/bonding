@@ -4,15 +4,19 @@ add_rules("plugin.vsxmake.autoupdate", {outputdir = "."})
 
 if ( "opensuse" == linuxos.name ) then
     add_requires("zypper::libcap-devel", {system = true})
+    add_requires("zypper::libcgroup-devel", {system = true})
     add_requires("zypper::libseccomp-devel", {system = true})
 elseif ( "archlinux" == linuxos.name ) then
     add_requires("pacman::libcap", {system = true})
+    add_requires("pacman::libcgroup", {system = true})
     add_requires("pacman::libseccomp", {system = true})
 elseif ( "ubuntu" == linuxos.name ) then
     add_requires("apt::libcap-dev", {system = true})
+    add_requires("apt::libcgroup-dev", {system = true})
     add_requires("apt::libseccomp-dev", {system = true})
 else
     add_requires("libcap")
+    add_requires("libcgroup")
     add_requires("libseccomp")
 end
 
@@ -58,7 +62,7 @@ target("bonding")
                     "lib/structopt/include", 
                     "lib/result/include")
     add_packages("spdlog", "structopt", "result")
-    add_links("seccomp", "cap")
+    add_links("seccomp", "cap", "cgroup")
 
     after_build(function (target)
         import("core.project.project")

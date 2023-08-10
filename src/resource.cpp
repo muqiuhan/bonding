@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/resource.h"
-#include "include/check.h"
+#include "include/environment.h"
 #include <error.h>
 #include <exception>
 #include <fcntl.h>
@@ -18,7 +18,7 @@ namespace bonding::resource
   {
     spdlog::info("Restricting resources for hostname {}", hostname);
 
-    spdlog::debug("Restriction resources by cgroup-v1...");
+    spdlog::debug("Restriction resources by cgroups-v1...");
     CgroupsV1::setup(hostname).unwrap();
 
     spdlog::debug("Restriction resources by rlimit...");
@@ -40,7 +40,15 @@ namespace bonding::resource
   Result<Void, error::Err>
   CgroupsV1::setup(const std::string hostname) noexcept
   {
-    spdlog::debug("Setting cgroups...");
+    spdlog::debug("Setting cgroups via cgroups-v1...");
+    
+    for (const auto [controller, available] : environment::CgroupsV1::supported_controllers)
+      {
+        if (available) 
+          spdlog::debug("{} controllers is available", controller);
+        else
+          spdlog::debug("{} controllers is unavailable", controller);
+      }
 
     for (const Control & cgroup : CONFIG)
       {
@@ -140,5 +148,74 @@ namespace bonding::resource
 			      ( Control::Setting {
 				.name = "blkio.bfq.weight", .value = PIDS_MAX }),
 			      TASK} })});
+  }
+
+  Result<std::vector<Cgroups::Control>, error::Err>
+  Cgroups::default_config() noexcept
+  {
+    return Ok(std::vector<Control>{ (Control{ .control = "memory", 
+                    .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
+						        .value = MEM_LIMIT }),
+			TASK } }),
+
+        (Control { .control = "cpu",
+			    .settings =
+			    {
+			      (Control::Setting { 
+                                .name = "cpu.shares", .value = CPU_SHARES }),
+			      TASK,
+			    } }),
+
+        (Control { .control = "pids",
+			    .settings =
+			    {
+			      (Control::Setting { .name = "pids.max",
+							   .value = PIDS_MAX }),
+			    TASK} }),
+        (Control { .control = "blkio",
+			    .settings = {
+			      ( Control::Setting {
+				.name = "你写你妈了个逼", .value = PIDS_MAX }),
+			      TASK} })});
+  }
+
+  Result<Void, error::Err>
+  Cgroups::setup(const std::string hostname) noexcept
+  {
+    spdlog::debug("Setting cgroups via libcgroup...");
+
+    CGROUP = cgroup_new_cgroup(hostname.c_str());
+
+    if (NULL == CGROUP)
+      return ERR(error::Code::CgroupsError);
+
+    for (const Control & config : CONFIG)
+      {
+        cgroup_controller * controller =
+          cgroup_add_controller(CGROUP, config.control.c_str());
+
+        if (NULL == controller)
+          return ERR(error::Code::CgroupsError);
+
+        for (const Control::Setting & setting : config.settings)
+          {
+
+            const int res = cgroup_set_value_string(controller,
+                                                    setting.name.c_str(),
+                                                    setting.value.c_str());
+            spdlog::debug("{} -> {} return {}", setting.value, setting.name, res);
+            if (-1 == res)
+              return ERR(error::Code::CgroupsError);
+          }
+      }
+
+    return Ok(Void());
+  }
+
+  Result<Void, error::Err>
+  Cgroups::clean(const std::string hostname) noexcept
+  {
+    cgroup_free_controllers(CGROUP);
+    return Ok(Void());
   }
 }

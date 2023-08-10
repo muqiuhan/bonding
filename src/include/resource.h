@@ -6,6 +6,7 @@
 #include "error.h"
 #include "result.hpp"
 #include <cstdint>
+#include <libcgroup.h>
 
 namespace bonding::resource
 {
@@ -43,13 +44,46 @@ namespace bonding::resource
      **       under /sys/fs/cgroup/<groupname>/ */
     static Result<Void, error::Err> clean(const std::string hostname) noexcept;
 
-  private:
+   private:
     static Result<std::vector<Control>, error::Err> default_config() noexcept;
 
    private:
     inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
 
     inline static const struct std::vector<Control> CONFIG = default_config().unwrap();
+  };
+
+  /** Use libcgroups */
+  class Cgroups
+  {
+   private:
+    inline static struct cgroup * CGROUP = NULL;
+    inline static const std::string MEM_LIMIT = std::to_string(1024 * 1024 * 1024);
+    inline static const std::string CPU_SHARES = "256";
+    inline static const std::string BLKIO_BFQ_WEIGHT = "10";
+    inline static const std::string PIDS_MAX = "64";
+
+    struct Control
+    {
+      const std::string control;
+
+      struct Setting
+      {
+        const std::string name;
+        const std::string value;
+      };
+
+      const std::vector<Setting> settings;
+    };
+
+    static Result<std::vector<Control>, error::Err> default_config() noexcept;
+
+    inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
+    inline static const struct std::vector<Control> CONFIG = default_config().unwrap();
+
+   public:
+    static Result<Void, error::Err> setup(const std::string hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string hostname) noexcept;
   };
 
   /** Rlimit is a system used to restrict a single process.
