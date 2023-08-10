@@ -6,7 +6,10 @@
 #include "error.h"
 #include "result.hpp"
 #include <cstdint>
+
+#ifdef __WITH_LIBCGROUP
 #include <libcgroup.h>
+#endif
 
 namespace bonding::resource
 {
@@ -51,7 +54,7 @@ namespace bonding::resource
     inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
     inline static const struct std::vector<Control> CONFIG = default_config().unwrap();
   };
-
+#ifdef __WITH_LIBCGROUP
   /** Use libcgroups */
   class Cgroups
   {
@@ -84,7 +87,7 @@ namespace bonding::resource
     static Result<Void, error::Err> setup(const std::string hostname) noexcept;
     static Result<Void, error::Err> clean(const std::string hostname) noexcept;
   };
-
+#endif
   /** Rlimit is a system used to restrict a single process.
    ** It’s focus is more centered around what this process can do than what realtime
    ** system ressources it consumes. */

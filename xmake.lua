@@ -3,7 +3,6 @@ add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
 add_rules("plugin.vsxmake.autoupdate", {outputdir = "."})
 
 add_requires("libcap")
-add_requires("libcgroup")
 add_requires("libseccomp")
 
 package("spdlog")
@@ -48,7 +47,7 @@ target("bonding")
                     "lib/structopt/include", 
                     "lib/result/include")
     add_packages("spdlog", "structopt", "result")
-    add_links("seccomp", "cap", "cgroup")
+    add_links("seccomp", "cap")
 
     after_build(function (target)
         import("core.project.project")

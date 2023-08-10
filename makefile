@@ -7,20 +7,20 @@ VV=@
 endif
 
 CCACHE=/usr/bin/ccache
-AS=/usr/bin/gcc-12
+CXX=/usr/bin/gcc-12
+MM=/usr/bin/gcc-12
 MXX=/usr/bin/gcc-12
 CC=/usr/bin/gcc-12
-MM=/usr/bin/gcc-12
-CXX=/usr/bin/gcc-12
+AS=/usr/bin/gcc-12
 
-AR=/usr/bin/ar
 LD=/usr/bin/g++-12
 SH=/usr/bin/g++-12
+AR=/usr/bin/ar
 
 
 bonding_CXXFLAGS=-m64 -g -O0 -std=c++20 -Ilib/spdlog/include -Ilib/structopt/include -Ilib/result/include
 bonding_CXXFLAGS=-m64 -g -O0 -std=c++20 -Ilib/spdlog/include -Ilib/structopt/include -Ilib/result/include
-bonding_LDFLAGS=-m64 -lseccomp -lcap -lcgroup
+bonding_LDFLAGS=-m64 -lseccomp -lcap
 
 default:  bonding
 

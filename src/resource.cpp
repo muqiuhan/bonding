@@ -8,10 +8,9 @@
 #include <exception>
 #include <fcntl.h>
 #include <filesystem>
+#include <sys/resource.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#include <sys/resource.h>
 
 namespace bonding::resource
 {
@@ -138,6 +137,7 @@ namespace bonding::resource
 			      TASK} })});
   }
 
+#ifdef __WITH_LIBCGROUP
   Result<std::vector<Cgroups::Control>, error::Err>
   Cgroups::default_config() noexcept
   {
@@ -206,4 +206,5 @@ namespace bonding::resource
     cgroup_free_controllers(CGROUP);
     return Ok(Void());
   }
+#endif
 }
