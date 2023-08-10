@@ -2,19 +2,8 @@ add_rules("mode.debug", "mode.release")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
 add_rules("plugin.vsxmake.autoupdate", {outputdir = "."})
 
-if ( "opensuse" == linuxos.name ) then
-    add_requires("zypper::libcap-devel", {system = true})
-    add_requires("zypper::libseccomp-devel", {system = true})
-elseif ( "archlinux" == linuxos.name ) then
-    add_requires("pacman::libcap", {system = true})
-    add_requires("pacman::libseccomp", {system = true})
-elseif ( "ubuntu" == linuxos.name ) then
-    add_requires("apt::libcap-dev", {system = true})
-    add_requires("apt::libseccomp-dev", {system = true})
-else
-    add_requires("libcap")
-    add_requires("libseccomp")
-end
+add_requires("libcap")
+add_requires("libseccomp")
 
 package("spdlog")
     add_deps("cmake")

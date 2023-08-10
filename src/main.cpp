@@ -11,13 +11,13 @@ using namespace bonding;
 int
 main(int argc, char ** argv)
 {
+  spdlog::set_pattern("%H:%M:%S.%f %^>%$ %v");
+
   auto app = structopt::app("bonding");
 
   try
     {
       auto options = app.parse<cli::Command_Line_Args>(argc, argv);
-
-      spdlog::set_pattern("%H:%M:%S.%f %^>%$ %v");
 
       if (options.debug.value())
         {

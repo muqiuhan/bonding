@@ -1,6 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/capabilities.h"
+#include "include/unix.h"
 #include "spdlog/spdlog.h"
 #include <error.h>
 #include <linux/prctl.h>
@@ -17,18 +18,26 @@ namespace bonding::capabilities
       if (-1 == prctl(PR_CAPBSET_DROP, drop_caps, 0, 0, 0))
         return ERR(error::Code::CapabilitiesError);
 
-    cap_t caps = NULL;
-    if (!(caps = cap_get_proc())
-        || cap_set_flag(caps, CAP_INHERITABLE, DROP.size(), &DROP[0], CAP_CLEAR)
-        || cap_set_proc(caps))
-      {
-        if (NULL != caps)
-          cap_free(caps);
+    unix::Capabilities::get_proc()
+      .and_then([](cap_t cap) {
+        unix::Capabilities::set_flag(cap,
+                                     CAP_INHERITABLE,
+                                     DROP.size(),
+                                     &DROP[0],
+                                     CAP_CLEAR)
+          .and_then([&](const int _) { return unix::Capabilities::set_proc(cap); })
+          .and_then([&](const int _) { return unix::Capabilities::free(cap); })
+          .or_else([&](const error::Err err) {
+            if (NULL != cap)
+              unix::Capabilities::free(cap).unwrap();
 
-        return ERR(error::Code::CapabilitiesError);
-      }
+            return ERR_MSG(error::Code::CapabilitiesError, err.to_string());
+          });
 
-    cap_free(caps);
+        return Ok(cap);
+      })
+      .unwrap();
+
     return Ok(Void());
   }
 }

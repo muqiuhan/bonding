@@ -7,6 +7,10 @@
 #include "result.hpp"
 #include <cstdint>
 
+#ifdef __WITH_LIBCGROUP
+#include <libcgroup.h>
+#endif
+
 namespace bonding::resource
 {
   /** Cgroups is a mechanism introduced in Linux v2.6.4 which allows to “allocate”
@@ -44,38 +48,46 @@ namespace bonding::resource
     static Result<Void, error::Err> clean(const std::string hostname) noexcept;
 
    private:
+    static Result<std::vector<Control>, error::Err> default_config() noexcept;
+
+   private:
     inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
-
-    inline static const struct std::vector<Control> CONFIG =
-    {
-      (Control{
-	  .control = "memory",
-	  .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
-						    .value = MEM_LIMIT }),
-			TASK } }),
-
-        (Control { .control = "cpu",
-			    .settings =
-			    {
-			      (Control::Setting { 
-                                .name = "cpu.shares", .value = CPU_SHARES }),
-			      TASK,
-			    } }),
-
-        (Control { .control = "pids",
-			    .settings =
-			    {
-			      (Control::Setting { .name = "pids.max",
-							   .value = PIDS_MAX }),
-			    TASK} }),
-        (Control { .control = "blkio",
-			    .settings = {
-			      ( Control::Setting {
-				.name = "blkio.bfq.weight", .value = PIDS_MAX }),
-			      TASK} }),
-    };
+    inline static const struct std::vector<Control> CONFIG = default_config().unwrap();
   };
+#ifdef __WITH_LIBCGROUP
+  /** Use libcgroups */
+  class Cgroups
+  {
+   private:
+    inline static struct cgroup * CGROUP = NULL;
+    inline static const std::string MEM_LIMIT = std::to_string(1024 * 1024 * 1024);
+    inline static const std::string CPU_SHARES = "256";
+    inline static const std::string BLKIO_BFQ_WEIGHT = "10";
+    inline static const std::string PIDS_MAX = "64";
 
+    struct Control
+    {
+      const std::string control;
+
+      struct Setting
+      {
+        const std::string name;
+        const std::string value;
+      };
+
+      const std::vector<Setting> settings;
+    };
+
+    static Result<std::vector<Control>, error::Err> default_config() noexcept;
+
+    inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
+    inline static const struct std::vector<Control> CONFIG = default_config().unwrap();
+
+   public:
+    static Result<Void, error::Err> setup(const std::string hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string hostname) noexcept;
+  };
+#endif
   /** Rlimit is a system used to restrict a single process.
    ** It’s focus is more centered around what this process can do than what realtime
    ** system ressources it consumes. */

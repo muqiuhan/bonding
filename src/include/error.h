@@ -25,7 +25,8 @@ namespace bonding::error
     CgroupsError,
     ExecError,
     CapabilitiesError,
-    UnixError
+    UnixError,
+    CheckError
   };
 
   class Err
@@ -47,7 +48,6 @@ namespace bonding::error
     {
       spdlog::error("{}", to_string());
       spdlog::dump_backtrace();
-      std::terminate();
     }
 
     Err(const Code code,
@@ -69,7 +69,6 @@ namespace bonding::error
                        file,
                        file,
                        line);
-      std::terminate();
     }
 
     int32_t to_exit_code() const noexcept;

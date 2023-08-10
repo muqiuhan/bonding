@@ -5,7 +5,7 @@
 
 #include "error.h"
 #include "result.hpp"
-#include <sys/capability.h>
+#include "unix.h"
 #include <vector>
 
 namespace bonding::capabilities
