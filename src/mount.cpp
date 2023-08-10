@@ -15,7 +15,7 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::__umount(const std::string & path) noexcept
   {
-    spdlog::debug("Umount {}", path);
+    spdlog::info("Umount {}", path);
     if (-1 == umount2(path.c_str(), MNT_DETACH))
       {
         spdlog::error("Unable to umount {}", path);
@@ -28,7 +28,6 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::__delete(const std::string & path) noexcept
   {
-    spdlog::debug("Remove {}", path);
     if (-1 == remove(path.c_str()))
       {
         spdlog::error("Unable to remove {}", path);
@@ -91,6 +90,7 @@ namespace bonding::mounts
                  const std::string & mount_point,
                  unsigned long flags) noexcept
   {
+    spdlog::info("Mount {} to {}", path, mount_point);
     if (-1
         == mount((path == "" ? NULL : path.c_str()),
                  mount_point.c_str(),

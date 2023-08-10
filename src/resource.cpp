@@ -2,6 +2,8 @@
 
 #include "include/resource.h"
 #include "include/environment.h"
+#include "include/unix.h"
+#include "spdlog/spdlog.h"
 #include <error.h>
 #include <exception>
 #include <fcntl.h>
@@ -17,15 +19,7 @@ namespace bonding::resource
   Resource::setup(const std::string hostname) noexcept
   {
     spdlog::info("Restricting resources for hostname {}", hostname);
-
-    for (const auto [controller, available] :
-         environment::CgroupsV1::supported_controllers)
-      spdlog::debug("{} controllers is {}",
-                    controller,
-                    available ? "available" : "unavailable");
-
     CgroupsV1::setup(hostname).unwrap();
-
     Rlimit::setup().unwrap();
 
     return Ok(Void());
@@ -44,37 +38,35 @@ namespace bonding::resource
   Result<Void, error::Err>
   CgroupsV1::setup(const std::string hostname) noexcept
   {
-    spdlog::debug("Setting cgroups via cgroups-v1...");
+    spdlog::debug("Setting cgroups by cgroups-v1...");
 
     for (const Control & cgroup : CONFIG)
       {
-        const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
-
-        try
+        if (environment::CgroupsV1::supported_controllers.contains(cgroup.control))
           {
-            std::filesystem::create_directories(dir);
-          }
-        catch (const std::filesystem::filesystem_error & e)
-          {
-            return ERR_MSG(error::Code::CgroupsError, e.what());
-          }
+            const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
+            unix::Filesystem::mkdir(dir).unwrap();
 
-        for (const Control::Setting & setting : cgroup.settings)
-          {
-            const std::string path = dir + "/" + setting.name;
-
-            int fd = open(path.c_str(), O_WRONLY);
-            if (-1 == fd)
+            for (const Control::Setting & setting : cgroup.settings)
               {
+                const std::string path = dir + "/" + setting.name;
+
+                int fd = open(path.c_str(), O_WRONLY);
+                if (-1 == fd)
+                  {
+                    spdlog::warn("Option {} is not support", setting.name);
+                    close(fd);
+                    break;
+                  }
+
+                if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
+                  return ERR(error::Code::CgroupsError);
+
                 close(fd);
-                return ERR(error::Code::CgroupsError);
               }
-
-            if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
-              return ERR(error::Code::CgroupsError);
-
-            close(fd);
           }
+        else
+          spdlog::warn("Controller {} is not support", cgroup.control);
       }
 
     return Ok(Void());

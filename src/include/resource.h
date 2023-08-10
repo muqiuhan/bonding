@@ -49,7 +49,6 @@ namespace bonding::resource
 
    private:
     inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
-
     inline static const struct std::vector<Control> CONFIG = default_config().unwrap();
   };
 

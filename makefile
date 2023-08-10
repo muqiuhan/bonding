@@ -7,14 +7,14 @@ VV=@
 endif
 
 CCACHE=/usr/bin/ccache
-MM=/usr/bin/gcc-12
-CXX=/usr/bin/gcc-12
-AS=/usr/bin/gcc-12
-CC=/usr/bin/gcc-12
 MXX=/usr/bin/gcc-12
+AS=/usr/bin/gcc-12
+CXX=/usr/bin/gcc-12
+MM=/usr/bin/gcc-12
+CC=/usr/bin/gcc-12
 
-SH=/usr/bin/g++-12
 LD=/usr/bin/g++-12
+SH=/usr/bin/g++-12
 AR=/usr/bin/ar
 
 
