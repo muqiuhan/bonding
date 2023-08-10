@@ -1,4 +1,6 @@
 #include "include/environment.h"
+#include <unistd.h>
+#include <utility>
 
 namespace bonding::environment
 {
@@ -16,4 +18,27 @@ namespace bonding::environment
     return Ok(std::make_pair(major, minor));
   }
 
+  Result<std::map<std::string, bool>, error::Err>
+  CgroupsV1::check_supported_controller() noexcept
+  {
+    std::map<std::string, bool> supported_controllers;
+
+    for (const std::string controller_name : controllers)
+      {
+        std::string controller_path = PATH;
+        std::string::size_type index = controller_name.find('.');
+
+        if (std::string::npos == index)
+          controller_path += controller_name;
+        else
+          controller_path += controller_name.substr(0, index) + "/" + controller_name;
+
+        if (-1 == access(controller_path.c_str(), F_OK))
+          supported_controllers.insert(std::make_pair(controller_name, false));
+        else
+          supported_controllers.insert(std::make_pair(controller_name, true));
+      }
+
+    return Ok(supported_controllers);
+  }
 }

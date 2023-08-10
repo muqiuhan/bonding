@@ -5,7 +5,9 @@
 
 #include "result.hpp"
 #include "unix.h"
+#include <map>
 #include <sys/utsname.h>
+#include <vector>
 
 namespace bonding::environment
 {
@@ -43,6 +45,28 @@ namespace bonding::environment
     const std::string release;
     const std::string sysname;
     const std::string node_name;
+  };
+
+  class CgroupsV1
+  {
+   private:
+    inline static const std::string PATH = "/sys/fs/cgroup/";
+
+   private:
+    static Result<std::map<std::string, bool>, error::Err>
+    check_supported_controller() noexcept;
+
+   private:
+    inline static const std::vector<std::string> controllers = {
+      "blkio",   "blkio.bfq", "cpuacct", "cpuset",           "freezer",    "memory",
+      "net_cls", "net_prio",  "pids",    "systemd",          "cpu",        "cpu,cpuacct",
+      "devices", "hugetlb",   "misc",    "net_cls,net_prio", "perf_event", "rdma",
+      "unified"
+    };
+
+   public:
+    inline static const std::map<std::string, bool> supported_controllers =
+      check_supported_controller().unwrap();
   };
 
   class Info
