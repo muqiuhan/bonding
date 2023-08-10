@@ -43,37 +43,13 @@ namespace bonding::resource
      **       under /sys/fs/cgroup/<groupname>/ */
     static Result<Void, error::Err> clean(const std::string hostname) noexcept;
 
+  private:
+    static Result<std::vector<Control>, error::Err> default_config() noexcept;
+
    private:
     inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
 
-    inline static const struct std::vector<Control> CONFIG =
-    {
-      (Control{
-	  .control = "memory",
-	  .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
-						    .value = MEM_LIMIT }),
-			TASK } }),
-
-        (Control { .control = "cpu",
-			    .settings =
-			    {
-			      (Control::Setting { 
-                                .name = "cpu.shares", .value = CPU_SHARES }),
-			      TASK,
-			    } }),
-
-        (Control { .control = "pids",
-			    .settings =
-			    {
-			      (Control::Setting { .name = "pids.max",
-							   .value = PIDS_MAX }),
-			    TASK} }),
-        (Control { .control = "blkio",
-			    .settings = {
-			      ( Control::Setting {
-				.name = "blkio.bfq.weight", .value = PIDS_MAX }),
-			      TASK} }),
-    };
+    inline static const struct std::vector<Control> CONFIG = default_config().unwrap();
   };
 
   /** Rlimit is a system used to restrict a single process.

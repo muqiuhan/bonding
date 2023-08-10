@@ -1,6 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/resource.h"
+#include "include/check.h"
 #include <error.h>
 #include <exception>
 #include <fcntl.h>
@@ -110,5 +111,34 @@ namespace bonding::resource
     CgroupsV1::clean(hostname).unwrap();
 
     return Ok(Void());
+  }
+
+  Result<std::vector<CgroupsV1::Control>, error::Err>
+  CgroupsV1::default_config() noexcept
+  {
+    return Ok(std::vector<CgroupsV1::Control>{ (Control{ .control = "memory", 
+                    .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
+						        .value = MEM_LIMIT }),
+			TASK } }),
+
+        (Control { .control = "cpu",
+			    .settings =
+			    {
+			      (Control::Setting { 
+                                .name = "cpu.shares", .value = CPU_SHARES }),
+			      TASK,
+			    } }),
+
+        (Control { .control = "pids",
+			    .settings =
+			    {
+			      (Control::Setting { .name = "pids.max",
+							   .value = PIDS_MAX }),
+			    TASK} }),
+        (Control { .control = "blkio",
+			    .settings = {
+			      ( Control::Setting {
+				.name = "blkio.bfq.weight", .value = PIDS_MAX }),
+			      TASK} })});
   }
 }

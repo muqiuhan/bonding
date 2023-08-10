@@ -56,6 +56,8 @@ namespace bonding::error
         return "Capabilities Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::UnixError)
         return "Unix Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::CheckError)
+        return "Check Error: " + std::string(strerror(m_errno));
       else
         return "Undefined Error: " + std::string(strerror(m_errno));
     };

@@ -1,9 +1,11 @@
+/** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
+
 #include "include/unix.h"
 #include <cstddef>
 #include <error.h>
 #include <filesystem>
 #include <sys/capability.h>
-
+#include <sys/utsname.h>
 
 namespace bonding::unix
 {
@@ -47,4 +49,15 @@ namespace bonding::unix
                                ncap,
                                caps,
                                value)
+
+  Result<utsname, error::Err>
+  Utsname::get() noexcept
+  {
+    struct utsname host = { 0 };
+    if (-1 == uname(&host))
+      return ERR(error::Code::UnixError);
+
+    return Ok(host);
+  }
+
 }

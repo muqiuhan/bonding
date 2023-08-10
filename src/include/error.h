@@ -25,7 +25,8 @@ namespace bonding::error
     CgroupsError,
     ExecError,
     CapabilitiesError,
-    UnixError
+    UnixError,
+    CheckError
   };
 
   class Err

@@ -8,6 +8,7 @@
 #include <linux/prctl.h>
 #include <sys/capability.h>
 #include <sys/prctl.h>
+#include <sys/utsname.h>
 
 /** Auto generate wrapper function for system calls function  */
 #define GENERATE_SYSTEM_CALL_WRAPPER(OK_TYPE,                                            \
@@ -43,6 +44,12 @@ namespace bonding::unix
                                             int ncap,
                                             const cap_value_t * caps,
                                             cap_flag_value_t value) noexcept;
+  };
+
+  class Utsname
+  {
+   public:
+    static Result<utsname, error::Err> get() noexcept;
   };
 };
 
