@@ -13,7 +13,7 @@ namespace bonding::cli
     if (hostname.value() == "")
       return "bonding." + hostname::Hostname::generate(10).unwrap();
     else
-      return hostname.value();
+      return "bonding." + hostname.value();
   }
 
   bool

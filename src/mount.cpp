@@ -15,7 +15,7 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::__umount(const std::string & path) noexcept
   {
-    spdlog::info("Umount {}", path);
+    spdlog::debug("Umount {}", path);
     if (-1 == umount2(path.c_str(), MNT_DETACH))
       {
         spdlog::error("Unable to umount {}", path);
@@ -109,6 +109,7 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::__create(const std::string & path) noexcept
   {
+    spdlog::debug("Create {}", path);
     try
       {
         std::filesystem::create_directories(path);
