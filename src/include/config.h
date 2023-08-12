@@ -8,6 +8,7 @@
 #include "result.hpp"
 
 #include <cstdint>
+#include <initializer_list>
 #include <string>
 #include <utility>
 #include <vector>
@@ -21,25 +22,28 @@ namespace bonding::config
   class Container_Options
   {
    public:
-    static Result<std::pair<Container_Options, std::pair<int, int>>, error::Err>
-    make(const std::string & command,
-         const std::string & mount_dir,
-         const uint32_t uid,
-         const std::string & hostname,
-         const std::vector<std::pair<std::string, std::string>> & mounts) noexcept
+    inline static Result<std::pair<Container_Options, std::pair<int, int>>, error::Err>
+    make(const cli::Args & args) noexcept
     {
       const std::pair<int, int> sockets = cli::generate_socketpair().unwrap();
       const std::vector<std::string> argv =
-        parse_argv(command).expect("Cannot parse command arguments");
+        parse_argv(args.command).expect("Cannot parse command arguments");
 
       return Ok(std::make_pair(Container_Options(argv,
-                                                 argv.at(0),
-                                                 mount_dir,
-                                                 uid,
+                                                 args.debug,
+                                                 args.mount_dir,
+                                                 args.uid,
                                                  sockets.second,
-                                                 hostname,
-                                                 mounts),
+                                                 args.hostname,
+                                                 args.random_hostname,
+                                                 args.mounts),
                                sockets));
+    }
+
+    inline const Container_Options
+    operator=(const Container_Options & container_options) const noexcept
+    {
+      return container_options;
     }
 
     Container_Options()
@@ -49,41 +53,40 @@ namespace bonding::config
       , m_path("")
       , m_raw_fd(0)
       , m_hostname("")
+      , m_random_hostname(false)
+      , m_debug(false)
       , m_mounts(
           std::vector<std::pair<std::string, std::string>>{ std::make_pair("", "") })
     {
       std::terminate();
     }
 
-    inline const Container_Options
-    operator=(const Container_Options & container_options) const noexcept
-    {
-      return container_options;
-    }
-
    private:
-    Container_Options(const std::vector<std::string> argv,
-                      const std::string path,
+    Container_Options(const std::vector<std::string> & argv,
+                      const bool debug,
                       const std::string mount_dir,
                       const uint32_t uid,
                       const int raw_fd,
                       const std::string hostname,
+                      const bool random_hostname,
                       const std::vector<std::pair<std::string, std::string>> mounts)
       : m_argv(argv)
-      , m_path(path)
-      , m_mount_dir(mount_dir)
+      , m_path(argv.at(0))
+      , m_mount_dir(std::move(mount_dir))
       , m_uid(uid)
       , m_raw_fd(raw_fd)
-      , m_hostname(hostname)
+      , m_hostname(std::move(hostname))
       , m_mounts(mounts)
+      , m_random_hostname(random_hostname)
+      , m_debug(debug)
     {
     }
 
-   private:
     static Result<std::vector<std::string>, Void>
     parse_argv(const std::string argv) noexcept;
 
    public:
+    const bool m_debug;
     /** The path of the binary executable script to execute inside the container. */
     const std::string m_path;
 
@@ -102,6 +105,7 @@ namespace bonding::config
 
     /** identifies machine */
     const std::string m_hostname;
+    const bool m_random_hostname;
 
     /** Additional mount path */
     const std::vector<std::pair<std::string, std::string>> m_mounts;

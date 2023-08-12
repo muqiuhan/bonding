@@ -22,6 +22,7 @@ namespace bonding::child
     hostname::Hostname::setup(container_options->m_hostname).unwrap();
     mounts::Mount::setup(container_options->m_mount_dir,
                          container_options->m_hostname,
+                         container_options->m_random_hostname,
                          container_options->m_mounts)
       .unwrap();
     ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid).unwrap();
