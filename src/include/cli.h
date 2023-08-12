@@ -27,6 +27,7 @@ namespace bonding::cli
 
     /** Hostname to identifies container */
     std::string hostname;
+    bool random_hostname;
 
     /** Additional mount path */
     std::vector<std::pair<std::string, std::string>> mounts;
@@ -47,6 +48,10 @@ namespace bonding::cli
      ** corresponding exception when the corresponding command parameter
      ** value cannot be obtained, and print the help information after being caught */
     Args to_args();
+    void check_args() const noexcept;
+    std::string check_hostname() const noexcept;
+    bool check_random_hostname() const noexcept;
+    std::vector<std::pair<std::string, std::string>> check_mounts() const noexcept;
 
     static Result<std::vector<std::pair<std::string, std::string>>, error::Err>
     parse_add_path(const std::vector<std::string> & add_path) noexcept;

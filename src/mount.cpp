@@ -41,6 +41,7 @@ namespace bonding::mounts
   Mount::setup(
     const std::string & mount_dir,
     const std::string & hostname,
+    const bool random_hostname,
     const std::vector<std::pair<std::string, std::string>> & mounts_paths) noexcept
   {
     spdlog::info("Setting mount points...");
@@ -56,7 +57,7 @@ namespace bonding::mounts
 
     for (const auto & [real_path, mount_path] : mounts_paths)
       {
-        const std::string mount_dir = root + "/" + mount_path;
+        const std::string mount_dir = root + mount_path;
         __create(mount_dir).unwrap();
         __mount(real_path, mount_dir, MS_BIND | MS_PRIVATE).unwrap();
       }

@@ -28,7 +28,6 @@ namespace bonding::environment
 
     for (const std::string controller_name : controllers)
       {
-
         std::string::size_type index = controller_name.find('.');
 
         if (std::string::npos == index)

@@ -7,8 +7,48 @@
 
 namespace bonding::cli
 {
+  std::string
+  Command_Line_Args::check_hostname() const noexcept
+  {
+    if (hostname.value() == "")
+      return "bonding." + hostname::Hostname::generate(10).unwrap();
+    else
+      return hostname.value();
+  }
+
+  bool
+  Command_Line_Args::check_random_hostname() const noexcept
+  {
+    if (hostname.value() == "")
+      return true;
+    else
+      return false;
+  }
+
+  std::vector<std::pair<std::string, std::string>>
+  Command_Line_Args::check_mounts() const noexcept
+  {
+    if (mounts.has_value())
+      {
+        return parse_add_path(mounts.value()).unwrap();
+      }
+    else
+      {
+        return std::vector<std::pair<std::string, std::string>>{ { "/lib64", "/lib64" },
+                                                                 { "/lib", "/lib" } };
+      }
+  }
+
   Args
   Command_Line_Args::to_args()
+  {
+    return Args{ debug.value(),     command.value(),  uid.value(),
+                 mount_dir.value(), check_hostname(), check_random_hostname(),
+                 check_mounts() };
+  }
+
+  void
+  Command_Line_Args::check_args() const noexcept
   {
     if (!command.has_value())
       spdlog::error("The `command` parameter must be provided!");
@@ -20,24 +60,13 @@ namespace bonding::cli
       spdlog::error("The `uid` parameter must be provided!");
 
     if (hostname.value() == "")
-      spdlog::warn("If hostname is not provided, it will be generated automatically");
+      spdlog::warn("If hostname is not provided, it will "
+                   "be generated automatically");
 
     if (!mounts.has_value())
-      spdlog::warn("The `mounts` parameter is not provided, use the default {}",
+      spdlog::warn("The `mounts` parameter is not "
+                   "provided, use the default {}",
                    "{\"/lib64:/lib64\", \"/lib:/lib\"}");
-
-    return Args{ debug.value(),
-                 command.value(),
-                 uid.value(),
-                 mount_dir.value(),
-                 "bonding."
-                   + (hostname.value() == "" ? hostname::Hostname::generate(10).unwrap()
-                                             : hostname.value()),
-
-                 (mounts.has_value() ? parse_add_path(mounts.value()).unwrap()
-                                     : std::vector<std::pair<std::string, std::string>>{
-                                       { "/lib64", "/lib64" },
-                                       { "/lib", "/lib" } }) };
   }
 
   Result<std::pair<int, int>, error::Err>
