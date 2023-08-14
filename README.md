@@ -13,7 +13,8 @@
 - [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
 - [structopt (MIT): Parse command line arguments by defining a struct](https://github.com/p-ranav/structopt)
 - [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
-- [libcap (BSD 3-clause and GPL v2.0)](https://git.kernel.org/pub/scm/libs/libcap/libcap.git/)
+- [libcap (BSD 3-clause and GPL v2.0): capability library: includes libcap2 file caps, setcap, getcap and capsh](https://git.kernel.org/pub/scm/libs/libcap/libcap.git/)
+- [toml11 (MIT): Toml library for Modern C++](https://github.com/ToruNiina/toml11)
   
 ## Build from source
 > This project is built using [xmake](https://xmake.io).
@@ -58,10 +59,10 @@ Bonding need advanced permissions to create, such as restricting resources throu
 
 ```shell
 sudo lldb ./build/linux/x86_64/debug/bonding -- \
-    --command "sleep 3"                         \
-    --uid 0                                     \
-    --mount_dir .                               \
-    --hostname Test                             \
+    --command="sleep 3"                         \
+    --uid=0                                     \
+    --mount_dir=.                               \
+    --hostname=Test                             \
     --debug
 ```
 
@@ -70,16 +71,17 @@ sudo lldb ./build/linux/x86_64/debug/bonding -- \
 USAGE: bonding [FLAGS] [OPTIONS] 
 
 FLAGS:
-    -d, --debug Active debug mode
+    --debug Active debug mode
 
 OPTIONS:
-    -c, --command Command to execute inside the container
-    -u, --uid <uid> User ID to create inside the container
-    -m, --mount-dir <mount_dir> Directory to mount as root of the container
-    -h, --hostname <hostname> Hostname to identifies container
-    -m, --mounts <mounts>  Additional mount path
+    --command Command to execute inside the container
+    --uid <uid> User ID to create inside the container
+    --mount-dir <mount_dir> Directory to mount as root of the container
+    --hostname <hostname> Hostname to identifies container
+    --mounts <mounts>  Additional mount path
+    --config Configuration file path
     --help <help> Show this message
-    -v, --version <version> Show version of bonding
+    --version <version> Show version of bonding
 ```
 
 - `-h --hostname`: If the hostname is not explicitly provided, bonding will randomly generate a random hostname, with a length of 10, consisting of English uppercase and lowercase letters and numbers, e.g `bonding.0wusbvmdos`.
@@ -88,10 +90,28 @@ OPTIONS:
 
 For example:
 ```
-sudo bonding --command "/bin/bash" \
-             --uid 0               \
-             --mount_dir mount_dir \
-             --hostname bash       \
+sudo bonding --command=/bin/bash   \
+             --uid=0               \
+             --mount_dir=mount_dir \
+             --hostname=bash
+```
+
+Currently, bonding is trying to add configuration file support, you can check the [example](./example) directory for more information. The configuration file follows the command line arguments. If the option `--config` of the configuration file are passed in on the command line, other options will be ignored, and bonding will read the configuration from the configuration file.
+
+An example configuration file ([config.toml](./example/config.toml)) is as follows:
+
+```toml
+debug = true
+uid = 0
+hostname = "Test"
+mount_dir = "./mount_dir"
+command = "/bin/bash"
+mounts = [["/lib", "/lib"], ["/lib64", "/lib64"]]
+```
+
+For example:
+```
+sudo bonding --config=config.toml
 ```
 
 ## REFERENCES

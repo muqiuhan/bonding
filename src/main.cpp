@@ -18,13 +18,6 @@ main(int argc, char ** argv)
   try
     {
       auto options = app.parse<cli::Command_Line_Args>(argc, argv);
-
-      if (options.debug.value())
-        {
-          spdlog::set_level(spdlog::level::debug);
-          spdlog::debug("Activate debug mode!");
-        }
-
       container::Container::start(options.to_args()).unwrap();
     }
   catch (structopt::exception & e)

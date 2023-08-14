@@ -30,6 +30,12 @@ namespace bonding::container
   {
     Container container = Container::make(argv).unwrap();
 
+    if (argv.debug)
+      {
+        spdlog::set_level(spdlog::level::debug);
+        spdlog::debug("Activate debug mode!");
+      }
+
     return container.create()
       .and_then([&](const auto _) {
         spdlog::info("Cleaning and exiting container...");

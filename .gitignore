@@ -9,12 +9,13 @@ build/
 .cache/
 
 .bonding/
+/example/mount_dir/lib*
+/example/mount_dir/test
+/example/mount_dir/bin
 
 test.log
 
-mount_dir/
-
-build.ninja
-CMakeLists.txt
-makefile
-compile_commands.json
+/build.ninja
+/CMakeLists.txt
+/makefile
+/compile_commands.json

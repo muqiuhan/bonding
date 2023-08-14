@@ -1,6 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/cli.h"
+#include "include/configfile.h"
 #include "include/hostname.h"
 #include <spdlog/spdlog.h>
 #include <vector>
@@ -10,19 +11,10 @@ namespace bonding::cli
   std::string
   Command_Line_Args::check_hostname() const noexcept
   {
-    if (hostname.value() == "")
+    if (hostname.value().empty())
       return "bonding." + hostname::Hostname::generate(10).unwrap();
     else
       return "bonding." + hostname.value();
-  }
-
-  bool
-  Command_Line_Args::check_random_hostname() const noexcept
-  {
-    if (hostname.value() == "")
-      return true;
-    else
-      return false;
   }
 
   std::vector<std::pair<std::string, std::string>>
@@ -42,24 +34,36 @@ namespace bonding::cli
   Args
   Command_Line_Args::to_args()
   {
-    return Args{ debug.value(),     command.value(),  uid.value(),
-                 mount_dir.value(), check_hostname(), check_random_hostname(),
-                 check_mounts() };
+    if (check_config_file())
+      return configfile::Config_File::read(config.value());
+    else
+      {
+        check_args();
+
+        return Args{ debug.value(),     command.value(),  uid.value(),
+                     mount_dir.value(), check_hostname(), check_mounts() };
+      }
+  }
+
+  bool
+  Command_Line_Args::check_config_file() const noexcept
+  {
+    return config.has_value();
   }
 
   void
   Command_Line_Args::check_args() const noexcept
   {
-    if (!command.has_value())
+    if (command.value().empty())
       spdlog::error("The `command` parameter must be provided!");
 
-    if (!mount_dir.has_value())
+    if (mount_dir.value().empty())
       spdlog::error("The `mount-dir` parameter must be provided!");
 
-    if (!uid.has_value())
+    if (uid.value() == -1)
       spdlog::error("The `uid` parameter must be provided!");
 
-    if (hostname.value() == "")
+    if (hostname.value().empty())
       spdlog::warn("If hostname is not provided, it will "
                    "be generated automatically");
 
