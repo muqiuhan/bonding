@@ -15,7 +15,7 @@ build/
 
 test.log
 
-build.ninja
-CMakeLists.txt
-makefile
-compile_commands.json
+/build.ninja
+/CMakeLists.txt
+/makefile
+/compile_commands.json
