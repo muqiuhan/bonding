@@ -48,7 +48,7 @@ namespace bonding::cli
      ** corresponding exception when the corresponding command parameter
      ** value cannot be obtained, and print the help information after being caught */
     Args to_args();
-    
+
     void check_args() const noexcept;
     std::string check_hostname() const noexcept;
     bool check_config_file() const noexcept;

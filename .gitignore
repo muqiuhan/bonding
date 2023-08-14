@@ -9,10 +9,10 @@ build/
 .cache/
 
 .bonding/
+/example/mount_dir/lib*
+/example/mount_dir/test
 
 test.log
-
-mount_dir/
 
 build.ninja
 CMakeLists.txt

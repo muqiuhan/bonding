@@ -1,0 +1,6 @@
+debug = true
+uid = 0
+hostname = "Test"
+mount_dir = "./mount_dir"
+command = "/bin/bash"
+mounts = [["/lib", "/lib"], ["/lib64", "/lib64"]]
