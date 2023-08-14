@@ -35,7 +35,6 @@ namespace bonding::config
                                                  args.uid,
                                                  sockets.second,
                                                  args.hostname,
-                                                 args.random_hostname,
                                                  args.mounts),
                                sockets));
     }
@@ -53,7 +52,6 @@ namespace bonding::config
       , m_path("")
       , m_raw_fd(0)
       , m_hostname("")
-      , m_random_hostname(false)
       , m_debug(false)
       , m_mounts(
           std::vector<std::pair<std::string, std::string>>{ std::make_pair("", "") })
@@ -68,7 +66,6 @@ namespace bonding::config
                       const uint32_t uid,
                       const int raw_fd,
                       const std::string hostname,
-                      const bool random_hostname,
                       const std::vector<std::pair<std::string, std::string>> mounts)
       : m_argv(argv)
       , m_path(argv.at(0))
@@ -77,7 +74,6 @@ namespace bonding::config
       , m_raw_fd(raw_fd)
       , m_hostname(std::move(hostname))
       , m_mounts(mounts)
-      , m_random_hostname(random_hostname)
       , m_debug(debug)
     {
     }
@@ -105,7 +101,6 @@ namespace bonding::config
 
     /** identifies machine */
     const std::string m_hostname;
-    const bool m_random_hostname;
 
     /** Additional mount path */
     const std::vector<std::pair<std::string, std::string>> m_mounts;
