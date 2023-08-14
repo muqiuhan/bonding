@@ -14,7 +14,7 @@ namespace bonding::cli
   struct Args
   {
     /** Activate debug mode */
-    bool debug = false;
+    bool debug;
 
     /** Command to execute inside the container */
     std::string command;
