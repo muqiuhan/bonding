@@ -16,8 +16,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
+      
+      - name: Install libseccomp-dev
+        run:
+          sudo apt-get install -y libseccomp-dev
+      
+      - name: Install libcap-dev
+        run:
+          sudo apt-get install -y libcap-dev
+      
       - name: build
         run: xmake
