@@ -23,7 +23,7 @@ namespace bonding::child
       , m_pid(generate_child_process(container_options).unwrap())
     {
       spdlog::info("Starting container with command `{}` on process {}",
-                   container_options.m_path,
+                   container_options.path,
                    m_pid);
     }
 

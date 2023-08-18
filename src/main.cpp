@@ -1,8 +1,6 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "spdlog/spdlog.h"
-#include "structopt/app.hpp"
-
 #include "include/cli.h"
 #include "include/container.h"
 
@@ -13,23 +11,11 @@ main(int argc, char ** argv)
 {
   spdlog::set_pattern("%H:%M:%S.%f %^>%$ %v");
 
-  auto app = structopt::app("bonding");
-
   try
     {
-      auto options = app.parse<cli::Command_Line_Args>(argc, argv);
-      container::Container::start(options.to_args()).unwrap();
+      cli::Command_Line_Args::make(argc, argv).unwrap();
     }
-  catch (structopt::exception & e)
-    {
-      spdlog::error(e.what());
-      spdlog::error(e.help());
-    }
-  catch (std::bad_optional_access & _)
-    {
-      spdlog::error(app.help());
-    }
-  catch (std::exception & e)
+  catch (const std::exception & e)
     {
       spdlog::error(e.what());
     }

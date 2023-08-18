@@ -1,6 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/container.h"
+#include "include/config.h"
 #include "include/namespace.h"
 #include "include/resource.h"
 #include "include/syscall.h"
@@ -11,7 +12,7 @@ namespace bonding::container
   Container::create() noexcept
   {
     ns::Namespace::handle_child_uid_map(m_child_process.m_pid, m_sockets.first);
-    resource::Resource::setup(m_config.m_hostname);
+    resource::Resource::setup(m_config.hostname);
     return m_child_process.wait();
   }
 
@@ -20,15 +21,15 @@ namespace bonding::container
   {
     Container_Cleaner::close_socket(m_sockets.first).unwrap();
     Container_Cleaner::close_socket(m_sockets.second).unwrap();
-    resource::Resource::clean(m_config.m_hostname);
+    resource::Resource::clean(m_config.hostname);
     syscall::Syscall::Syscall::clean().unwrap();
     return Ok(Void());
   }
 
   Result<Void, error::Err>
-  Container::start(const cli::Args argv) noexcept
+  Container::start(const config::Container_Options argv) noexcept
   {
-    Container container = Container::make(argv).unwrap();
+    Container container(argv);
 
     if (argv.debug)
       {
@@ -56,7 +57,7 @@ namespace bonding::container
     if (-1 == close(socket))
       {
         spdlog::error("Unable to close socket: {}", socket);
-        return ERR(error::Code::SocketError);
+        return ERR(error::Code::Socket);
       }
     return Ok(Void());
   }

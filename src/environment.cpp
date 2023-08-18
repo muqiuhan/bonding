@@ -14,7 +14,7 @@ namespace bonding::environment
 
     if (2 != sscanf(host.release, "%u.%u", &major, &minor))
       {
-        return ERR_MSG(error::Code::CheckError,
+        return ERR_MSG(error::Code::Environment,
                        "weird release format: " + std::string(host.release));
       }
 

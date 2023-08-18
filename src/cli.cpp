@@ -3,103 +3,222 @@
 #include "include/cli.h"
 #include "include/configfile.h"
 #include "include/hostname.h"
+#include <error.h>
 #include <spdlog/spdlog.h>
 #include <vector>
 
 namespace bonding::cli
 {
-  std::string
-  Command_Line_Args::check_hostname() const noexcept
+  Result<Void, error::Err>
+  Command_Line_Args::make(const int argc, char * argv[]) noexcept
   {
-    if (hostname.value().empty())
-      return "bonding." + hostname::Hostname::generate(10).unwrap();
-    else
-      return "bonding." + hostname.value();
+    const auto parser = init_parser(argc, argv).unwrap();
+
+    if (parser.get<bool>("init").unwrap())
+      spdlog::info("init");
+    else if (parser.get<bool>("run").unwrap())
+      spdlog::info("run");
+
+    return Ok(Void());
   }
 
-  std::vector<std::pair<std::string, std::string>>
-  Command_Line_Args::check_mounts() const noexcept
+  Result<Parser, error::Err>
+  Command_Line_Args::init_parser(const int argc, char * argv[]) noexcept
   {
-    if (mounts.has_value())
+    Parser parser(argc, argv);
+
+    parser.add("init",
+               "Initialize the current directory as the container directory",
+               "init",
+               false,
+               true);
+
+    parser.add("run",
+               "Run with the current directory as the container directory",
+               "run",
+               false,
+               true);
+
+    if (parser.parse().is_err())
       {
-        return parse_add_path(mounts.value()).unwrap();
-      }
-    else
-      {
-        return std::vector<std::pair<std::string, std::string>>{ { "/lib64", "/lib64" },
-                                                                 { "/lib", "/lib" } };
-      }
-  }
-
-  Args
-  Command_Line_Args::to_args()
-  {
-    if (check_config_file())
-      return configfile::Config_File::read(config.value());
-    else
-      {
-        check_args();
-
-        return Args{ debug.value(),     command.value(),  uid.value(),
-                     mount_dir.value(), check_hostname(), check_mounts() };
-      }
-  }
-
-  bool
-  Command_Line_Args::check_config_file() const noexcept
-  {
-    return config.has_value();
-  }
-
-  void
-  Command_Line_Args::check_args() const noexcept
-  {
-    if (command.value().empty())
-      spdlog::error("The `command` parameter must be provided!");
-
-    if (mount_dir.value().empty())
-      spdlog::error("The `mount-dir` parameter must be provided!");
-
-    if (uid.value() == -1)
-      spdlog::error("The `uid` parameter must be provided!");
-
-    if (hostname.value().empty())
-      spdlog::warn("If hostname is not provided, it will "
-                   "be generated automatically");
-
-    if (!mounts.has_value())
-      spdlog::warn("The `mounts` parameter is not "
-                   "provided, use the default {}",
-                   "{\"/lib64:/lib64\", \"/lib:/lib\"}");
-  }
-
-  Result<std::pair<int, int>, error::Err>
-  generate_socketpair() noexcept
-  {
-    int __fds[2] = { 0 };
-    /* creating a Unix domain socket, and socket will use a communication semantic with
-     * packets and fixed length datagrams.*/
-    if (-1 == socketpair(AF_UNIX, SOCK_SEQPACKET, 0, __fds))
-      return ERR(error::Code::SocketError);
-
-    return Ok(std::make_pair(__fds[0], __fds[1]));
-  }
-
-  Result<std::vector<std::pair<std::string, std::string>>, error::Err>
-  Command_Line_Args::parse_add_path(
-    const std::vector<std::string> & cli_add_paths) noexcept
-  {
-    std::vector<std::pair<std::string, std::string>> add_paths;
-
-    for (const std::string & path : cli_add_paths)
-      {
-        const std::string::size_type index = path.find(':');
-
-        if (index != std::string::npos)
-          add_paths.push_back(
-            std::make_pair(path.substr(0, index), path.substr(index + 1)));
+        parser.help().unwrap();
+        return ERR_MSG(error::Code::Cli, "Cannot parse the command line argument");
       }
 
-    return Ok(add_paths);
+    return Ok(parser);
+  }
+
+  Result<bool, error::Err>
+  Parser::parse() noexcept
+  {
+    assert(m_argc > 0);
+    if (m_argc - 1 < m_required)
+      return ERR(error::Code::Cli);
+
+    int num_required = 0;
+    std::unordered_set<std::string> parsed_shorthands;
+    parsed_shorthands.reserve(m_argc);
+
+    for (int i = 1; i != m_argc; ++i)
+      {
+        std::string parsed(m_argv[i]);
+        if (parsed == "-h" || parsed == "--help")
+          ERR(error::Code::Cli);
+
+        int id = 0;
+        if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end())
+          return ERR_MSG(error::Code::Cli, "shorthand " + parsed + " not found");
+
+        else
+          {
+            if (const auto it = parsed_shorthands.find(parsed);
+                it != parsed_shorthands.end())
+              return ERR_MSG(error::Code::Cli,
+                             "shorthand '" + parsed + "' already parsed");
+
+            parsed_shorthands.emplace(parsed);
+            id = (*it).second;
+          }
+
+        assert(static_cast<size_t>(id) < m_names.size());
+        auto const & name = m_names[id];
+        auto & cmd = m_cmds[name];
+        if (cmd.is_required)
+          num_required += 1;
+        if (cmd.is_boolean)
+          parsed = "true";
+        else
+          {
+            ++i;
+            if (i == m_argc)
+              return ERR(error::Code::Cli);
+            parsed = m_argv[i];
+          }
+        cmd.value = parsed;
+      }
+
+    if (num_required != m_required)
+      return ERR(error::Code::Cli);
+
+    return Ok(true);
+  }
+
+  Result<Void, error::Err>
+  Parser::help() const noexcept
+  {
+    std::cerr << "Usage: " << m_argv[0] << " [-h,--help]";
+    const auto print = [this](bool with_description) {
+      for (size_t i = 0; i != m_names.size(); ++i)
+        {
+          auto const & cmd = m_cmds.at(m_names[i]);
+
+          std::cout << " [" << cmd.shorthand;
+
+          if (!cmd.is_boolean)
+            std::cerr << " " << m_names[i];
+
+          std::cout << "]";
+
+          if (with_description)
+            std::cout << "\n\t" + std::string((cmd.is_required ? "REQUIRED: " : ""))
+                           + cmd.descr + "\n\n";
+        }
+    };
+
+    print(false);
+    std::cout << "\n\n";
+    print(true);
+    std::cout << " [-h,--help]\n\tPrint this help text and silently exits." << std::endl;
+
+    return Ok(Void());
+  }
+
+  Result<bool, error::Err>
+  Parser::add(std::string const & name,
+              std::string const & descr,
+              std::string const & shorthand,
+              bool is_required,
+              bool is_boolean) noexcept
+  {
+    bool ret =
+      m_cmds
+        .emplace(
+          name,
+          cmd{ shorthand, is_boolean ? "false" : "", descr, is_required, is_boolean })
+        .second;
+    if (ret)
+      {
+        if (is_required)
+          m_required += 1;
+        m_names.push_back(name);
+        m_shorthands.emplace(shorthand, m_names.size() - 1);
+      }
+    return Ok(ret);
+  }
+
+  template <typename T>
+  Result<T, error::Err>
+  Parser::get(std::string const & name) const noexcept
+  {
+    auto it = m_cmds.find(name);
+    if (it == m_cmds.end())
+      return ERR_MSG(error::Code::Cli, "error: '" + name + "' not found");
+
+    auto const & value = (*it).second.value;
+    return Ok(parse<T>(value).unwrap());
+  }
+
+  Result<bool, error::Err>
+  Parser::parsed(std::string const & name) const noexcept
+  {
+    auto it = m_cmds.find(name);
+    if (it == m_cmds.end())
+      return Ok(false);
+    auto const & cmd = (*it).second;
+    if (cmd.is_boolean)
+      {
+        if (cmd.value == "true")
+          return Ok(true);
+        if (cmd.value == "false")
+          return Ok(false);
+        assert(false); // should never happen
+      }
+
+    return Ok(cmd.value != "");
+  }
+
+  template <typename T>
+  Result<T, error::Err>
+  Parser::parse(std::string const & value) const noexcept
+  {
+    if constexpr (std::is_same<T, std::string>::value)
+      return value;
+    else if constexpr (std::is_same<T, char>::value || std::is_same<T, signed char>::value
+                       || std::is_same<T, unsigned char>::value)
+      return value.front();
+    else if constexpr (std::is_same<T, unsigned int>::value || std::is_same<T, int>::value
+                       || std::is_same<T, unsigned short int>::value
+                       || std::is_same<T, short int>::value)
+      return std::strtol(value.c_str(), nullptr, 10);
+    else if constexpr (std::is_same<T, unsigned long int>::value
+                       || std::is_same<T, long int>::value
+                       || std::is_same<T, unsigned long long int>::value
+                       || std::is_same<T, long long int>::value)
+      return std::strtoll(value.c_str(), nullptr, 10);
+    else if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value
+                       || std::is_same<T, long double>::value)
+      return std::strtod(value.c_str(), nullptr);
+    else if constexpr (std::is_same<T, bool>::value)
+      {
+        std::istringstream stream(value);
+        bool ret;
+        if (value == "true" || value == "false")
+          stream >> std::boolalpha >> ret;
+        else
+          stream >> std::noboolalpha >> ret;
+        return Ok(ret);
+      }
+    assert(false); // should never happen
+    return ERR_MSG(error::Code::Cli, "unsupported type");
   }
 }

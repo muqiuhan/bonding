@@ -16,7 +16,7 @@ namespace bonding::capabilities
 
     for (const int drop_caps : DROP)
       if (-1 == prctl(PR_CAPBSET_DROP, drop_caps, 0, 0, 0))
-        return ERR(error::Code::CapabilitiesError);
+        return ERR(error::Code::Capabilities);
 
     unix::Capabilities::get_proc()
       .and_then([](cap_t cap) {
@@ -31,7 +31,7 @@ namespace bonding::capabilities
             if (NULL != cap)
               unix::Capabilities::free(cap).unwrap();
 
-            return ERR_MSG(error::Code::CapabilitiesError, err.to_string());
+            return ERR_MSG(error::Code::Capabilities, err.to_string());
           });
 
         return Ok(cap);

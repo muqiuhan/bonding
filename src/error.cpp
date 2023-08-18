@@ -35,37 +35,11 @@ namespace bonding::error
   std::string
   Err::to_string() const noexcept
   {
-    const auto original_error = [&]() {
-      if (m_code == Code::ChildProcessError)
-        return "Child Process Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::ContainerError)
-        return "Container Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::SocketError)
-        return "Socket Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::HostnameError)
-        return "Hostname Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::MountsError)
-        return "Mounts Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::NamespaceError)
-        return "Namespace Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::CgroupsError)
-        return "Cgroups Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::ExecError)
-        return "Exec Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::CapabilitiesError)
-        return "Capabilities Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::UnixError)
-        return "Unix Error: " + std::string(strerror(m_errno));
-      else if (m_code == Code::CheckError)
-        return "Check Error: " + std::string(strerror(m_errno));
-      else
-        return "Undefined Error: " + std::string(strerror(m_errno));
-    };
-
     if (m_custom == "")
-      return original_error();
+      return CODE_TO_STRING.at(m_code) + ": " + strerror(m_errno);
 
-    return original_error() + "\n\t\t  Help: " + m_custom;
+    return CODE_TO_STRING.at(m_code) + ": " + strerror(m_errno)
+           + "\n\t\t> " + m_custom;
   }
 
 } // namespace bonding::error
