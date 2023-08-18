@@ -8,14 +8,6 @@
 
 </div>
 
-## Dependencies
-- [spdlog (MIT): Fast C++ logging library.](https://github.com/gabime/spdlog)
-- [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
-- [structopt (MIT): Parse command line arguments by defining a struct](https://github.com/p-ranav/structopt)
-- [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
-- [libcap (BSD 3-clause and GPL v2.0): capability library: includes libcap2 file caps, setcap, getcap and capsh](https://git.kernel.org/pub/scm/libs/libcap/libcap.git/)
-- [toml11 (MIT): Toml library for Modern C++](https://github.com/ToruNiina/toml11)
-  
 ## Build from source
 > This project is built using [xmake](https://xmake.io).
 
@@ -58,61 +50,52 @@ Other install options:
 Bonding need advanced permissions to create, such as restricting resources through cgroups, restricting system calls through seccomp, etc. So they must be debug with sudo. For example:
 
 ```shell
-sudo lldb ./build/linux/x86_64/debug/bonding -- \
-    --command="sleep 3"                         \
-    --uid=0                                     \
-    --mount_dir=.                               \
-    --hostname=Test                             \
-    --debug
+sudo lldb ./build/linux/x86_64/debug/bonding run --debug
 ```
 
 ## USAGE:
 ```
-USAGE: bonding [FLAGS] [OPTIONS] 
+sage: ./build/linux/x86_64/debug/bonding [-h,--help] [init] [run]
 
-FLAGS:
-    --debug Active debug mode
+ [init]
+        Initialize the current directory as the container directory
 
-OPTIONS:
-    --command Command to execute inside the container
-    --uid <uid> User ID to create inside the container
-    --mount-dir <mount_dir> Directory to mount as root of the container
-    --hostname <hostname> Hostname to identifies container
-    --mounts <mounts>  Additional mount path
-    --config Configuration file path
-    --help <help> Show this message
-    --version <version> Show version of bonding
+ [run]
+        Run with the current directory as the container directory
 ```
 
 - `-h --hostname`: If the hostname is not explicitly provided, bonding will randomly generate a random hostname, with a length of 10, consisting of English uppercase and lowercase letters and numbers, e.g `bonding.0wusbvmdos`.
 
 - `-m --mounts`: If no additional mount path is explicitly provided, two system dynamic library directories will be mounted by default: `/lib64`, `/lib`.
 
-For example:
-```
-sudo bonding --command=/bin/bash   \
-             --uid=0               \
-             --mount_dir=mount_dir \
-             --hostname=bash
+Bonding sets the environment and various parameters through the configuration file [bonding.json](./example/bonding.json):
+```json
+{
+    "hostname": "Test",
+    "debug": true,
+    "uid": 0,
+    "mount_dir": "./mount_dir",
+    "command": "/bin/bash",
+    "mounts": [
+        [
+            "/lib",
+            "/lib"
+        ],
+        [
+            "/lib64",
+            "/lib64"
+        ]
+    ]
+}
 ```
 
-Currently, bonding is trying to add configuration file support, you can check the [example](./example) directory for more information. The configuration file follows the command line arguments. If the option `--config` of the configuration file are passed in on the command line, other options will be ignored, and bonding will read the configuration from the configuration file.
-
-An example configuration file ([config.toml](./example/config.toml)) is as follows:
-
-```toml
-debug = true
-uid = 0
-hostname = "Test"
-mount_dir = "./mount_dir"
-command = "/bin/bash"
-mounts = [["/lib", "/lib"], ["/lib64", "/lib64"]]
-```
-
-For example:
-```
-sudo bonding --config=config.toml
-```
+## Dependencies
+- [spdlog (MIT): Fast C++ logging library.](https://github.com/gabime/spdlog)
+- [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
+- [cmd_line_parser (MIT):  Command line parser for C++17. ](https://github.com/jermp/cmd_line_parser)
+- [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
+- [libcap (BSD 3-clause and GPL v2.0): capability library: includes libcap2 file caps, setcap, getcap and capsh](https://git.kernel.org/pub/scm/libs/libcap/libcap.git/)
+- [configor (MIT): A light weight configuration library for C++](https://github.com/Nomango/configor)
 
 ## REFERENCES
 

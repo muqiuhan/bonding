@@ -16,9 +16,9 @@ package("spdlog")
     end)
 package_end()
 
-package("structopt")
+package("clipp")
     add_deps("cmake")
-    set_sourcedir(path.join(os.scriptdir(), "lib/structopt"))
+    set_sourcedir(path.join(os.scriptdir(), "lib/clipp"))
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -55,11 +55,10 @@ target("bonding")
 
     add_files("src/*.cpp")
     add_includedirs("lib/spdlog/include", 
-                    "lib/structopt/include", 
                     "lib/result/include",
                     "lib/configor/include")
 
-    add_packages("spdlog", "structopt", "result")
+    add_packages("spdlog", "clipp", "result")
     add_links("seccomp", "cap")
 
     after_build(function (target)
