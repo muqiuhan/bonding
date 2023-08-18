@@ -38,9 +38,9 @@ package("result")
     end)
 package_end()
 
-package("toml11")
+package("configor")
     add_deps("cmake")
-    set_sourcedir(path.join(os.scriptdir(), "lib/toml11"))
+    set_sourcedir(path.join(os.scriptdir(), "lib/configor"))
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -57,7 +57,7 @@ target("bonding")
     add_includedirs("lib/spdlog/include", 
                     "lib/structopt/include", 
                     "lib/result/include",
-                    "lib/toml11")
+                    "lib/configor/include")
 
     add_packages("spdlog", "structopt", "result")
     add_links("seccomp", "cap")

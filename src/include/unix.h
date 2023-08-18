@@ -30,6 +30,7 @@ namespace bonding::unix
   {
    public:
     static Result<Void, error::Err> mkdir(const std::string & path) noexcept;
+    static Result<std::string, error::Err> read_entire_file(const std::string & path) noexcept;
   };
 
   class Capabilities
