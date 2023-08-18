@@ -20,7 +20,7 @@ namespace bonding::unix
     catch (...)
       {
         spdlog::error("Cannot create direcotry {}");
-        return ERR(error::Code::MountsError);
+        return ERR(error::Code::Mounts);
       }
 
     return Ok(Void());
@@ -56,7 +56,7 @@ namespace bonding::unix
   {
     struct utsname host = { 0 };
     if (-1 == uname(&host))
-      return ERR(error::Code::UnixError);
+      return ERR(error::Code::Unix);
 
     return Ok(host);
   }
@@ -70,7 +70,7 @@ namespace bonding::unix
     stream.exceptions(std::ios_base::badbit);
 
     if (!stream.is_open())
-      return ERR(error::Code::UnixError);
+      return ERR(error::Code::Unix);
 
     auto out = std::string();
     auto buf = std::string(read_size, '\0');

@@ -20,7 +20,7 @@
   {                                                                                      \
     const OK_TYPE SYSTEM_CALL_FUNCTION_RESULT = SYSTEM_CALL_FUNCTION_NAME(__VA_ARGS__);  \
     if (FAILURE_VALUE == SYSTEM_CALL_FUNCTION_RESULT)                                    \
-      return ERR(error::Code::UnixError);                                                \
+      return ERR(error::Code::Unix);                                                     \
     return Ok(SYSTEM_CALL_FUNCTION_RESULT);                                              \
   }
 
@@ -30,7 +30,8 @@ namespace bonding::unix
   {
    public:
     static Result<Void, error::Err> mkdir(const std::string & path) noexcept;
-    static Result<std::string, error::Err> read_entire_file(const std::string & path) noexcept;
+    static Result<std::string, error::Err>
+    read_entire_file(const std::string & path) noexcept;
   };
 
   class Capabilities

@@ -3,103 +3,48 @@
 #include "include/cli.h"
 #include "include/configfile.h"
 #include "include/hostname.h"
+#include <error.h>
 #include <spdlog/spdlog.h>
 #include <vector>
 
 namespace bonding::cli
 {
-  std::string
-  Command_Line_Args::check_hostname() const noexcept
+  Result<Void, error::Err>
+  Command_Line_Args::make(const int argc, char * argv[]) noexcept
   {
-    if (hostname.value().empty())
-      return "bonding." + hostname::Hostname::generate(10).unwrap();
-    else
-      return "bonding." + hostname.value();
+    const auto parser = init_parser(argc, argv).unwrap();
+
+    if (parser.get<bool>("init"))
+      spdlog::info("init");
+    else if (parser.get<bool>("run"))
+      spdlog::info("run");
+
+    return Ok(Void());
   }
 
-  std::vector<std::pair<std::string, std::string>>
-  Command_Line_Args::check_mounts() const noexcept
+  Result<parser, error::Err>
+  Command_Line_Args::init_parser(const int argc, char * argv[]) noexcept
   {
-    if (mounts.has_value())
+    parser parser(argc, argv);
+
+    parser.add("init",
+               "Initialize the current directory as the container directory",
+               "init",
+               false,
+               true);
+
+    parser.add("run",
+               "Run with the current directory as the container directory",
+               "run",
+               false,
+               true);
+
+    if (!parser.parse())
       {
-        return parse_add_path(mounts.value()).unwrap();
-      }
-    else
-      {
-        return std::vector<std::pair<std::string, std::string>>{ { "/lib64", "/lib64" },
-                                                                 { "/lib", "/lib" } };
-      }
-  }
-
-  Args
-  Command_Line_Args::to_args()
-  {
-    if (check_config_file())
-      return configfile::Config_File::read(config.value());
-    else
-      {
-        check_args();
-
-        return Args{ debug.value(),     command.value(),  uid.value(),
-                     mount_dir.value(), check_hostname(), check_mounts() };
-      }
-  }
-
-  bool
-  Command_Line_Args::check_config_file() const noexcept
-  {
-    return config.has_value();
-  }
-
-  void
-  Command_Line_Args::check_args() const noexcept
-  {
-    if (command.value().empty())
-      spdlog::error("The `command` parameter must be provided!");
-
-    if (mount_dir.value().empty())
-      spdlog::error("The `mount-dir` parameter must be provided!");
-
-    if (uid.value() == -1)
-      spdlog::error("The `uid` parameter must be provided!");
-
-    if (hostname.value().empty())
-      spdlog::warn("If hostname is not provided, it will "
-                   "be generated automatically");
-
-    if (!mounts.has_value())
-      spdlog::warn("The `mounts` parameter is not "
-                   "provided, use the default {}",
-                   "{\"/lib64:/lib64\", \"/lib:/lib\"}");
-  }
-
-  Result<std::pair<int, int>, error::Err>
-  generate_socketpair() noexcept
-  {
-    int __fds[2] = { 0 };
-    /* creating a Unix domain socket, and socket will use a communication semantic with
-     * packets and fixed length datagrams.*/
-    if (-1 == socketpair(AF_UNIX, SOCK_SEQPACKET, 0, __fds))
-      return ERR(error::Code::SocketError);
-
-    return Ok(std::make_pair(__fds[0], __fds[1]));
-  }
-
-  Result<std::vector<std::pair<std::string, std::string>>, error::Err>
-  Command_Line_Args::parse_add_path(
-    const std::vector<std::string> & cli_add_paths) noexcept
-  {
-    std::vector<std::pair<std::string, std::string>> add_paths;
-
-    for (const std::string & path : cli_add_paths)
-      {
-        const std::string::size_type index = path.find(':');
-
-        if (index != std::string::npos)
-          add_paths.push_back(
-            std::make_pair(path.substr(0, index), path.substr(index + 1)));
+        return ERR_MSG(error::Code::Cli, "Cannot parse the command line argument");
+        parser.help();
       }
 
-    return Ok(add_paths);
+    return Ok(parser);
   }
 }

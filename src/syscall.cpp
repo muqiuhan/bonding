@@ -22,7 +22,7 @@ namespace bonding::syscall
 
         if (0 != seccomp_rule_add_array(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 1, &cmp))
           return Err(
-            error::Err(error::Code::SystemcallError, "seccomp_rule_add_array error"));
+            error::Err(error::Code::Systemcall, "seccomp_rule_add_array error"));
       }
 
     return Ok(Void());
@@ -33,7 +33,7 @@ namespace bonding::syscall
   {
     for (const int syscall : default_refuse_syscalls)
       if (0 != seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 0))
-        return ERR_MSG(error::Code::SystemcallError, "seccomp_rule_add error");
+        return ERR_MSG(error::Code::Systemcall, "seccomp_rule_add error");
 
     return Ok(Void());
   }
@@ -46,13 +46,13 @@ namespace bonding::syscall
     /* Initialize seccomp profile with all syscalls allowed by default */
     ctx = seccomp_init(SCMP_ACT_ALLOW);
     if (NULL == ctx)
-      return ERR_MSG(error::Code::SystemcallError, "seccomp_init error");
+      return ERR_MSG(error::Code::Systemcall, "seccomp_init error");
 
     refuse_syscall().unwrap();
     refuse_if_comp().unwrap();
 
     if (0 != seccomp_load(ctx))
-      return ERR_MSG(error::Code::SystemcallError, "seccomp_load error");
+      return ERR_MSG(error::Code::Systemcall, "seccomp_load error");
 
     return Ok(Void());
   }

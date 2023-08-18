@@ -29,7 +29,7 @@ namespace bonding::resource
   {
     const rlimit rlim = rlimit{ .rlim_cur = NOFILE, .rlim_max = NOFILE };
     if (-1 == setrlimit(RLIMIT_NOFILE, &rlim))
-      return ERR(error::Code::CgroupsError);
+      return ERR(error::Code::Cgroups);
 
     return Ok(Void());
   }
@@ -59,7 +59,7 @@ namespace bonding::resource
                   }
 
                 if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
-                  return ERR(error::Code::CgroupsError);
+                  return ERR(error::Code::Cgroups);
 
                 close(fd);
               }
@@ -83,18 +83,18 @@ namespace bonding::resource
 
         int taskfd = open(task.c_str(), O_WRONLY);
         if (-1 == taskfd)
-          return ERR(error::Code::CgroupsError);
+          return ERR(error::Code::Cgroups);
 
         if (-1 == write(taskfd, "0", 2))
           {
             close(taskfd);
-            return ERR(error::Code::CgroupsError);
+            return ERR(error::Code::Cgroups);
           }
 
         close(taskfd);
 
         if (-1 == rmdir(dir.c_str()))
-          return ERR(error::Code::CgroupsError);
+          return ERR(error::Code::Cgroups);
       }
 
     return Ok(Void());
