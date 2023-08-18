@@ -13,12 +13,6 @@ namespace bonding::container
   class Container
   {
    public:
-    static Result<Container, error::Err>
-    make(const cli::Args & args) noexcept
-    {
-      /* creates the ContainerOpts struct from the commandline arguments. */
-      return Ok(Container(config::Container_Options::make(args).unwrap()));
-    }
 
     Container()
       : m_config(config::Container_Options())
@@ -29,15 +23,9 @@ namespace bonding::container
     }
 
    private:
-    explicit Container(
-      std::pair<config::Container_Options, std::pair<int, int>> config_and_sockets)
-      : Container(config_and_sockets.first, config_and_sockets.second)
-    {
-    }
-
-    Container(config::Container_Options config, std::pair<int, int> sockets)
+    Container(config::Container_Options config)
       : m_config(config)
-      , m_sockets(sockets)
+      , m_sockets(config.ipc)
       , m_child_process(child::Child(config))
     {
     }
@@ -52,7 +40,7 @@ namespace bonding::container
     /** get the args from the commandline and handle everything
      ** from the struct Container creation to the exit.
      ** returns a Result that will inform if an error happened during the process. */
-    static Result<Void, error::Err> start(const cli::Args argv) noexcept;
+    static Result<Void, error::Err> start(const config::Container_Options argv) noexcept;
 
    private:
     const config::Container_Options m_config;

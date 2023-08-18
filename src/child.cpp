@@ -19,12 +19,12 @@ namespace bonding::child
   Result<Void, error::Err>
   Child::Process::setup_container_configurations() noexcept
   {
-    hostname::Hostname::setup(container_options->m_hostname).unwrap();
-    mounts::Mount::setup(container_options->m_mount_dir,
-                         container_options->m_hostname,
-                         container_options->m_mounts)
+    hostname::Hostname::setup(container_options->hostname).unwrap();
+    mounts::Mount::setup(container_options->mount_dir,
+                         container_options->hostname,
+                         container_options->mounts)
       .unwrap();
-    ns::Namespace::setup(container_options->m_raw_fd, container_options->m_uid).unwrap();
+    ns::Namespace::setup(container_options->ipc.first, container_options->uid).unwrap();
     capabilities::Capabilities::setup().unwrap();
     syscall::Syscall::setup().unwrap();
 
@@ -48,7 +48,7 @@ namespace bonding::child
       .unwrap();
 
     int ret_code = 0;
-    if (exec::Execve::call(container_options->m_path, container_options->m_argv).is_err())
+    if (exec::Execve::call(container_options->path, container_options->argv).is_err())
       ret_code = -1;
 
     return ret_code;

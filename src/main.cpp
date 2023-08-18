@@ -18,7 +18,7 @@ main(int argc, char ** argv)
   try
     {
       auto options = app.parse<cli::Command_Line_Args>(argc, argv);
-      container::Container::start(options.to_args()).unwrap();
+      
     }
   catch (structopt::exception & e)
     {

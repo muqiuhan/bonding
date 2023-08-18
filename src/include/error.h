@@ -26,7 +26,8 @@ namespace bonding::error
     ExecError,
     CapabilitiesError,
     UnixError,
-    CheckError
+    CheckError,
+    ConfigfileError,
   };
 
   class Err

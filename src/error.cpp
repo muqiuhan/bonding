@@ -58,6 +58,8 @@ namespace bonding::error
         return "Unix Error: " + std::string(strerror(m_errno));
       else if (m_code == Code::CheckError)
         return "Check Error: " + std::string(strerror(m_errno));
+      else if (m_code == Code::ConfigfileError)
+        return "Config file Error: " + std::string(strerror(m_errno));
       else
         return "Undefined Error: " + std::string(strerror(m_errno));
     };
