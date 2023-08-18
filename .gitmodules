@@ -13,3 +13,6 @@
 [submodule "lib/configor"]
 	path = lib/configor
 	url = https://github.com/Nomango/configor
+[submodule "lib/clipp"]
+	path = lib/clipp
+	url = https://github.com/muellan/clipp

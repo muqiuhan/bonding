@@ -10,25 +10,41 @@
 namespace bonding::cli
 {
   Result<Void, error::Err>
-  function(const Command_Line_Args args) noexcept
+  Command_Line_Args::make(const int argc, char * argv[]) noexcept
   {
-    if (args.init.has_value())
-      init(args).unwrap();
-    else if (args.run.has_value())
-      run(args).unwrap();
+    const auto parser = init_parser(argc, argv).unwrap();
 
-    return ERR_MSG(error::Code::Cli, "Unknown command line arguments");
+    if (parser.get<bool>("init"))
+      spdlog::info("init");
+    else if (parser.get<bool>("run"))
+      spdlog::info("run");
+
+    return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  init(const Command_Line_Args args) noexcept
+  Result<parser, error::Err>
+  Command_Line_Args::init_parser(const int argc, char * argv[]) noexcept
   {
-    return ERR_MSG(error::Code::Cli, "Unimplemented");
-  }
+    parser parser(argc, argv);
 
-  Result<Void, error::Err>
-  run(const Command_Line_Args args) noexcept
-  {
-    return ERR_MSG(error::Code::Cli, "Unimplemented");
+    parser.add("init",
+               "Initialize the current directory as the container directory",
+               "init",
+               false,
+               true);
+
+    parser.add("run",
+               "Run with the current directory as the container directory",
+               "run",
+               false,
+               true);
+
+    if (!parser.parse())
+      {
+        return ERR_MSG(error::Code::Cli, "Cannot parse the command line argument");
+        parser.help();
+      }
+
+    return Ok(parser);
   }
 }
