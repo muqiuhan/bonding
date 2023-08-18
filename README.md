@@ -6,6 +6,9 @@
 
 *A Minimalism container implementation in C++*
 
+![](https://github.com/muqiuhan/bonding/actions/workflows/build.yaml/badge.svg)
+![](https://img.shields.io/badge/work%20in%20progress-FFFF00)
+
 </div>
 
 ## Build from source
