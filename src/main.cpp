@@ -17,8 +17,7 @@ main(int argc, char ** argv)
 
   try
     {
-      auto options = app.parse<cli::Command_Line_Args>(argc, argv);
-      
+      cli::function(app.parse<cli::Command_Line_Args>(argc, argv));
     }
   catch (structopt::exception & e)
     {

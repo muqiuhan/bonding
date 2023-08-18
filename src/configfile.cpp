@@ -39,7 +39,7 @@ namespace bonding::configfile
       }
     catch (const configor::configor_exception & e)
       {
-        return ERR_MSG(error::Code::ConfigfileError, e.what());
+        return ERR_MSG(error::Code::Configfile, e.what());
       }
     return Ok(mounts);
   }
@@ -56,7 +56,7 @@ namespace bonding::configfile
       }
     catch (const configor::configor_exception & e)
       {
-        return ERR_MSG(error::Code::ConfigfileError, e.what());
+        return ERR_MSG(error::Code::Configfile, e.what());
       }
     return Ok(options);
   }
@@ -78,7 +78,7 @@ namespace bonding::configfile
     /* creating a Unix domain socket, and socket will use a communication semantic with
      * packets and fixed length datagrams.*/
     if (-1 == socketpair(AF_UNIX, SOCK_SEQPACKET, 0, __fds))
-      return ERR(error::Code::SocketError);
+      return ERR(error::Code::Socket);
 
     return Ok(std::make_pair(__fds[0], __fds[1]));
   }

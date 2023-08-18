@@ -11,7 +11,7 @@ namespace bonding::hostname
     if (-1 == sethostname(hostname.c_str(), hostname.size()))
       {
         spdlog::error("Cannot set hostname {} for container", hostname);
-        return ERR(error::Code::HostnameError);
+        return ERR(error::Code::Hostname);
       }
 
     spdlog::info("Container hostname is now {}", hostname);

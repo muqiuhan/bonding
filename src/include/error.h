@@ -6,6 +6,7 @@
 #include "result.hpp"
 #include <cerrno>
 #include <exception>
+#include <map>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <string>
@@ -15,19 +16,38 @@ namespace bonding::error
   enum class Code
   {
     Undefined,
-    SocketError,
-    ChildProcessError,
-    ContainerError,
-    HostnameError,
-    MountsError,
-    NamespaceError,
-    SystemcallError,
-    CgroupsError,
-    ExecError,
-    CapabilitiesError,
-    UnixError,
-    CheckError,
-    ConfigfileError,
+    Socket,
+    ChildProcess,
+    Container,
+    Hostname,
+    Mounts,
+    Namespace,
+    Systemcall,
+    Cgroups,
+    Exec,
+    Capabilities,
+    Unix,
+    Environment,
+    Cli,
+    Configfile,
+  };
+
+  inline const std::map<Code, std::string> CODE_TO_STRING = {
+    { Code::Undefined, "Unknown Error" },
+    { Code::Socket, "Socket Error" },
+    { Code::ChildProcess, "Child Process Error" },
+    { Code::Container, "Container Error" },
+    { Code::Hostname, "Hostname Error" },
+    { Code::Mounts, "Mounts Error" },
+    { Code::Namespace, "Namespace Error" },
+    { Code::Systemcall, "System Call Error" },
+    { Code::Cgroups, "Cgroups Error" },
+    { Code::Exec, "Execute Error" },
+    { Code::Cli, "Cli Error" },
+    { Code::Environment, "Envronment Error" },
+    { Code::Capabilities, "Capabilities Error" },
+    { Code::Unix, "Unix Error" },
+    { Code::Configfile, "Config File Error" },
   };
 
   class Err
@@ -48,7 +68,6 @@ namespace bonding::error
       : Err(code, custom, 0, "Unknown", "Unknown")
     {
       spdlog::error("{}", to_string());
-      spdlog::dump_backtrace();
     }
 
     Err(const Code code,

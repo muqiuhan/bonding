@@ -70,7 +70,7 @@ namespace bonding::child
             (void *)&container_options);
 
     if (-1 == child_pid)
-      return ERR(error::Code::ChildProcessError);
+      return ERR(error::Code::ChildProcess);
 
     return Ok(child_pid);
   }
@@ -84,7 +84,7 @@ namespace bonding::child
 
     /** To wait for children produced by clone(), need __WCLONE flag */
     if (-1 == waitpid(m_pid, &child_process_status, __WALL))
-      return ERR(error::Code::ContainerError);
+      return ERR(error::Code::Container);
 
     spdlog::info("Child process exit with code {}, signal {}",
                  (child_process_status >> 8) & 0xFF,
