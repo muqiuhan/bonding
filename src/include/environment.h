@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_CHECK_H__
-#define __BONDING_CHECK_H__
+#ifndef BONDING_CHECK_H
+#define BONDING_CHECK_H
 
 #include "result.hpp"
 #include "unix.h"
@@ -76,4 +76,4 @@ namespace bonding::environment
   };
 };
 
-#endif /* __BONDING_CHECK_H__ */
+#endif /* BONDING_CHECK_H */

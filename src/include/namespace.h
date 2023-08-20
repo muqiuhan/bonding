@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_NAMESPACE_H__
-#define __BONDING_NAMESPACE_H__
+#ifndef BONDING_NAMESPACE_H
+#define BONDING_NAMESPACE_H
 
 #include "error.h"
 #include "result.hpp"
@@ -17,18 +17,18 @@ namespace bonding::ns
   {
    public:
     /** Executed by the child process during its configuration. */
-    static Result<Void, error::Err> setup(const int socket, const uid_t uid) noexcept;
+    static Result<Void, error::Err> setup(int socket, uid_t uid) noexcept;
 
     /** Called by the container when it will perform UID / GID mapping. */
-    static Result<Void, error::Err> handle_child_uid_map(const pid_t pid,
-                                                         const int socket) noexcept;
+    static Result<Void, error::Err> handle_child_uid_map(pid_t pid,
+                                                         int socket) noexcept;
 
    private:
     /** If that call is successful, then user namespaces are supported. */
     static Result<bool, error::Err> has_user_namespace() noexcept;
 
-    static Result<Void, error::Err> create_map(const int id,
-                                               const std::string map) noexcept;
+    static Result<Void, error::Err> create_map(int id,
+                                               std::string map) noexcept;
 
    private:
     inline static gid_t groups[1];
@@ -41,4 +41,4 @@ namespace bonding::ns
   };
 };
 
-#endif /* __BONDING_NAMESPACE_H__ */
+#endif /* BONDING_NAMESPACE_H */

@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_HOSTNAME_H__
-#define __BONDING_HOSTNAME_H__
+#ifndef BONDING_HOSTNAME_H
+#define BONDING_HOSTNAME_H
 
 #include "error.h"
 #include "result.hpp"
@@ -15,8 +15,8 @@ namespace bonding::hostname
   class Hostname
   {
    public:
-    static Result<Void, error::Err> setup(const std::string custom) noexcept;
+    static Result<Void, error::Err> setup(const std::string& custom) noexcept;
   };
 }
 
-#endif /* __BONDING_HOSTNAME_H__ */
+#endif /* BONDING_HOSTNAME_H */

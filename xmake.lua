@@ -51,7 +51,7 @@ package_end()
 
 target("bonding")
     set_kind("binary")
-    set_languages("c++20")
+    set_languages("c++17")
 
     add_files("src/*.cpp")
     add_includedirs("lib/spdlog/include", 

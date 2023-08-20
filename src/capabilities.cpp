@@ -3,7 +3,6 @@
 #include "include/capabilities.h"
 #include "include/unix.h"
 #include "spdlog/spdlog.h"
-#include <error.h>
 #include <linux/prctl.h>
 #include <sys/prctl.h>
 
@@ -22,13 +21,13 @@ namespace bonding::capabilities
       .and_then([](cap_t cap) {
         unix::Capabilities::set_flag(cap,
                                      CAP_INHERITABLE,
-                                     DROP.size(),
+                                     static_cast<int>(DROP.size()),
                                      &DROP[0],
                                      CAP_CLEAR)
           .and_then([&](const int _) { return unix::Capabilities::set_proc(cap); })
           .and_then([&](const int _) { return unix::Capabilities::free(cap); })
-          .or_else([&](const error::Err err) {
-            if (NULL != cap)
+          .or_else([&](const error::Err& err) {
+            if (nullptr != cap)
               unix::Capabilities::free(cap).unwrap();
 
             return ERR_MSG(error::Code::Capabilities, err.to_string());

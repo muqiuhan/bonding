@@ -6,7 +6,7 @@
 namespace bonding::hostname
 {
   Result<Void, error::Err>
-  Hostname::setup(const std::string hostname) noexcept
+  Hostname::setup(const std::string& hostname) noexcept
   {
     if (-1 == sethostname(hostname.c_str(), hostname.size()))
       {

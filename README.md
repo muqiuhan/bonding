@@ -6,8 +6,13 @@
 
 *A Minimalism container implementation in C++*
 
-![](https://github.com/muqiuhan/bonding/actions/workflows/build.yaml/badge.svg)
-![](https://img.shields.io/badge/work%20in%20progress-FFFF00)
+![](https://github.com/muqiuhan/bonding/actions/workflows/build.yaml/badge.svg) 
+
+![](https://img.shields.io/badge/C++17-123456)
+![](https://img.shields.io/badge/Clang16.0.6-00F)
+![](https://img.shields.io/badge/GCC13.2.1-00F)
+
+![](https://img.shields.io/badge/WIP-FFFF00)
 
 </div>
 

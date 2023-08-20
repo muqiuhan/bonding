@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_CHILD_H__
-#define __BONDING_CHILD_H__
+#ifndef BONDING_CHILD_H
+#define BONDING_CHILD_H
 
 #include "config.h"
 #include "error.h"
@@ -18,7 +18,7 @@ namespace bonding::child
   class Child
   {
    public:
-    explicit Child(const config::Container_Options container_options)
+    explicit Child(const config::Container_Options& container_options)
       : m_container_options(container_options)
       , m_pid(generate_child_process(container_options).unwrap())
     {
@@ -35,7 +35,7 @@ namespace bonding::child
     }
 
     /* Wait for the child to finish. */
-    Result<Void, error::Err> wait() const noexcept;
+    [[nodiscard]] Result<Void, error::Err> wait() const noexcept;
 
    private:
     class Process
@@ -50,14 +50,14 @@ namespace bonding::child
      public:
       /** Make a copy of config::Container_Optionsm, instead of using
        ** the reference of the parent process */
-      static int __main(void * options) noexcept;
+      [[maybe_unused]] static int _main(void * options) noexcept;
 
       static Result<Void, error::Err> setup_container_configurations() noexcept;
     };
 
    private:
     static Result<pid_t, error::Err>
-    generate_child_process(const config::Container_Options container_options) noexcept;
+    generate_child_process(config::Container_Options container_options) noexcept;
 
    private:
     const config::Container_Options m_container_options;
@@ -67,4 +67,4 @@ namespace bonding::child
   };
 }
 
-#endif /* __BONDING_CHILD_H__ */
+#endif /* BONDING_CHILD_H */
