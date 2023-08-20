@@ -2,8 +2,6 @@
 
 #include "include/mount.h"
 
-#include <error.h>
-#include <exception>
 #include <filesystem>
 #include <sys/mount.h>
 #include <sys/syscall.h>
@@ -13,7 +11,7 @@ namespace bonding::mounts
 {
 
   Result<Void, error::Err>
-  Mount::__umount(const std::string & path) noexcept
+  Mount::_umount(const std::string & path) noexcept
   {
     spdlog::debug("Umount {}", path);
     if (-1 == umount2(path.c_str(), MNT_DETACH))
@@ -26,7 +24,7 @@ namespace bonding::mounts
   }
 
   Result<Void, error::Err>
-  Mount::__delete(const std::string & path) noexcept
+  Mount::_delete(const std::string & path) noexcept
   {
     if (-1 == remove(path.c_str()))
       {
@@ -44,21 +42,21 @@ namespace bonding::mounts
     const std::vector<std::pair<std::string, std::string>> & mounts_paths) noexcept
   {
     spdlog::info("Setting mount points...");
-    __mount("", "/", MS_REC | MS_PRIVATE).unwrap();
+    _mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
     root = ".bonding/tmp/" + hostname + "/";
     const std::string old_root_tail = "oldroot." + hostname + "/";
     const std::string put_old = root + old_root_tail;
 
-    __create(root).unwrap();
-    __mount(mount_dir, root, MS_BIND | MS_PRIVATE).unwrap();
-    __create(put_old).unwrap();
+    _create(root).unwrap();
+    _mount(mount_dir, root, MS_BIND | MS_PRIVATE).unwrap();
+    _create(put_old).unwrap();
 
     for (const auto & [real_path, mount_path] : mounts_paths)
       {
         const std::string mount_dir = root + mount_path;
-        __create(mount_dir).unwrap();
-        __mount(real_path, mount_dir, MS_BIND | MS_PRIVATE).unwrap();
+        _create(mount_dir).unwrap();
+        _mount(real_path, mount_dir, MS_BIND | MS_PRIVATE).unwrap();
       }
 
     if (-1 == syscall(SYS_pivot_root, root.c_str(), put_old.c_str()))
@@ -70,8 +68,8 @@ namespace bonding::mounts
     if (-1 == chdir("/"))
       return ERR(error::Code::Mounts);
 
-    __umount(old_root).unwrap();
-    __delete(old_root).unwrap();
+    _umount(old_root).unwrap();
+    _delete(old_root).unwrap();
 
     return Ok(Void());
   }
@@ -86,17 +84,17 @@ namespace bonding::mounts
   }
 
   Result<Void, error::Err>
-  Mount::__mount(const std::string & path,
+  Mount::_mount(const std::string & path,
                  const std::string & mount_point,
                  unsigned long flags) noexcept
   {
     spdlog::info("Mount {} to {}", path, mount_point);
     if (-1
-        == mount((path == "" ? NULL : path.c_str()),
+        == mount((path.empty() ? nullptr : path.c_str()),
                  mount_point.c_str(),
-                 NULL,
+                 nullptr,
                  flags,
-                 NULL))
+                 nullptr))
       {
         spdlog::error("Cannot mount {} to {}", path, mount_point);
         return ERR(error::Code::Mounts);
@@ -106,7 +104,7 @@ namespace bonding::mounts
   }
 
   Result<Void, error::Err>
-  Mount::__create(const std::string & path) noexcept
+  Mount::_create(const std::string & path) noexcept
   {
     spdlog::debug("Create {}", path);
     try

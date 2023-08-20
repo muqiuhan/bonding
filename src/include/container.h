@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_CONTAINER_H__
-#define __BONDING_CONTAINER_H__
+#ifndef BONDING_CONTAINER_H
+#define BONDING_CONTAINER_H
 
 #include "child.h"
 #include "cli.h"
@@ -23,7 +23,7 @@ namespace bonding::container
     }
 
    private:
-    Container(config::Container_Options config)
+    explicit Container(const config::Container_Options& config)
       : m_config(config)
       , m_sockets(config.ipc)
       , m_child_process(child::Child(config))
@@ -40,7 +40,7 @@ namespace bonding::container
     /** get the args from the commandline and handle everything
      ** from the struct Container creation to the exit.
      ** returns a Result that will inform if an error happened during the process. */
-    static Result<Void, error::Err> start(const config::Container_Options argv) noexcept;
+    static Result<Void, error::Err> start(const config::Container_Options& argv) noexcept;
 
    private:
     const config::Container_Options m_config;
@@ -55,4 +55,4 @@ namespace bonding::container
   };
 };
 
-#endif /* __BONDING_CONTAINER_H__ */
+#endif /* BONDING_CONTAINER_H */

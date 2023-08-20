@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_RESOURCE_H__
-#define __BONDING_RESOURCE_H__
+#ifndef BONDING_RESOURCE_H
+#define BONDING_RESOURCE_H
 
 #include "error.h"
 #include "result.hpp"
@@ -39,13 +39,13 @@ namespace bonding::resource
       const std::vector<Setting> settings;
     };
 
-    static Result<Void, error::Err> setup(const std::string hostname) noexcept;
+    static Result<Void, error::Err> setup(std::string hostname) noexcept;
 
     /** After the child process exited, container need to clean
      ** all the cgroups restriction added.
      ** NOTE: This is very simple as cgroups v2 centralises everything in a directory
      **       under /sys/fs/cgroup/<groupname>/ */
-    static Result<Void, error::Err> clean(const std::string hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string& hostname) noexcept;
 
    private:
     static Result<std::vector<Control>, error::Err> default_config() noexcept;
@@ -105,9 +105,9 @@ namespace bonding::resource
   class Resource
   {
    public:
-    static Result<Void, error::Err> setup(const std::string hostname) noexcept;
-    static Result<Void, error::Err> clean(const std::string hostname) noexcept;
+    static Result<Void, error::Err> setup(const std::string& hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string& hostname) noexcept;
   };
 };
 
-#endif /* __BONDING_RESOURCE_H__ */
+#endif /* BONDING_RESOURCE_H */

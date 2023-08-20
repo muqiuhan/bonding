@@ -5,8 +5,6 @@
 #include <fcntl.h>
 #include <grp.h>
 #include <sched.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 namespace bonding::ns

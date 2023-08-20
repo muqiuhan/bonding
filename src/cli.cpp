@@ -168,7 +168,7 @@ namespace bonding::cli
     return Ok(parse<T>(value).unwrap());
   }
 
-  Result<bool, error::Err>
+  [[maybe_unused]] Result<bool, error::Err>
   Parser::parsed(std::string const & name) const noexcept
   {
     auto it = m_cmds.find(name);

@@ -1,5 +1,4 @@
 #include "include/environment.h"
-#include <cstring>
 #include <dirent.h>
 #include <string>
 #include <unistd.h>
@@ -26,7 +25,7 @@ namespace bonding::environment
   {
     std::map<std::string, bool> supported_controllers;
 
-    for (const std::string controller_name : controllers)
+    for (const std::string& controller_name : controllers)
       {
         std::string::size_type index = controller_name.find('.');
 
@@ -44,10 +43,10 @@ namespace bonding::environment
             supported_controllers.insert(std::make_pair(controller_name, false));
 
             DIR * d = opendir(controller_path.c_str());
-            struct dirent * dir = NULL;
-            if (NULL != d)
+            struct dirent * dir = nullptr;
+            if (nullptr != d)
               {
-                while (NULL != (dir = readdir(d)))
+                while (nullptr != (dir = readdir(d)))
                   if (std::string::npos != std::string(dir->d_name).find(controller_name))
                     {
                       supported_controllers.insert_or_assign(controller_name, true);

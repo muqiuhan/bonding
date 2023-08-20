@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_UNIX_H__
-#define __BONDING_UNIX_H__
+#ifndef BONDING_UNIX_H
+#define BONDING_UNIX_H
 
 #include "error.h"
 #include "result.hpp"
@@ -18,7 +18,7 @@
                                      ...)                                                \
   Result<OK_TYPE, error::Err> WRAPPER_FUNCTION_SIGNATURE noexcept                        \
   {                                                                                      \
-    const OK_TYPE SYSTEM_CALL_FUNCTION_RESULT = SYSTEM_CALL_FUNCTION_NAME(__VA_ARGS__);  \
+    OK_TYPE SYSTEM_CALL_FUNCTION_RESULT = SYSTEM_CALL_FUNCTION_NAME(__VA_ARGS__);  \
     if (FAILURE_VALUE == SYSTEM_CALL_FUNCTION_RESULT)                                    \
       return ERR(error::Code::Unix);                                                     \
     return Ok(SYSTEM_CALL_FUNCTION_RESULT);                                              \
@@ -55,4 +55,4 @@ namespace bonding::unix
   };
 };
 
-#endif /* __BONDING_UNIX_H__ */
+#endif /* BONDING_UNIX_H */

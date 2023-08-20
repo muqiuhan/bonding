@@ -2,7 +2,6 @@
 
 #include "include/child.h"
 #include "include/capabilities.h"
-#include "include/container.h"
 #include "include/exec.h"
 #include "include/hostname.h"
 #include "include/mount.h"
@@ -32,7 +31,7 @@ namespace bonding::child
   }
 
   int
-  Child::Process::__main(void * options) noexcept
+  Child::Process::_main(void * options) noexcept
   {
     container_options = static_cast<config::Container_Options *>(options);
 
@@ -41,7 +40,7 @@ namespace bonding::child
         spdlog::info("Container setup successfully");
         return Ok(ok);
       })
-      .or_else([](const error::Err err) {
+      .or_else([](const error::Err& err) {
         spdlog::error("Error while creating container");
         return Err(err);
       })
@@ -59,7 +58,7 @@ namespace bonding::child
     const config::Container_Options container_options) noexcept
   {
     const pid_t child_pid =
-      clone(Process::__main,
+      clone(Process::_main,
             static_cast<char *>(Process::STACK) + Process::STACK_SIZE,
             CLONE_NEWNS         /* new mount namespace */
               | CLONE_NEWCGROUP /* new cgroup namespace */

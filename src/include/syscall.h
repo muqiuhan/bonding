@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_SYSCALL_H__
-#define __BONDING_SYSCALL_H__
+#ifndef BONDING_SYSCALL_H
+#define BONDING_SYSCALL_H
 
 #include "error.h"
 #include "result.hpp"
@@ -36,7 +36,7 @@ namespace bonding::syscall
     static Result<Void, error::Err> refuse_if_comp() noexcept;
 
    private:
-    inline static scmp_filter_ctx ctx = NULL;
+    inline static scmp_filter_ctx ctx = nullptr;
 
     inline static const std::array<int, 10> default_refuse_syscalls = {
       SCMP_SYS(keyctl),         SCMP_SYS(add_key),       SCMP_SYS(request_key),
@@ -46,7 +46,7 @@ namespace bonding::syscall
     };
 
     /** Syscalls can be restricted when a particular condition is met. */
-    inline static const std::array<std::tuple<unsigned int, unsigned int, scmp_datum_t>,
+    inline static const std::array<std::tuple<int, unsigned int, scmp_datum_t>,
                                    9>
       default_refuse_if_comp_syscalls = {
         std::make_tuple(SCMP_SYS(chmod), 1, S_ISUID),
@@ -62,4 +62,4 @@ namespace bonding::syscall
   };
 }
 
-#endif /* __BONDING_SYSTEMCALL_H__ */
+#endif /* BONDING_SYSTEMCALL_H */

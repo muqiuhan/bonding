@@ -1,7 +1,6 @@
 #include "include/configfile.h"
 #include "configor/configor_exception.hpp"
 #include "configor/json.hpp"
-#include "include/cli.h"
 #include "include/config.h"
 #include "include/unix.h"
 #include <error.h>
@@ -9,7 +8,7 @@
 namespace bonding::configfile
 {
   config::Container_Options
-  Config_File::read(const std::string path) noexcept
+  Config_File::read(const std::string& path) noexcept
   {
     const configor::json::value data =
       configor::json::parse(unix::Filesystem::read_entire_file(path).unwrap());

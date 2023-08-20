@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_RESULT_H__
-#define __BONDING_RESULT_H__
+#ifndef BONDING_RESULT_H
+#define BONDING_RESULT_H
 
 #include <result/result.hpp>
 
@@ -9,4 +9,4 @@ using namespace result;
 
 using Void = bool;
 
-#endif /* __BONDING_RESULT_H__ */
+#endif /* BONDING_RESULT_H */
