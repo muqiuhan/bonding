@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_CONFIG_H__
-#define __BONDING_CONFIG_H__
+#ifndef BONDING_CONFIG_H
+#define BONDING_CONFIG_H
 
 #include "cli.h"
 #include "error.h"
@@ -53,4 +53,4 @@ namespace bonding::config
 
 };
 
-#endif /* __BONDING_CONFIG_HPP__ */
+#endif /* BONDING_CONFIG_H */

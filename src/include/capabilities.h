@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_CAPABILITIES_H__
-#define __BONDING_CAPABILITIES_H__
+#ifndef BONDING_CAPABILITIES_H
+#define BONDING_CAPABILITIES_H
 
 #include "error.h"
 #include "result.hpp"
@@ -32,4 +32,4 @@ namespace bonding::capabilities
   };
 }
 
-#endif /* __BONDING_CAPABILITIES_H__ */
+#endif /* BONDING_CAPABILITIES_H */

@@ -1,8 +1,6 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/unix.h"
-#include <cstddef>
-#include <error.h>
 #include <filesystem>
 #include <fstream>
 #include <sys/capability.h>
@@ -27,7 +25,7 @@ namespace bonding::unix
   }
 
   /** Capabilities::get_proc */
-  GENERATE_SYSTEM_CALL_WRAPPER(cap_t, NULL, Capabilities::get_proc(), cap_get_proc)
+  GENERATE_SYSTEM_CALL_WRAPPER(cap_t, nullptr, Capabilities::get_proc(), cap_get_proc)
 
   /** Capabilities::set_proc */
   GENERATE_SYSTEM_CALL_WRAPPER(

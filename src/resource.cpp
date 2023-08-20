@@ -4,18 +4,15 @@
 #include "include/environment.h"
 #include "include/unix.h"
 #include "spdlog/spdlog.h"
-#include <error.h>
-#include <exception>
 #include <fcntl.h>
 #include <filesystem>
 #include <sys/resource.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 namespace bonding::resource
 {
   Result<Void, error::Err>
-  Resource::setup(const std::string hostname) noexcept
+  Resource::setup(const std::string& hostname) noexcept
   {
     spdlog::info("Restricting resources for hostname {}", hostname);
     CgroupsV1::setup(hostname).unwrap();
@@ -72,7 +69,7 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  CgroupsV1::clean(const std::string hostname) noexcept
+  CgroupsV1::clean(const std::string& hostname) noexcept
   {
     spdlog::debug("Cleaning cgroups-v1 settings...");
 
@@ -101,7 +98,7 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  Resource::clean(const std::string hostname) noexcept
+  Resource::clean(const std::string& hostname) noexcept
   {
     CgroupsV1::clean(hostname).unwrap();
 

@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_CLI_H__
-#define __BONDING_CLI_H__
+#ifndef BONDING_CLI_H
+#define BONDING_CLI_H
 
 #include "error.h"
 #include "result.hpp"
@@ -31,6 +31,8 @@ namespace bonding::cli
     {
     }
 
+    Parser() = default;
+
     struct cmd
     {
       std::string shorthand, value, descr;
@@ -51,7 +53,7 @@ namespace bonding::cli
     Result<T, error::Err>
     get(std::string const & name) const noexcept;
 
-    Result<bool, error::Err>
+    [[maybe_unused]] Result<bool, error::Err>
     parsed(std::string const & name) const noexcept;
 
     template <typename T>
@@ -77,13 +79,11 @@ namespace bonding::cli
   class Command_Line_Args
   {
    public:
-    static Result<Void, error::Err> make(const int argc, char * argv[]) noexcept;
-    static Result<Parser, error::Err> init_parser(const int argc, char * argv[]) noexcept;
+    static Result<Void, error::Err> make(int argc, char * argv[]) noexcept;
+    static Result<Parser, error::Err> init_parser(int argc, char * argv[]) noexcept;
   };
 
-  Result<Void, error::Err> function(const Command_Line_Args args) noexcept;
-  Result<Void, error::Err> init(const Command_Line_Args args) noexcept;
-  Result<Void, error::Err> run(const Command_Line_Args args) noexcept;
+  Result<Void, error::Err> function(Command_Line_Args args) noexcept;
 };
 
-#endif /* __BONDING_CLI_H__ */
+#endif /* BONDING_CLI_H */

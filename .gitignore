@@ -6,6 +6,7 @@ build/
 .DS_Store
 
 .vscode/
+.idea
 .cache/
 
 .bonding/

@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_ERROR_H__
-#define __BONDING_ERROR_H__
+#ifndef BONDING_ERROR_H
+#define BONDING_ERROR_H
 
 #include "result.hpp"
 #include <cerrno>
@@ -10,6 +10,7 @@
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace bonding::error
 {
@@ -58,29 +59,29 @@ namespace bonding::error
     {
     }
 
-    Err(const Code code)
+    explicit Err(const Code code)
       : Err(code, "")
     {
       spdlog::error("{}", to_string());
     }
 
-    Err(const Code code, const std::string custom)
+    Err(const Code code, const std::string& custom)
       : Err(code, custom, 0, "Unknown", "Unknown")
     {
       spdlog::error("{}", to_string());
     }
 
     Err(const Code code,
-        const std::string custom,
+        std::string  custom,
         const uint32_t line,
-        const std::string file,
-        const std::string function)
+        std::string file,
+        std::string function)
       : m_code(code)
       , m_errno(errno)
       , m_custom(std::move(custom))
       , m_line(line)
-      , m_file(file)
-      , m_function(function)
+      , m_file(std::move(file))
+      , m_function(std::move(function))
     {
       spdlog::error("{}", to_string(), function);
       spdlog::critical("In the `{}` function on line `{}` of the file `{}` ({}:{})",
@@ -91,8 +92,8 @@ namespace bonding::error
                        line);
     }
 
-    int32_t to_exit_code() const noexcept;
-    std::string to_string() const noexcept;
+    [[nodiscard]] static int32_t to_exit_code() noexcept;
+    [[nodiscard]] std::string to_string() const noexcept;
 
    private:
     const Code m_code;
@@ -105,12 +106,6 @@ namespace bonding::error
     const std::string m_file;
   };
 
-  /** Get the result from a function, and exit the process with the correct error
-   ** code. Linux executable returns a number when they exit, which describe how
-   ** everything went a return code of 0 means that there was no errors, any
-   ** other number describe an error and what that error is
-   ** (based on the return code value). */
-  void exit_with_return_code(Result<Void, const Err> result) noexcept;
 }
 
 #define ERR(CODE)                                                                        \
@@ -118,4 +113,4 @@ namespace bonding::error
 #define ERR_MSG(CODE, MSG)                                                               \
   result::Err(bonding::error::Err(CODE, MSG, __LINE__, __FILE__, __FUNCTION__))
 
-#endif /* __BONDING_ERROR_H__ */
+#endif /* BONDING_ERROR_H */

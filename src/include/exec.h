@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_EXEC_H__
-#define __BONDING_EXEC_H__
+#ifndef BONDING_EXEC_H
+#define BONDING_EXEC_H
 
 #include "error.h"
 #include "result.hpp"
@@ -23,4 +23,4 @@ namespace bonding::exec
 
 };
 
-#endif /* __BONDING_EXEC_H__ */
+#endif /* BONDING_EXEC_H */

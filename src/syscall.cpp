@@ -2,7 +2,6 @@
 
 #include "include/syscall.h"
 #include <algorithm>
-#include <array>
 #include <asm-generic/errno-base.h>
 
 #if __has_include(<libseccomp/seccomp.h>)
@@ -45,7 +44,7 @@ namespace bonding::syscall
 
     /* Initialize seccomp profile with all syscalls allowed by default */
     ctx = seccomp_init(SCMP_ACT_ALLOW);
-    if (NULL == ctx)
+    if (nullptr == ctx)
       return ERR_MSG(error::Code::Systemcall, "seccomp_init error");
 
     refuse_syscall().unwrap();

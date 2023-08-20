@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#ifndef __BONDING_IPC_H__
-#define __BONDING_IPC_H__
+#ifndef BONDING_IPC_H
+#define BONDING_IPC_H
 
 #include "error.h"
 #include "result.hpp"
@@ -13,10 +13,10 @@ namespace bonding::ipc
   class IPC
   {
    public:
-    static Result<Void, error::Err> send_boolean(const int socket,
-                                                 const bool data) noexcept;
-    static Result<bool, error::Err> recv_boolean(const int socket) noexcept;
+    static Result<Void, error::Err> send_boolean(int socket,
+                                                 bool data) noexcept;
+    static Result<bool, error::Err> recv_boolean(int socket) noexcept;
   };
 }
 
-#endif /* __BONDING_IPC_H__ */
+#endif /* BONDING_IPC_H */
