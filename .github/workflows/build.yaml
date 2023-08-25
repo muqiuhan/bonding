@@ -21,13 +21,13 @@ jobs:
         with:
           xmake-version: latest
       
-      - name: Install libseccomp-dev
+      - name: Install dependencies
         run:
           sudo apt-get install -y libseccomp-dev
-      
-      - name: Install libcap-dev
-        run:
+
           sudo apt-get install -y libcap-dev
+          
+          xrepo install -y spdlog
       
       - name: build
         run: xmake
