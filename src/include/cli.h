@@ -42,23 +42,20 @@ namespace bonding::cli
     Result<bool, error::Err> parse() noexcept;
     Result<Void, error::Err> help() const noexcept;
 
-    Result<bool, error::Err>
-    add(std::string const & name,
-        std::string const & descr,
-        std::string const & shorthand,
-        bool is_required,
-        bool is_boolean = false) noexcept;
+    Result<bool, error::Err> add(std::string const & name,
+                                 std::string const & descr,
+                                 std::string const & shorthand,
+                                 bool is_required,
+                                 bool is_boolean = false) noexcept;
 
     template <typename T>
-    Result<T, error::Err>
-    get(std::string const & name) const noexcept;
+    Result<T, error::Err> get(std::string const & name) const noexcept;
 
     [[maybe_unused]] Result<bool, error::Err>
     parsed(std::string const & name) const noexcept;
 
     template <typename T>
-    Result<T, error::Err>
-    parse(std::string const & value) const noexcept;
+    Result<T, error::Err> parse(std::string const & value) const noexcept;
 
    private:
     int m_argc;
@@ -83,7 +80,9 @@ namespace bonding::cli
     static Result<Parser, error::Err> init_parser(int argc, char * argv[]) noexcept;
   };
 
-  Result<Void, error::Err> function(Command_Line_Args args) noexcept;
+  Result<Void, error::Err> function(const Parser args) noexcept;
+  Result<Void, error::Err> run(const Parser & args) noexcept;
+  Result<Void, error::Err> init(const Parser & args) noexcept;
 };
 
 #endif /* BONDING_CLI_H */
