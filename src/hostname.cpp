@@ -2,6 +2,7 @@
 
 #include "include/hostname.h"
 #include "spdlog/spdlog.h"
+#include <unistd.h>
 
 namespace bonding::hostname
 {
