@@ -1,12 +1,13 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
-#include "spdlog/spdlog.h"
 #include "include/cli.h"
+#include "spdlog/spdlog.h"
+#include <cstdlib>
 
 using namespace bonding;
 
 int
-main(int argc, char ** argv)
+__main(int argc, char ** argv)
 {
   spdlog::set_pattern("%H:%M:%S.%f %^>%$ %v");
 
@@ -18,5 +19,12 @@ main(int argc, char ** argv)
     {
       spdlog::error(e.what());
     }
+
   return 0;
+}
+
+int
+main(int argc, char ** argv)
+{
+  return __main(argc, argv);
 }

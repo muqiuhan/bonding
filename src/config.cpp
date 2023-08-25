@@ -7,5 +7,5 @@
 
 namespace bonding::config
 {
-  
+
 }

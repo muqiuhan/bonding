@@ -27,7 +27,7 @@ namespace bonding::container
   }
 
   Result<Void, error::Err>
-  Container::start(const config::Container_Options& argv) noexcept
+  Container::start(const config::Container_Options & argv) noexcept
   {
     Container container(argv);
 

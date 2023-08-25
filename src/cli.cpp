@@ -2,6 +2,7 @@
 
 #include "include/cli.h"
 #include "include/configfile.h"
+#include "include/container.h"
 #include "include/hostname.h"
 #include <error.h>
 #include <spdlog/spdlog.h>
@@ -12,14 +13,7 @@ namespace bonding::cli
   Result<Void, error::Err>
   Command_Line_Args::make(const int argc, char * argv[]) noexcept
   {
-    const auto parser = init_parser(argc, argv).unwrap();
-
-    if (parser.get<bool>("init").unwrap())
-      spdlog::info("init");
-    else if (parser.get<bool>("run").unwrap())
-      spdlog::info("run");
-
-    return Ok(Void());
+    return function(init_parser(argc, argv).unwrap());
   }
 
   Result<Parser, error::Err>
@@ -38,6 +32,8 @@ namespace bonding::cli
                "run",
                false,
                true);
+
+    parser.add("help", "show this message", "help", false, true);
 
     if (parser.parse().is_err())
       {
@@ -106,7 +102,7 @@ namespace bonding::cli
   Result<Void, error::Err>
   Parser::help() const noexcept
   {
-    std::cerr << "Usage: " << m_argv[0] << " [-h,--help]";
+    std::cerr << "Usage: " << m_argv[0] << " [help]";
     const auto print = [this](bool with_description) {
       for (size_t i = 0; i != m_names.size(); ++i)
         {
@@ -128,7 +124,6 @@ namespace bonding::cli
     print(false);
     std::cout << "\n\n";
     print(true);
-    std::cout << " [-h,--help]\n\tPrint this help text and silently exits." << std::endl;
 
     return Ok(Void());
   }
@@ -221,4 +216,32 @@ namespace bonding::cli
     assert(false); // should never happen
     return ERR_MSG(error::Code::Cli, "unsupported type");
   }
+
+  Result<Void, error::Err>
+  function(const Parser parser) noexcept
+  {
+    if (parser.get<bool>("init").unwrap())
+      return init(parser);
+    else if (parser.get<bool>("run").unwrap())
+      return run(parser);
+    else if (parser.get<bool>("help").unwrap())
+      return parser.help();
+    else
+      return ERR(error::Code::Cli);
+
+    return Ok(Void());
+  }
+
+  Result<Void, error::Err>
+  run(const Parser & args) noexcept
+  {
+    return Ok(container::Container::start(configfile::Config_File::read("./bonding.json"))
+                .unwrap());
+  }
+
+  Result<Void, error::Err>
+  init(const Parser & args) noexcept
+  {
+  }
+
 }

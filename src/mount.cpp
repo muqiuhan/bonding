@@ -70,7 +70,6 @@ namespace bonding::mounts
 
     _umount(old_root).unwrap();
     _delete(old_root).unwrap();
-
     return Ok(Void());
   }
 
@@ -85,8 +84,8 @@ namespace bonding::mounts
 
   Result<Void, error::Err>
   Mount::_mount(const std::string & path,
-                 const std::string & mount_point,
-                 unsigned long flags) noexcept
+                const std::string & mount_point,
+                unsigned long flags) noexcept
   {
     spdlog::info("Mount {} to {}", path, mount_point);
     if (-1

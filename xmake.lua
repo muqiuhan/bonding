@@ -1,31 +1,9 @@
 add_rules("mode.debug", "mode.release")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
-add_rules("plugin.vsxmake.autoupdate", {outputdir = "."})
 
 add_requires("libcap")
 add_requires("libseccomp")
-
-package("spdlog")
-    add_deps("cmake")
-    set_sourcedir(path.join(os.scriptdir(), "lib/spdlog"))
-    on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
-    end)
-package_end()
-
-package("clipp")
-    add_deps("cmake")
-    set_sourcedir(path.join(os.scriptdir(), "lib/clipp"))
-    on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
-    end)
-package_end()
+add_requires("spdlog")
 
 package("result")
     add_deps("cmake")
@@ -54,11 +32,9 @@ target("bonding")
     set_languages("c++17")
 
     add_files("src/*.cpp")
-    add_includedirs("lib/spdlog/include", 
-                    "lib/result/include",
-                    "lib/configor/include")
+    add_includedirs("lib/result/include", "lib/configor/include")
 
-    add_packages("spdlog", "clipp", "result")
+    add_packages("spdlog", "result")
     add_links("seccomp", "cap")
 
     after_build(function (target)

@@ -18,7 +18,7 @@
                                      ...)                                                \
   Result<OK_TYPE, error::Err> WRAPPER_FUNCTION_SIGNATURE noexcept                        \
   {                                                                                      \
-    OK_TYPE SYSTEM_CALL_FUNCTION_RESULT = SYSTEM_CALL_FUNCTION_NAME(__VA_ARGS__);  \
+    OK_TYPE SYSTEM_CALL_FUNCTION_RESULT = SYSTEM_CALL_FUNCTION_NAME(__VA_ARGS__);        \
     if (FAILURE_VALUE == SYSTEM_CALL_FUNCTION_RESULT)                                    \
       return ERR(error::Code::Unix);                                                     \
     return Ok(SYSTEM_CALL_FUNCTION_RESULT);                                              \

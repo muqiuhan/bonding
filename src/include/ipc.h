@@ -13,8 +13,7 @@ namespace bonding::ipc
   class IPC
   {
    public:
-    static Result<Void, error::Err> send_boolean(int socket,
-                                                 bool data) noexcept;
+    static Result<Void, error::Err> send_boolean(int socket, bool data) noexcept;
     static Result<bool, error::Err> recv_boolean(int socket) noexcept;
   };
 }

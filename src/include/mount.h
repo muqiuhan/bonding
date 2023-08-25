@@ -25,8 +25,8 @@ namespace bonding::mounts
    private:
     /** Call the mount() system call */
     static Result<Void, error::Err> _mount(const std::string & path,
-                                            const std::string & mount_point,
-                                            unsigned long flags) noexcept;
+                                           const std::string & mount_point,
+                                           unsigned long flags) noexcept;
 
     /** Create directories recursively based on path */
     static Result<Void, error::Err> _create(const std::string & path) noexcept;

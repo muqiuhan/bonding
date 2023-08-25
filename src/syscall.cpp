@@ -20,8 +20,7 @@ namespace bonding::syscall
         const scmp_arg_cmp cmp = { ind, SCMP_CMP_MASKED_EQ, biteq, biteq };
 
         if (0 != seccomp_rule_add_array(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 1, &cmp))
-          return Err(
-            error::Err(error::Code::Systemcall, "seccomp_rule_add_array error"));
+          return ERR_MSG(error::Code::Systemcall, "seccomp_rule_add_array error");
       }
 
     return Ok(Void());

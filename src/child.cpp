@@ -23,7 +23,7 @@ namespace bonding::child
                          container_options->hostname,
                          container_options->mounts)
       .unwrap();
-    ns::Namespace::setup(container_options->ipc.first, container_options->uid).unwrap();
+    ns::Namespace::setup(container_options->ipc.second, container_options->uid).unwrap();
     capabilities::Capabilities::setup().unwrap();
     syscall::Syscall::setup().unwrap();
 
@@ -40,7 +40,7 @@ namespace bonding::child
         spdlog::info("Container setup successfully");
         return Ok(ok);
       })
-      .or_else([](const error::Err& err) {
+      .or_else([](const error::Err & err) {
         spdlog::error("Error while creating container");
         return Err(err);
       })

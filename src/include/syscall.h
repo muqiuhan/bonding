@@ -46,8 +46,7 @@ namespace bonding::syscall
     };
 
     /** Syscalls can be restricted when a particular condition is met. */
-    inline static const std::array<std::tuple<int, unsigned int, scmp_datum_t>,
-                                   9>
+    inline static const std::array<std::tuple<int, unsigned int, scmp_datum_t>, 9>
       default_refuse_if_comp_syscalls = {
         std::make_tuple(SCMP_SYS(chmod), 1, S_ISUID),
         std::make_tuple(SCMP_SYS(chmod), 1, S_ISGID),

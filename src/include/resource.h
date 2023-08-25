@@ -45,7 +45,7 @@ namespace bonding::resource
      ** all the cgroups restriction added.
      ** NOTE: This is very simple as cgroups v2 centralises everything in a directory
      **       under /sys/fs/cgroup/<groupname>/ */
-    static Result<Void, error::Err> clean(const std::string& hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string & hostname) noexcept;
 
    private:
     static Result<std::vector<Control>, error::Err> default_config() noexcept;
@@ -105,8 +105,8 @@ namespace bonding::resource
   class Resource
   {
    public:
-    static Result<Void, error::Err> setup(const std::string& hostname) noexcept;
-    static Result<Void, error::Err> clean(const std::string& hostname) noexcept;
+    static Result<Void, error::Err> setup(const std::string & hostname) noexcept;
+    static Result<Void, error::Err> clean(const std::string & hostname) noexcept;
   };
 };
 
