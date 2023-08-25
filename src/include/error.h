@@ -55,20 +55,8 @@ namespace bonding::error
   {
    public:
     Err()
-      : Err(Code::Undefined)
     {
-    }
-
-    explicit Err(const Code code)
-      : Err(code, "")
-    {
-      spdlog::error("{}", to_string());
-    }
-
-    Err(const Code code, const std::string& custom)
-      : Err(code, custom, 0, "Unknown", "Unknown")
-    {
-      spdlog::error("{}", to_string());
+      std::terminate();
     }
 
     Err(const Code code,
@@ -84,7 +72,7 @@ namespace bonding::error
       , m_function(std::move(function))
     {
       spdlog::error("{}", to_string(), function);
-      spdlog::critical("In the `{}` function on line `{}` of the file `{}` ({}:{})",
+      spdlog::debug("In the `{}` function on line `{}` of the file `{}` ({}:{})",
                        function,
                        line,
                        file,
@@ -96,14 +84,14 @@ namespace bonding::error
     [[nodiscard]] std::string to_string() const noexcept;
 
    private:
-    const Code m_code;
+    Code m_code;
 
-    const int m_errno;
-    const uint32_t m_line;
+    int m_errno;
+    uint32_t m_line;
 
-    const std::string m_custom;
-    const std::string m_function;
-    const std::string m_file;
+    std::string m_custom;
+    std::string m_function;
+    std::string m_file;
   };
 
 }
