@@ -70,7 +70,6 @@ namespace bonding::mounts
 
     _umount(old_root).unwrap();
     _delete(old_root).unwrap();
-
     return Ok(Void());
   }
 

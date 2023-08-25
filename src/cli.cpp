@@ -2,6 +2,7 @@
 
 #include "include/cli.h"
 #include "include/configfile.h"
+#include "include/container.h"
 #include "include/hostname.h"
 #include <error.h>
 #include <spdlog/spdlog.h>
@@ -32,11 +33,7 @@ namespace bonding::cli
                false,
                true);
 
-    parser.add("help",
-               "show this message",
-               "help",
-               false,
-               true);
+    parser.add("help", "show this message", "help", false, true);
 
     if (parser.parse().is_err())
       {
@@ -224,9 +221,9 @@ namespace bonding::cli
   function(const Parser parser) noexcept
   {
     if (parser.get<bool>("init").unwrap())
-      spdlog::info("init");
+      return init(parser);
     else if (parser.get<bool>("run").unwrap())
-      spdlog::info("run");
+      return run(parser);
     else if (parser.get<bool>("help").unwrap())
       return parser.help();
     else
@@ -234,4 +231,17 @@ namespace bonding::cli
 
     return Ok(Void());
   }
+
+  Result<Void, error::Err>
+  run(const Parser & args) noexcept
+  {
+    return Ok(container::Container::start(configfile::Config_File::read("./bonding.json"))
+                .unwrap());
+  }
+
+  Result<Void, error::Err>
+  init(const Parser & args) noexcept
+  {
+  }
+
 }
