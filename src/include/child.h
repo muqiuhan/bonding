@@ -18,7 +18,7 @@ namespace bonding::child
   class Child
   {
    public:
-    explicit Child(const config::Container_Options& container_options)
+    explicit Child(const config::Container_Options & container_options)
       : m_container_options(container_options)
       , m_pid(generate_child_process(container_options).unwrap())
     {

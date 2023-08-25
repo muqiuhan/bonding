@@ -15,7 +15,7 @@ namespace bonding::hostname
   class Hostname
   {
    public:
-    static Result<Void, error::Err> setup(const std::string& custom) noexcept;
+    static Result<Void, error::Err> setup(const std::string & custom) noexcept;
   };
 }
 

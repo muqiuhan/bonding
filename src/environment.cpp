@@ -25,7 +25,7 @@ namespace bonding::environment
   {
     std::map<std::string, bool> supported_controllers;
 
-    for (const std::string& controller_name : controllers)
+    for (const std::string & controller_name : controllers)
       {
         std::string::size_type index = controller_name.find('.');
 

@@ -40,7 +40,7 @@ namespace bonding::child
         spdlog::info("Container setup successfully");
         return Ok(ok);
       })
-      .or_else([](const error::Err& err) {
+      .or_else([](const error::Err & err) {
         spdlog::error("Error while creating container");
         return Err(err);
       })

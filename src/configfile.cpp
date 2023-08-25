@@ -8,22 +8,20 @@
 namespace bonding::configfile
 {
   config::Container_Options
-  Config_File::read(const std::string& path) noexcept
+  Config_File::read(const std::string & path) noexcept
   {
     const configor::json::value data =
       configor::json::parse(unix::Filesystem::read_entire_file(path).unwrap());
 
-    return config::Container_Options{
-      data["debug"],
-      data["command"],
-      data["mount_dir"],
-      data["uid"],
-      parse_argv(data["command"]).unwrap(),
-      generate_socketpair().unwrap(),
-      data["hostname"],
-      read_mounts(data).unwrap(),
-      read_cgroups_options(data).unwrap()
-    };
+    return config::Container_Options{ data["debug"],
+                                      data["command"],
+                                      data["mount_dir"],
+                                      data["uid"],
+                                      parse_argv(data["command"]).unwrap(),
+                                      generate_socketpair().unwrap(),
+                                      data["hostname"],
+                                      read_mounts(data).unwrap(),
+                                      read_cgroups_options(data).unwrap() };
   }
 
   Result<std::vector<std::pair<std::string, std::string>>, error::Err>

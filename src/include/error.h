@@ -54,13 +54,10 @@ namespace bonding::error
   class Err
   {
    public:
-    Err()
-    {
-      std::terminate();
-    }
+    Err() { std::terminate(); }
 
     Err(const Code code,
-        std::string  custom,
+        std::string custom,
         const uint32_t line,
         std::string file,
         std::string function)
@@ -73,11 +70,11 @@ namespace bonding::error
     {
       spdlog::error("{}", to_string(), function);
       spdlog::debug("In the `{}` function on line `{}` of the file `{}` ({}:{})",
-                       function,
-                       line,
-                       file,
-                       file,
-                       line);
+                    function,
+                    line,
+                    file,
+                    file,
+                    line);
     }
 
     [[nodiscard]] static int32_t to_exit_code() noexcept;

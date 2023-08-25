@@ -26,7 +26,7 @@ namespace bonding::capabilities
                                      CAP_CLEAR)
           .and_then([&](const int _) { return unix::Capabilities::set_proc(cap); })
           .and_then([&](const int _) { return unix::Capabilities::free(cap); })
-          .or_else([&](const error::Err& err) {
+          .or_else([&](const error::Err & err) {
             if (nullptr != cap)
               unix::Capabilities::free(cap).unwrap();
 

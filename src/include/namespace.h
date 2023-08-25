@@ -20,15 +20,13 @@ namespace bonding::ns
     static Result<Void, error::Err> setup(int socket, uid_t uid) noexcept;
 
     /** Called by the container when it will perform UID / GID mapping. */
-    static Result<Void, error::Err> handle_child_uid_map(pid_t pid,
-                                                         int socket) noexcept;
+    static Result<Void, error::Err> handle_child_uid_map(pid_t pid, int socket) noexcept;
 
    private:
     /** If that call is successful, then user namespaces are supported. */
     static Result<bool, error::Err> has_user_namespace() noexcept;
 
-    static Result<Void, error::Err> create_map(int id,
-                                               std::string map) noexcept;
+    static Result<Void, error::Err> create_map(int id, std::string map) noexcept;
 
    private:
     inline static gid_t groups[1];
