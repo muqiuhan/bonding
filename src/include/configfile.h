@@ -2,9 +2,9 @@
 #define BONDING_CONFIGFILE_H
 
 #include "config.h"
-#include "configor/json.hpp"
 #include "error.h"
 #include "result.hpp"
+#include <nlohmann/json.hpp>
 
 namespace bonding::configfile
 {
@@ -15,10 +15,10 @@ namespace bonding::configfile
 
    private:
     static Result<std::vector<std::pair<std::string, std::string>>, error::Err>
-    read_mounts(const configor::json::value & data) noexcept;
+    read_mounts(const nlohmann::json & data) noexcept;
 
     static Result<std::vector<std::pair<std::string, std::string>>, error::Err>
-    read_cgroups_options(const configor::json::value & data) noexcept;
+    read_cgroups_options(const nlohmann::json & data) noexcept;
 
     static Result<std::vector<std::string>, Void> parse_argv(std::string argv) noexcept;
 

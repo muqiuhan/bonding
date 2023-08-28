@@ -1,6 +1,0 @@
-[submodule "lib/result"]
-	path = lib/result
-	url = https://github.com/p-ranav/result
-[submodule "lib/configor"]
-	path = lib/configor
-	url = https://github.com/Nomango/configor

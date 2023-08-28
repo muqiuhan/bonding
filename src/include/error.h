@@ -93,9 +93,8 @@ namespace bonding::error
 
 }
 
-#define ERR(CODE)                                                                        \
-  result::Err(bonding::error::Err(CODE, "", __LINE__, __FILE__, __FUNCTION__))
+#define ERR(CODE) Err(bonding::error::Err(CODE, "", __LINE__, __FILE__, __FUNCTION__))
 #define ERR_MSG(CODE, MSG)                                                               \
-  result::Err(bonding::error::Err(CODE, MSG, __LINE__, __FILE__, __FUNCTION__))
+  Err(bonding::error::Err(CODE, MSG, __LINE__, __FILE__, __FUNCTION__))
 
 #endif /* BONDING_ERROR_H */

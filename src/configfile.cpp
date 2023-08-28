@@ -1,17 +1,16 @@
 #include "include/configfile.h"
-#include "configor/configor_exception.hpp"
-#include "configor/json.hpp"
 #include "include/config.h"
 #include "include/unix.h"
 #include <error.h>
+#include <exception>
 
 namespace bonding::configfile
 {
   config::Container_Options
   Config_File::read(const std::string & path) noexcept
   {
-    const configor::json::value data =
-      configor::json::parse(unix::Filesystem::read_entire_file(path).unwrap());
+    const nlohmann::json data =
+      nlohmann::json::parse(unix::Filesystem::read_entire_file(path).unwrap());
 
     return config::Container_Options{ data["debug"],
                                       data["command"],
@@ -25,7 +24,7 @@ namespace bonding::configfile
   }
 
   Result<std::vector<std::pair<std::string, std::string>>, error::Err>
-  Config_File::read_mounts(const configor::json::value & data) noexcept
+  Config_File::read_mounts(const nlohmann::json & data) noexcept
   {
     std::vector<std::pair<std::string, std::string>> mounts;
 
@@ -34,7 +33,7 @@ namespace bonding::configfile
         for (auto && mount : data["mounts"])
           mounts.push_back(std::make_pair(mount[0], mount[1]));
       }
-    catch (const configor::configor_exception & e)
+    catch (const std::exception & e)
       {
         return ERR_MSG(error::Code::Configfile, e.what());
       }
@@ -42,7 +41,7 @@ namespace bonding::configfile
   }
 
   Result<std::vector<std::pair<std::string, std::string>>, error::Err>
-  Config_File::read_cgroups_options(const configor::json::value & data) noexcept
+  Config_File::read_cgroups_options(const nlohmann::json & data) noexcept
   {
     std::vector<std::pair<std::string, std::string>> options;
 
@@ -51,7 +50,7 @@ namespace bonding::configfile
         for (auto && option : data["mounts"])
           options.push_back(std::make_pair(option[0], option[1]));
       }
-    catch (const configor::configor_exception & e)
+    catch (const std::exception & e)
       {
         return ERR_MSG(error::Code::Configfile, e.what());
       }
