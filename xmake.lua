@@ -14,11 +14,3 @@ target("bonding")
     add_files("src/*.cpp")
     add_packages("spdlog", "result", "nlohmann_json")
     add_links("seccomp", "cap")
-
-    after_build(function (target)
-        import("core.project.project")
-        import("core.base.task")
-        
-        task.run("project", {kind = "makefile", outputdir = "."})
-        task.run("project", {kind = "ninja", outputdir = "."})
-    end)
