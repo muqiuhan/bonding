@@ -7,6 +7,7 @@
 #include "error.h"
 #include "result.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <initializer_list>
 #include <string>
@@ -46,6 +47,9 @@ namespace bonding::config
 
     /** Additional mount path */
     std::vector<std::pair<std::string, std::string>> mounts;
+
+    /** The child process clone flags mask */
+    int clone_flags;
 
     /** Cgroups-v1 control options */
     std::vector<std::pair<std::string, std::string>> cgroups_options;

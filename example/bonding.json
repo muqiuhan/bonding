@@ -13,5 +13,15 @@
             "/lib64",
             "/lib64"
         ]
+    ],
+    "clone": [
+        [
+            "CLONE_NEWNS",
+            "CLONE_NEWCGROUP",
+            "CLONE_NEWPID",
+            "CLONE_NEWIPC",
+            "CLONE_NEWNET",
+            "CLONE_NEWUTS"
+        ]
     ]
 }

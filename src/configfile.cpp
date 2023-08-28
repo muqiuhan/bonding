@@ -1,8 +1,11 @@
 #include "include/configfile.h"
 #include "include/config.h"
 #include "include/unix.h"
+#include <algorithm>
 #include <error.h>
 #include <exception>
+#include <numeric>
+#include <stdexcept>
 
 namespace bonding::configfile
 {
@@ -20,7 +23,37 @@ namespace bonding::configfile
                                       generate_socketpair().unwrap(),
                                       data["hostname"],
                                       read_mounts(data).unwrap(),
+                                      read_clone(data).unwrap(),
                                       read_cgroups_options(data).unwrap() };
+  }
+
+  Result<int, error::Err>
+  Config_File::read_clone(const nlohmann::json & data) noexcept
+  {
+    std::vector<int> result;
+
+    try
+      {
+        for (auto && flag : data["clone"])
+          try
+            {
+              result.push_back(CLONE_FLAGS_MAP.at(flag));
+            }
+          catch (const std::out_of_range & e)
+            {
+              return ERR_MSG(error::Code::Configfile,
+                             std::string(flag) + " is not a valid flag");
+            }
+      }
+    catch (const nlohmann::json::exception & e)
+      {
+        return ERR_MSG(error::Code::Configfile, e.what());
+      }
+
+    return Ok(
+      std::accumulate(result.begin(), result.end(), 0, [](uint32_t a, uint32_t b) {
+        return a | b;
+      }));
   }
 
   Result<std::vector<std::pair<std::string, std::string>>, error::Err>
@@ -33,7 +66,7 @@ namespace bonding::configfile
         for (auto && mount : data["mounts"])
           mounts.push_back(std::make_pair(mount[0], mount[1]));
       }
-    catch (const std::exception & e)
+    catch (const nlohmann::json::exception & e)
       {
         return ERR_MSG(error::Code::Configfile, e.what());
       }
@@ -50,7 +83,7 @@ namespace bonding::configfile
         for (auto && option : data["mounts"])
           options.push_back(std::make_pair(option[0], option[1]));
       }
-    catch (const std::exception & e)
+    catch (const nlohmann::json::exception & e)
       {
         return ERR_MSG(error::Code::Configfile, e.what());
       }

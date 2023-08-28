@@ -36,7 +36,7 @@ xmake project -k xcode
 
 ## Install
 
-- The easiest is `xmake install --admin`, it will try to request administrator permission to install
+- The easiest is `xmake install --root --admin`, it will try to request administrator permission to install
 
 Other install options: 
 - `xmake -o INSTALLDIR` to set the install directory.
