@@ -27,7 +27,7 @@ jobs:
 
           sudo apt-get install -y libcap-dev
           
-          xrepo install -y spdlog
+          xrepo install -y spdlog nlohmann_json
       
       - name: build
         run: xmake
