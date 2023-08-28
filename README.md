@@ -23,7 +23,7 @@ This is currently the only way to use bonding. Fortunately, xmake can solve most
 
 Bonding's [xmake.lua](./xmake.lua) will automatically generate Ninja, Makefile, CMake, Visual Studio project files, and Xcode project files after the first build, and you can also generate other builds directly through it before using xmake to build this project Tool related files:
 
-```e
+```shell
 xmake project -k ninja
 xmake project -k cmake
 xmake project -k make
@@ -31,12 +31,12 @@ xmake project -k vs
 xmake project -k xcode
 ```
 
-1. clone the source: `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
-2. build it: `xmake f -m release && xmake build` or build for debug: `xmake f -m debug && xmake build`
+1. clone: `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
+2. and build it: `make build.release` or build for debug: `make build.debug`
 
 ## Install
 
-- The easiest is `xmake install --root --admin`, it will try to request administrator permission to install
+- The easiest is `make install`, it will try to request administrator permission to install
 
 Other install options: 
 - `xmake -o INSTALLDIR` to set the install directory.
@@ -63,18 +63,17 @@ sudo lldb ./build/linux/x86_64/debug/bonding run --debug
 
 ## USAGE:
 ```
-sage: ./build/linux/x86_64/debug/bonding [-h,--help] [init] [run]
+Usage: bonding [help] [init] [run] [help]
 
  [init]
         Initialize the current directory as the container directory
 
  [run]
         Run with the current directory as the container directory
+
+ [help]
+        show this message
 ```
-
-- `-h --hostname`: If the hostname is not explicitly provided, bonding will randomly generate a random hostname, with a length of 10, consisting of English uppercase and lowercase letters and numbers, e.g `bonding.0wusbvmdos`.
-
-- `-m --mounts`: If no additional mount path is explicitly provided, two system dynamic library directories will be mounted by default: `/lib64`, `/lib`.
 
 Bonding sets the environment and various parameters through the configuration file [bonding.json](./example/bonding.json):
 ```json
@@ -93,6 +92,14 @@ Bonding sets the environment and various parameters through the configuration fi
             "/lib64",
             "/lib64"
         ]
+    ],
+    "clone": [
+        "CLONE_NEWNS",
+        "CLONE_NEWCGROUP",
+        "CLONE_NEWPID",
+        "CLONE_NEWIPC",
+        "CLONE_NEWNET",
+        "CLONE_NEWUTS"
     ]
 }
 ```
