@@ -1,15 +1,17 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/unix.h"
+#include <fcntl.h>
 #include <filesystem>
 #include <fstream>
 #include <sys/capability.h>
 #include <sys/utsname.h>
+#include <unistd.h>
 
 namespace bonding::unix
 {
   Result<Void, error::Err>
-  Filesystem::mkdir(const std::string & path) noexcept
+  Filesystem::Mkdir(const std::string & path) noexcept
   {
     try
       {
@@ -25,32 +27,60 @@ namespace bonding::unix
   }
 
   /** Capabilities::get_proc */
-  GENERATE_SYSTEM_CALL_WRAPPER(cap_t, nullptr, Capabilities::get_proc(), cap_get_proc)
+  GENERATE_SYSTEM_CALL_WRAPPER(cap_t, nullptr, Capabilities::Get_proc(), cap_get_proc)
 
   /** Capabilities::set_proc */
-  GENERATE_SYSTEM_CALL_WRAPPER(
-    int, -1, Capabilities::set_proc(cap_t cap), cap_set_proc, cap)
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
+    int, -1, Capabilities::Set_proc(cap_t cap), cap_set_proc, cap)
 
   /** Capabilities::free */
-  GENERATE_SYSTEM_CALL_WRAPPER(int, -1, Capabilities::free(cap_t cap), cap_free, cap)
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
+    int, -1, Capabilities::Free(cap_t cap), cap_free, cap)
 
   /** Capabilities::set_flag */
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
+    int,
+    -1,
+    Capabilities::Set_flag(cap_t cap,
+                           cap_flag_t flag,
+                           int ncap,
+                           const cap_value_t * caps,
+                           cap_flag_value_t value),
+    cap_set_flag,
+    cap,
+    flag,
+    ncap,
+    caps,
+    value)
+
+  /** Filesystem::Close */
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
+    int, -1, Filesystem::Close(int fd), close, fd);
+
+  /** Filesystem::Rmdir */
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
+    int, -1, Filesystem::Rmdir(const std::string & path), rmdir, path.c_str());
+
+  /** Filesystem::Open */
   GENERATE_SYSTEM_CALL_WRAPPER(int,
                                -1,
-                               Capabilities::set_flag(cap_t cap,
-                                                      cap_flag_t flag,
-                                                      int ncap,
-                                                      const cap_value_t * caps,
-                                                      cap_flag_value_t value),
-                               cap_set_flag,
-                               cap,
-                               flag,
-                               ncap,
-                               caps,
-                               value)
+                               Filesystem::Open(const std::string & file, int flag),
+                               open,
+                               file.c_str(),
+                               flag);
+
+  /** Filesystem::Write */
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(int,
+                                            -1,
+                                            Filesystem::Write(int fd,
+                                                              const std::string & s),
+                                            write,
+                                            fd,
+                                            s.c_str(),
+                                            s.length());
 
   Result<utsname, error::Err>
-  Utsname::get() noexcept
+  Utsname::Get() noexcept
   {
     struct utsname host = { 0 };
     if (-1 == uname(&host))
