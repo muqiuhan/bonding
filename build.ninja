@@ -9,13 +9,19 @@ rule gen
  description = regenerating ninja files
 
 # rules for compiler
+rule as
+ command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = ccache compiling.debug $in
+
 rule mm
  command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
  description = ccache compiling.debug $in
 
-rule cc
+rule mxx
  command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
@@ -27,13 +33,7 @@ rule cxx
  depfile = $out.d
  description = ccache compiling.debug $in
 
-rule as
- command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = ccache compiling.debug $in
-
-rule mxx
+rule cc
  command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
