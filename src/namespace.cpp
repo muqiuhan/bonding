@@ -33,9 +33,9 @@ namespace bonding::ns
       return ERR(error::Code::Namespace);
 
     if (has_userns)
-      spdlog::info("User namespace setup...");
+      spdlog::info("Setting user namespace...✓");
     else
-      spdlog::warn("User namespace not supported, continuting...");
+      spdlog::error("Setting user namespace...✗");
 
     /* set the list of groups the process is part of */
     if (-1 == setgroups(1, groups))
@@ -73,22 +73,11 @@ namespace bonding::ns
   }
 
   Result<Void, error::Err>
-  Namespace::handle_child_uid_map(const pid_t pid, const int socket) noexcept
+  Namespace::handle_child_uid_map(const pid_t pid) noexcept
   {
-    if (ipc::IPC::recv_boolean(socket).unwrap())
-      {
-        create_map(pid, "uid_map").unwrap();
-        create_map(pid, "gid_map").unwrap();
-      }
-    else
-      {
-        spdlog::warn("No user namespace set up from child process");
-        return Ok(Void());
-      }
 
-    spdlog::debug("Child UID/GID map done, sending signal to child to continue...");
-    ipc::IPC::send_boolean(socket, false);
-
+    create_map(pid, "uid_map").unwrap();
+    create_map(pid, "gid_map").unwrap();
     return Ok(Void());
   }
 

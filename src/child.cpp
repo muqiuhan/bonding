@@ -60,12 +60,7 @@ namespace bonding::child
     const pid_t child_pid =
       clone(Process::_main,
             static_cast<char *>(Process::STACK) + Process::STACK_SIZE,
-            CLONE_NEWNS         /* new mount namespace */
-              | CLONE_NEWCGROUP /* new cgroup namespace */
-              | CLONE_NEWPID    /* new pid namespace */
-              | CLONE_NEWIPC    /* new ipc namespace */
-              | CLONE_NEWNET    /* new network namespace */
-              | CLONE_NEWUTS /* new uts namespace */,
+            container_options.clone_flags,
             (void *)&container_options);
 
     if (-1 == child_pid)

@@ -8,10 +8,11 @@ namespace bonding::error
   std::string
   Err::to_string() const noexcept
   {
-    if (m_custom.empty())
-      return CODE_TO_STRING.at(m_code) + ": " + strerror(m_errno);
+    const std::string system_error_msg = strerror(m_errno);
 
-    return CODE_TO_STRING.at(m_code) + ": " + strerror(m_errno) + "\n\t\t> " + m_custom;
+    return CODE_TO_STRING.at(m_code) + ": "
+           + (system_error_msg == "Success" ? "Unknown error" : system_error_msg)
+           + (m_custom.empty() ? "" : +"\n\t\t> " + m_custom);
   }
 
 } // namespace bonding::error

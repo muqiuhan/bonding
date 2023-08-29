@@ -19,6 +19,6 @@ target("bonding")
         import("core.project.project")
         import("core.base.task")
         
-        task.run("project", {kind = "makefile", outputdir = "."})
+        task.run("project", {kind = "cmake", outputdir = "."})
         task.run("project", {kind = "ninja", outputdir = "."})
     end)

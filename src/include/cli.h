@@ -83,6 +83,7 @@ namespace bonding::cli
   Result<Void, error::Err> function(const Parser args) noexcept;
   Result<Void, error::Err> run(const Parser & args) noexcept;
   Result<Void, error::Err> init(const Parser & args) noexcept;
+  Result<Void, error::Err> version(const Parser & args) noexcept;
 };
 
 #endif /* BONDING_CLI_H */

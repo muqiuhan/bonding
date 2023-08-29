@@ -41,7 +41,7 @@ namespace bonding::mounts
     const std::string & hostname,
     const std::vector<std::pair<std::string, std::string>> & mounts_paths) noexcept
   {
-    spdlog::info("Setting mount points...");
+    spdlog::info("Setting mount points...✓");
     _mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
     root = ".bonding/tmp/" + hostname + "/";
@@ -87,17 +87,16 @@ namespace bonding::mounts
                 const std::string & mount_point,
                 unsigned long flags) noexcept
   {
-    spdlog::info("Mount {} to {}", path, mount_point);
     if (-1
         == mount((path.empty() ? nullptr : path.c_str()),
                  mount_point.c_str(),
                  nullptr,
                  flags,
                  nullptr))
-      {
-        spdlog::error("Cannot mount {} to {}", path, mount_point);
-        return ERR(error::Code::Mounts);
-      }
+      return ERR_MSG(error::Code::Mounts, "Cannot mount " + path + " to " + mount_point);
+
+    if (!path.empty())
+      spdlog::info("Mount {} to {}...✓", path, mount_point);
 
     return Ok(Void());
   }
@@ -105,17 +104,16 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::_create(const std::string & path) noexcept
   {
-    spdlog::debug("Create {}", path);
     try
       {
         std::filesystem::create_directories(path);
       }
     catch (...)
       {
-        spdlog::error("Cannot create direcotry {}");
-        return ERR(error::Code::Mounts);
+        return ERR_MSG(error::Code::Mounts, "Cannot create direcotry " + path);
       }
 
+    spdlog::debug("Create {}...✓", path);
     return Ok(Void());
   }
 }

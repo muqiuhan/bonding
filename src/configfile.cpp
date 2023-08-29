@@ -1,8 +1,13 @@
 #include "include/configfile.h"
 #include "include/config.h"
+#include "include/resource.h"
 #include "include/unix.h"
+#include <algorithm>
 #include <error.h>
 #include <exception>
+#include <numeric>
+#include <stdexcept>
+#include <utility>
 
 namespace bonding::configfile
 {
@@ -20,7 +25,37 @@ namespace bonding::configfile
                                       generate_socketpair().unwrap(),
                                       data["hostname"],
                                       read_mounts(data).unwrap(),
+                                      read_clone(data).unwrap(),
                                       read_cgroups_options(data).unwrap() };
+  }
+
+  Result<int, error::Err>
+  Config_File::read_clone(const nlohmann::json & data) noexcept
+  {
+    std::vector<int> result;
+
+    try
+      {
+        for (auto && flag : data["clone"])
+          try
+            {
+              result.push_back(CLONE_FLAGS_MAP.at(flag));
+            }
+          catch (const std::out_of_range & e)
+            {
+              return ERR_MSG(error::Code::Configfile,
+                             std::string(flag) + " is not a valid flag");
+            }
+      }
+    catch (const nlohmann::json::exception & e)
+      {
+        return ERR_MSG(error::Code::Configfile, e.what());
+      }
+
+    return Ok(
+      std::accumulate(result.begin(), result.end(), 0, [](uint32_t a, uint32_t b) {
+        return a | b;
+      }));
   }
 
   Result<std::vector<std::pair<std::string, std::string>>, error::Err>
@@ -30,27 +65,42 @@ namespace bonding::configfile
 
     try
       {
-        for (auto && mount : data["mounts"])
-          mounts.push_back(std::make_pair(mount[0], mount[1]));
+        for (auto && [path, mount_point] : data["mounts"].items())
+          mounts.push_back(std::make_pair(path, mount_point));
       }
-    catch (const std::exception & e)
+    catch (const nlohmann::json::exception & e)
       {
         return ERR_MSG(error::Code::Configfile, e.what());
       }
     return Ok(mounts);
   }
 
-  Result<std::vector<std::pair<std::string, std::string>>, error::Err>
+  Result<std::vector<config::CgroupsV1::Control>, error::Err>
   Config_File::read_cgroups_options(const nlohmann::json & data) noexcept
   {
-    std::vector<std::pair<std::string, std::string>> options;
-
+    std::vector<config::CgroupsV1::Control> options;
     try
       {
-        for (auto && option : data["mounts"])
-          options.push_back(std::make_pair(option[0], option[1]));
+        std::string controller;
+        std::vector<config::CgroupsV1::Control::Setting> settings;
+        for (auto && [setting_name, setting_value] : data["cgroups-v1"].items())
+          {
+            const std::string current_controller =
+              setting_name.substr(0, setting_name.find_first_of("."));
+
+            if (controller != current_controller && (!controller.empty()))
+              {
+                options.push_back(config::CgroupsV1::Control{ controller, settings });
+                settings.clear();
+              }
+
+            settings.push_back(
+              config::CgroupsV1::Control::Setting{ setting_name, setting_value });
+
+            controller = current_controller;
+          }
       }
-    catch (const std::exception & e)
+    catch (const nlohmann::json::exception & e)
       {
         return ERR_MSG(error::Code::Configfile, e.what());
       }

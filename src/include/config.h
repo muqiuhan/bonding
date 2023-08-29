@@ -7,6 +7,7 @@
 #include "error.h"
 #include "result.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <initializer_list>
 #include <string>
@@ -15,6 +16,21 @@
 
 namespace bonding::config
 {
+  namespace CgroupsV1
+  {
+    struct Control
+    {
+      const std::string control;
+
+      struct Setting
+      {
+        const std::string name;
+        const std::string value;
+      };
+
+      const std::vector<Setting> settings;
+    };
+  };
 
   /** Extract the command line arguments into this class
    ** and initialize a Container struct that will have to perform
@@ -47,10 +63,13 @@ namespace bonding::config
     /** Additional mount path */
     std::vector<std::pair<std::string, std::string>> mounts;
 
-    /** Cgroups-v1 control options */
-    std::vector<std::pair<std::string, std::string>> cgroups_options;
-  };
+    /** The child process clone flags mask */
+    int clone_flags = CLONE_NEWNS | CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC
+                      | CLONE_NEWNET | CLONE_NEWUTS;
 
+    /** Cgroups-v1 control options */
+    std::vector<CgroupsV1::Control> cgroups_options;
+  };
 };
 
 #endif /* BONDING_CONFIG_H */
