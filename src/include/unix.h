@@ -47,9 +47,13 @@ namespace bonding::unix
     static Result<std::string, error::Err>
     read_entire_file(const std::string & path) noexcept;
     static Result<int, error::Err> Open(const std::string & file, int flag) noexcept;
+    static Result<int, error::Err>
+    Open(const std::string & file, int flag, int mode) noexcept;
     static Result<Void, error::Err> Rmdir(const std::string & file) noexcept;
     static Result<Void, error::Err> Close(int fd) noexcept;
     static Result<Void, error::Err> Write(int fd, const std::string & s) noexcept;
+    static Result<Void, error::Err> Write(const std::string & path,
+                                          const std::string & s) noexcept;
   };
 
   class Capabilities
