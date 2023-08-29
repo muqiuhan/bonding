@@ -1,19 +1,13 @@
 {
     "hostname": "Test",
-    "debug": true,
+    "debug": false,
     "uid": 0,
     "mount_dir": "./mount_dir",
     "command": "/bin/bash",
-    "mounts": [
-        [
-            "/lib",
-            "/lib"
-        ],
-        [
-            "/lib64",
-            "/lib64"
-        ]
-    ],
+    "mounts": {
+        "/lib": "/lib",
+        "/lib64": "/lib64"
+    },
     "clone": [
         "CLONE_NEWNS",
         "CLONE_NEWCGROUP",
