@@ -19,20 +19,11 @@
 ## Build from source
 > This project is built using [xmake](https://xmake.io).
 
-This is currently the only way to use bonding. Fortunately, xmake can solve most of the build problems, so don't hesitate to use it!
-
-Bonding's [xmake.lua](./xmake.lua) will automatically generate Ninja, Makefile, CMake, Visual Studio project files, and Xcode project files after the first build, and you can also generate other builds directly through it before using xmake to build this project Tool related files:
-
-```shell
-xmake project -k ninja
-xmake project -k cmake
-xmake project -k make
-xmake project -k vs
-xmake project -k xcode
-```
+This is currently the only way to use bonding. Fortunately, xmake supports the generation of files required by build tools such as Ninja, CMake and Makefile, so this project supports building from Ninja or CMakes:
 
 1. clone: `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
 2. and build it: `make build.release` or build for debug: `make build.debug`
+    > or use one of cmake and ninja
 
 ## Install
 
@@ -63,7 +54,7 @@ sudo lldb ./build/linux/x86_64/debug/bonding run --debug
 
 ## USAGE:
 ```
-Usage: bonding [help] [init] [run] [help]
+Usage: bonding [help] [init] [run] [help] [version]
 
  [init]
         Initialize the current directory as the container directory
@@ -73,6 +64,9 @@ Usage: bonding [help] [init] [run] [help]
 
  [help]
         show this message
+
+ [version]
+        show the version of bonding
 ```
 
 Bonding sets the environment and various parameters through the configuration file [bonding.json](./example/bonding.json):
@@ -100,7 +94,13 @@ Bonding sets the environment and various parameters through the configuration fi
         "CLONE_NEWIPC",
         "CLONE_NEWNET",
         "CLONE_NEWUTS"
-    ]
+    ],
+    "cgroups-v1": {
+        "cpu.shares": "256",
+        "pids.max": "64",
+        "blkio.bfq.weight": "64",
+        "memory.limit_in_bytes": "1073741824"
+    }
 }
 ```
 
