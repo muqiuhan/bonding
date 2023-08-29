@@ -35,7 +35,7 @@ namespace bonding::environment
           }
       }
 
-    spdlog::error("Check if Cgroups-v1 {} controller is supported...✗", controller);
+    spdlog::warn("Check if Cgroups-v1 {} controller is supported...✗", controller);
     return Ok(false);
   }
 }

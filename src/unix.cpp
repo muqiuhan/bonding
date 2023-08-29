@@ -69,6 +69,17 @@ namespace bonding::unix
                                file.c_str(),
                                flag);
 
+  /** Filesystem::Open */
+  GENERATE_SYSTEM_CALL_WRAPPER(int,
+                               -1,
+                               Filesystem::Open(const std::string & file,
+                                                int flag,
+                                                int mode),
+                               open,
+                               file.c_str(),
+                               flag,
+                               mode);
+
   /** Filesystem::Write */
   GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(int,
                                             -1,
@@ -107,6 +118,14 @@ namespace bonding::unix
 
     out.append(buf, 0, stream.gcount());
     return Ok(out);
+  }
+
+  Result<Void, error::Err>
+  Filesystem::Write(const std::string & path, const std::string & s) noexcept
+  {
+    int fd = Filesystem::Open(path, O_WRONLY | O_CREAT, 0777).unwrap();
+    Filesystem::Write(fd, s).unwrap();
+    return Filesystem::Close(fd);
   }
 
 }

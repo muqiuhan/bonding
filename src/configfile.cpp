@@ -2,6 +2,7 @@
 #include "include/config.h"
 #include "include/resource.h"
 #include "include/unix.h"
+#include "nlohmann/json_fwd.hpp"
 #include <algorithm>
 #include <error.h>
 #include <exception>
@@ -11,22 +12,41 @@
 
 namespace bonding::configfile
 {
-  config::Container_Options
+  Result<nlohmann::json, error::Err>
+  Config_File::parse(const std::string & str) noexcept
+  {
+    try
+      {
+        return Ok(nlohmann::json::parse(str));
+      }
+    catch (const nlohmann::json::exception & e)
+      {
+        return ERR_MSG(error::Code::Configfile, e.what());
+      }
+  }
+
+  Result<config::Container_Options, error::Err>
+  Config_File::Container_Options_of_json(const nlohmann::json & json) noexcept
+  {
+    return Ok(config::Container_Options{ json["debug"],
+                                         json["command"],
+                                         json["mount_dir"],
+                                         json["uid"],
+                                         parse_argv(json["command"]).unwrap(),
+                                         generate_socketpair().unwrap(),
+                                         json["hostname"],
+                                         read_mounts(json).unwrap(),
+                                         read_clone(json).unwrap(),
+                                         read_cgroups_options(json).unwrap() });
+  }
+
+  Result<config::Container_Options, error::Err>
   Config_File::read(const std::string & path) noexcept
   {
     const nlohmann::json data =
-      nlohmann::json::parse(unix::Filesystem::read_entire_file(path).unwrap());
+      parse(unix::Filesystem::read_entire_file(path).unwrap()).unwrap();
 
-    return config::Container_Options{ data["debug"],
-                                      data["command"],
-                                      data["mount_dir"],
-                                      data["uid"],
-                                      parse_argv(data["command"]).unwrap(),
-                                      generate_socketpair().unwrap(),
-                                      data["hostname"],
-                                      read_mounts(data).unwrap(),
-                                      read_clone(data).unwrap(),
-                                      read_cgroups_options(data).unwrap() };
+    return Container_Options_of_json(data);
   }
 
   Result<int, error::Err>
@@ -127,6 +147,28 @@ namespace bonding::configfile
       return ERR(error::Code::Socket);
 
     return Ok(std::make_pair(__fds[0], __fds[1]));
+  }
+
+  Result<std::string, error::Err>
+  Config_File::generate_default(std::string hostname, std::string command) noexcept
+  {
+    nlohmann::json config;
+
+    config["hostname"] = hostname;
+    config["debug"] = false;
+    config["uid"] = 0;
+    config["mount_dir"] = "./mount_dir";
+    config["command"] = command;
+    config["mounts"] = { { "/usr/lib", "/usr/lib" },
+                         { "/usr/lib64", "/usr/lib64" },
+                         { "/lib", "/lib" },
+                         { "/lib64", "/lib64" },
+                         { "/usr/bin/", "/usr/bin/" } };
+    config["clone"] = { "CLONE_NEWNS",  "CLONE_NEWCGROUP", "CLONE_NEWPID",
+                        "CLONE_NEWIPC", "CLONE_NEWNET",    "CLONE_NEWUTS" };
+    config["cgroups-v1"] = { { "pid.max", "64" } };
+
+    return Ok(config.dump(2));
   }
 
 }

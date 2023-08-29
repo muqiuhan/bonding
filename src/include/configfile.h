@@ -13,9 +13,17 @@ namespace bonding::configfile
   class Config_File
   {
    public:
-    static config::Container_Options read(const std::string & file) noexcept;
+    static Result<config::Container_Options, error::Err>
+    read(const std::string & file) noexcept;
+
+    static Result<std::string, error::Err> generate_default(std::string hostname,
+                                                            std::string command) noexcept;
 
    private:
+    static Result<nlohmann::json, error::Err> parse(const std::string & str) noexcept;
+    static Result<config::Container_Options, error::Err>
+    Container_Options_of_json(const nlohmann::json & json) noexcept;
+
     static Result<std::vector<std::pair<std::string, std::string>>, error::Err>
     read_mounts(const nlohmann::json & data) noexcept;
 

@@ -80,8 +80,9 @@ namespace bonding::resource
         return Ok(Void());
       }
     else
-      return ERR_MSG(error::Code::Cgroups,
-                     "Controller " + cgroup.control + " is not support");
+      spdlog::warn("Controller {} is not support!!", cgroup.control);
+
+    return Ok(Void());
   }
 
   Result<Void, error::Err>

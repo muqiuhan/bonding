@@ -5,10 +5,12 @@
 #include "include/configfile.h"
 #include "include/container.h"
 #include "include/hostname.h"
+#include "include/unix.h"
 #include <cstdlib>
 #include <error.h>
 #include <iterator>
 #include <spdlog/spdlog.h>
+#include <string>
 #include <vector>
 
 namespace bonding::cli
@@ -248,14 +250,32 @@ namespace bonding::cli
   Result<Void, error::Err>
   run(const Parser & args) noexcept
   {
-    return Ok(container::Container::start(configfile::Config_File::read("./bonding.json"))
-                .unwrap());
+    return container::Container::start(
+      configfile::Config_File::read("./bonding.json").unwrap());
   }
 
   Result<Void, error::Err>
   init(const Parser & args) noexcept
   {
-    return ERR_MSG(error::Code::Capabilities, "Not implemented");
+    std::string hostname;
+    std::string command;
+
+    std::cout << "Hostname: ";
+    std::getline(std::cin, hostname);
+
+    std::cout << "Command: ";
+    std::getline(std::cin, command);
+
+    unix::Filesystem::Mkdir("Bonding." + hostname).unwrap();
+    unix::Filesystem::Mkdir("Bonding." + hostname + "/mount_dir").unwrap();
+
+    unix::Filesystem::Write(
+      "Bonding." + hostname + "/bonding.json",
+      configfile::Config_File::generate_default(hostname, command).unwrap());
+
+    spdlog::info("Creating a Container...✓");
+
+    return Ok(Void());
   }
 
   Result<Void, error::Err>
