@@ -104,12 +104,17 @@ Bonding sets the environment and various parameters through the configuration fi
 }
 ```
 
+- `mount_dir` is the root directory where the container runs
+- `mounts` is the external directory that the container needs to mount
+- `command` is the path and arguments to the application running inside the container
+- `clone` is the process running command CLONE_FLAG, see [man clone](https://www.man7.org/linux/man-pages/man2/clone.2.html)
+- `cgroups-v1` is used to limit the resources of the container, see [Control Groups Version 1](https://docs.kernel.org/admin-guide/cgroup-v1/index.html)
+
 ## Dependencies
 - [spdlog (MIT): Fast C++ logging library.](https://github.com/gabime/spdlog)
 - [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
 - [cmd_line_parser (MIT):  Command line parser for C++17. ](https://github.com/jermp/cmd_line_parser)
 - [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
-- [libcap (BSD 3-clause and GPL v2.0): capability library: includes libcap2 file caps, setcap, getcap and capsh](https://git.kernel.org/pub/scm/libs/libcap/libcap.git/)
 - [configor (MIT): A light weight configuration library for C++](https://github.com/Nomango/configor)
 
 ## REFERENCES

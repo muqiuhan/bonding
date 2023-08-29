@@ -3,10 +3,13 @@
     "debug": false,
     "uid": 0,
     "mount_dir": "./mount_dir",
-    "command": "/bin/bash",
+    "command": "/usr/bin/bash",
     "mounts": {
+        "/usr/lib": "/usr/lib",
+        "/usr/lib64": "/usr/lib64",
         "/lib": "/lib",
-        "/lib64": "/lib64"
+        "/lib64": "/lib64",
+        "/usr/bin/": "/usr/bin/"
     },
     "clone": [
         "CLONE_NEWNS",
