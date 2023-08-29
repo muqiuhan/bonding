@@ -34,8 +34,6 @@ namespace bonding::resource
   Result<Void, error::Err>
   CgroupsV1::setup(const std::string hostname) noexcept
   {
-    spdlog::debug("Setting cgroups by cgroups-v1...");
-
     for (const Control & cgroup : CONFIG)
       {
         if (environment::CgroupsV1::check_support_controller(cgroup.control).unwrap())
@@ -59,22 +57,24 @@ namespace bonding::resource
                   return ERR_MSG(error::Code::Cgroups,
                                  "Cannot set controller " + setting.name);
 
+                spdlog::debug("Setting controller {} by value {}...✓",
+                              setting.name,
+                              setting.value);
                 close(fd);
               }
           }
         else
-          ERR_MSG(error::Code::Cgroups,
-                  "Controller " + cgroup.control + " is not support");
+          return ERR_MSG(error::Code::Cgroups,
+                         "Controller " + cgroup.control + " is not support");
       }
 
+    spdlog::info("Setting cgroups by cgroups-v1...✓");
     return Ok(Void());
   }
 
   Result<Void, error::Err>
   CgroupsV1::clean(const std::string & hostname) noexcept
   {
-    spdlog::debug("Cleaning cgroups-v1 settings...");
-
     for (const Control & cgroup : CONFIG)
       {
         const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
@@ -82,20 +82,26 @@ namespace bonding::resource
 
         int taskfd = open(task.c_str(), O_WRONLY);
         if (-1 == taskfd)
-          return ERR(error::Code::Cgroups);
+          return ERR_MSG(error::Code::Cgroups,
+                         "Cannot clean cgroups controller " + cgroup.control);
 
         if (-1 == write(taskfd, "0", 2))
           {
             close(taskfd);
-            return ERR(error::Code::Cgroups);
+            return ERR_MSG(error::Code::Cgroups,
+                           "Cannot clean cgroups controller " + cgroup.control);
           }
 
-        close(taskfd);
+        if (-1 == close(taskfd))
+          return ERR_MSG(error::Code::Cgroups,
+                         "Cannot clean cgroups controller " + cgroup.control);
 
         if (-1 == rmdir(dir.c_str()))
-          return ERR(error::Code::Cgroups);
+          return ERR_MSG(error::Code::Cgroups,
+                         "Cannot clean cgroups controller " + cgroup.control);
       }
 
+    spdlog::info("Cleaning cgroups-v1 settings...✓");
     return Ok(Void());
   }
 

@@ -12,7 +12,8 @@ build.debug:
 	xmake f -m release && xmake build
 
 debug:
-	sudo lldb .././build/linux/x86_64/debug/bonding run
+	xmake f -m debug && xmake build
+	cd example && sudo lldb .././build/linux/x86_64/debug/bonding run && cd ..
 
 fmt:
 	find src -iname '*.h' -o -iname '*.cpp' -o -iname '*.hpp' | xargs clang-format -i

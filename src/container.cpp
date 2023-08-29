@@ -6,6 +6,7 @@
 #include "include/namespace.h"
 #include "include/resource.h"
 #include "include/syscall.h"
+#include <error.h>
 
 namespace bonding::container
 {
@@ -20,7 +21,8 @@ namespace bonding::container
       }
     else
       {
-        ERR_MSG(error::Code::Namespace, "No user namespace set up from child process");
+        return ERR_MSG(error::Code::Namespace,
+                       "No user namespace set up from child process");
       }
     return m_child_process.wait();
   }
@@ -43,31 +45,30 @@ namespace bonding::container
     if (argv.debug)
       {
         spdlog::set_level(spdlog::level::debug);
-        spdlog::debug("Activate debug mode!");
+        spdlog::debug("Activate debug mode...✓");
       }
 
     return container.create()
       .and_then([&](const auto _) {
-        spdlog::info("Cleaning and exiting container...");
         container.clean_and_exit().unwrap();
+        spdlog::info("Cleaning and exiting container...✓");
         return Ok(Void());
       })
       .or_else([&](const error::Err e) {
         container.clean_and_exit().unwrap();
-        spdlog::error("Error while creating container: {}", e.to_string());
-        return Err(e);
+        return ERR_MSG(error::Code::Container,
+                       "Error while creating container: {}" + e.to_string());
       });
   }
 
   Result<Void, error::Err>
   Container_Cleaner::close_socket(const int socket) noexcept
   {
-    spdlog::debug("Closing socket {}...", socket);
     if (-1 == close(socket))
-      {
-        spdlog::error("Unable to close socket: {}", socket);
-        return ERR(error::Code::Socket);
-      }
+      return ERR_MSG(error::Code::Socket,
+                     "Unable to close socket " + std::to_string(socket));
+
+    spdlog::debug("Closing socket {}...✓", socket);
     return Ok(Void());
   }
 }

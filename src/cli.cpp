@@ -59,7 +59,7 @@ namespace bonding::cli
       {
         std::string parsed(m_argv[i]);
         if (parsed == "-h" || parsed == "--help")
-          ERR(error::Code::Cli);
+          return ERR(error::Code::Cli);
 
         int id = 0;
         if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end())

@@ -33,9 +33,9 @@ namespace bonding::ns
       return ERR(error::Code::Namespace);
 
     if (has_userns)
-      spdlog::info("User namespace setup...");
+      spdlog::info("Setting user namespace...✓");
     else
-      spdlog::warn("User namespace not supported, continuting...");
+      spdlog::error("Setting user namespace...✗");
 
     /* set the list of groups the process is part of */
     if (-1 == setgroups(1, groups))
@@ -78,8 +78,6 @@ namespace bonding::ns
 
     create_map(pid, "uid_map").unwrap();
     create_map(pid, "gid_map").unwrap();
-
-    spdlog::debug("Child UID/GID map done, sending signal to child to continue...");
     return Ok(Void());
   }
 
