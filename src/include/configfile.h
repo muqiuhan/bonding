@@ -21,7 +21,7 @@ namespace bonding::configfile
 
     static Result<int, error::Err> read_clone(const nlohmann::json & data) noexcept;
 
-    static Result<std::vector<std::pair<std::string, std::string>>, error::Err>
+    static Result<std::vector<config::CgroupsV1::Control>, error::Err>
     read_cgroups_options(const nlohmann::json & data) noexcept;
 
     static Result<std::vector<std::string>, Void> parse_argv(std::string argv) noexcept;

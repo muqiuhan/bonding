@@ -1,5 +1,6 @@
 #include "include/configfile.h"
 #include "include/config.h"
+#include "include/resource.h"
 #include "include/unix.h"
 #include <algorithm>
 #include <error.h>
@@ -73,15 +74,30 @@ namespace bonding::configfile
     return Ok(mounts);
   }
 
-  Result<std::vector<std::pair<std::string, std::string>>, error::Err>
+  Result<std::vector<config::CgroupsV1::Control>, error::Err>
   Config_File::read_cgroups_options(const nlohmann::json & data) noexcept
   {
-    std::vector<std::pair<std::string, std::string>> options;
-
+    std::vector<config::CgroupsV1::Control> options;
     try
       {
-        for (auto && option : data["mounts"])
-          options.push_back(std::make_pair(option[0], option[1]));
+        std::string controller;
+        std::vector<config::CgroupsV1::Control::Setting> settings;
+        for (auto && [setting_name, setting_value] : data["cgroups-v1"].items())
+          {
+            const std::string current_controller =
+              setting_name.substr(0, setting_name.find_first_of("."));
+
+            if (controller != current_controller && (!controller.empty()))
+              {
+                options.push_back(config::CgroupsV1::Control{ controller, settings });
+                settings.clear();
+              }
+
+            settings.push_back(
+              config::CgroupsV1::Control::Setting{ setting_name, setting_value });
+
+            controller = current_controller;
+          }
       }
     catch (const nlohmann::json::exception & e)
       {

@@ -54,7 +54,7 @@ namespace bonding::environment
 
    public:
     static Result<bool, error::Err>
-    check_support_controller(const std::string & controller) noexcept;
+    checking_if_controller_supported(const std::string & controller) noexcept;
   };
 
   class Info

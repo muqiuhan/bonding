@@ -22,19 +22,19 @@ namespace bonding::environment
   }
 
   Result<bool, error::Err>
-  CgroupsV1::check_support_controller(const std::string & controller) noexcept
+  CgroupsV1::checking_if_controller_supported(const std::string & controller) noexcept
   {
     for (const auto & support_controller :
          std::filesystem::recursive_directory_iterator(PATH))
       {
         if (support_controller.path().filename().c_str() == controller)
           {
-            spdlog::debug("Check Cgroups controller {}...✓", controller);
+            spdlog::debug("Check if Cgroups-v1 {} controller is supported...✓", controller);
             return Ok(true);
           }
       }
 
-    spdlog::error("Check Cgroups controller {}...✗", controller);
+    spdlog::error("Check if Cgroups-v1 {} controller is supported...✗", controller);
     return Ok(false);
   }
 }

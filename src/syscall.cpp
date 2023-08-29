@@ -39,8 +39,6 @@ namespace bonding::syscall
   Result<Void, error::Err>
   Syscall::setup() noexcept
   {
-    spdlog::debug("Refusing / Filtering unwanted syscalls...");
-
     /* Initialize seccomp profile with all syscalls allowed by default */
     ctx = seccomp_init(SCMP_ACT_ALLOW);
     if (nullptr == ctx)
@@ -52,6 +50,7 @@ namespace bonding::syscall
     if (0 != seccomp_load(ctx))
       return ERR_MSG(error::Code::Systemcall, "seccomp_load error");
 
+    spdlog::info("Refusing / Filtering unwanted syscalls...✓");
     return Ok(Void());
   }
 
@@ -59,7 +58,6 @@ namespace bonding::syscall
   Syscall::clean() noexcept
   {
     seccomp_release(ctx);
-
     return Ok(Void());
   }
 }

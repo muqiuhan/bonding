@@ -11,8 +11,6 @@ namespace bonding::capabilities
   Result<Void, error::Err>
   Capabilities::setup() noexcept
   {
-    spdlog::debug("Clearing unwanted capabilities...");
-
     for (const int drop_caps : DROP)
       if (-1 == prctl(PR_CAPBSET_DROP, drop_caps, 0, 0, 0))
         return ERR(error::Code::Capabilities);
@@ -37,6 +35,7 @@ namespace bonding::capabilities
       })
       .unwrap();
 
+    spdlog::info("Clearing unwanted capabilities...✓");
     return Ok(Void());
   }
 }

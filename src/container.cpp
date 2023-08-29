@@ -17,8 +17,8 @@ namespace bonding::container
     if (ipc::IPC::recv_boolean(m_sockets.first).unwrap())
       {
         ns::Namespace::handle_child_uid_map(m_child_process.m_pid).unwrap();
-        resource::Resource::setup(m_config.hostname).unwrap();
-        ipc::IPC::send_boolean(m_sockets.first, false);
+        resource::Resource::setup(m_config).unwrap();
+        ipc::IPC::send_boolean(m_sockets.first, false).unwrap();
       }
     else
       {
@@ -33,7 +33,7 @@ namespace bonding::container
   {
     Container_Cleaner::close_socket(m_sockets.first).unwrap();
     Container_Cleaner::close_socket(m_sockets.second).unwrap();
-    resource::Resource::clean(m_config.hostname).unwrap();
+    resource::Resource::clean(m_config).unwrap();
     syscall::Syscall::Syscall::clean().unwrap();
     return Ok(Void());
   }

@@ -1,6 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/resource.h"
+#include "include/config.h"
 #include "include/environment.h"
 #include "include/unix.h"
 #include "spdlog/spdlog.h"
@@ -12,10 +13,10 @@
 namespace bonding::resource
 {
   Result<Void, error::Err>
-  Resource::setup(const std::string & hostname) noexcept
+  Resource::setup(const config::Container_Options & config) noexcept
   {
-    spdlog::info("Restricting resources for hostname {}", hostname);
-    CgroupsV1::setup(hostname).unwrap();
+    spdlog::info("Restricting resources for hostname {}", config.hostname);
+    CgroupsV1::setup(config).unwrap();
     Rlimit::setup().unwrap();
 
     return Ok(Void());
@@ -28,12 +29,13 @@ namespace bonding::resource
     if (-1 == setrlimit(RLIMIT_NOFILE, &rlim))
       return ERR(error::Code::Cgroups);
 
+    spdlog::info("Setting rlimit...✓");
     return Ok(Void());
   }
 
   Result<Void, error::Err>
   CgroupsV1::write_settings(const std::string & dir,
-                            const CgroupsV1::Control::Setting & setting) noexcept
+                            const config::CgroupsV1::Control::Setting & setting) noexcept
   {
     const int fd =
       unix::Filesystem::Open(dir + "/" + setting.name, O_WRONLY)
@@ -55,7 +57,7 @@ namespace bonding::resource
       })
       .unwrap();
 
-    if (setting.name != "task")
+    if (setting.name != "tasks")
       spdlog::debug("Setting controller {} by value {}...✓", setting.name, setting.value);
 
     return Ok(Void());
@@ -63,14 +65,14 @@ namespace bonding::resource
 
   Result<Void, error::Err>
   CgroupsV1::write_contorl(const std::string hostname,
-                           const CgroupsV1::Control & cgroup) noexcept
+                           const config::CgroupsV1::Control & cgroup) noexcept
   {
-    if (environment::CgroupsV1::check_support_controller(cgroup.control).unwrap())
+    if (environment::CgroupsV1::checking_if_controller_supported(cgroup.control).unwrap())
       {
         const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
         unix::Filesystem::Mkdir(dir).unwrap();
 
-        for (const Control::Setting & setting : cgroup.settings)
+        for (const auto & setting : cgroup.settings)
           write_settings(dir, setting).unwrap();
 
         write_settings(dir, TASK).unwrap();
@@ -83,17 +85,17 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  CgroupsV1::setup(const std::string hostname) noexcept
+  CgroupsV1::setup(const config::Container_Options & config) noexcept
   {
-    for (const auto & control : CONFIG)
-      write_contorl(hostname, control);
+    for (const auto & control : config.cgroups_options)
+      write_contorl(config.hostname, control);
 
     spdlog::info("Setting cgroups by cgroups-v1...✓");
     return Ok(Void());
   }
 
   Result<Void, error::Err>
-  CgroupsV1::clean_control_task(const CgroupsV1::Control & cgroup) noexcept
+  CgroupsV1::clean_control_task(const config::CgroupsV1::Control & cgroup) noexcept
   {
     const std::string task = "/sys/fs/cgroup/" + cgroup.control + "/tasks";
 
@@ -130,11 +132,12 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  CgroupsV1::clean(const std::string & hostname) noexcept
+  CgroupsV1::clean(const config::Container_Options & config) noexcept
   {
-    for (const Control & cgroup : CONFIG)
+    for (const auto & cgroup : config.cgroups_options)
       {
-        const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
+        const std::string dir =
+          "/sys/fs/cgroup/" + cgroup.control + "/" + config.hostname;
 
         clean_control_task(cgroup).unwrap();
 
@@ -151,9 +154,9 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  Resource::clean(const std::string & hostname) noexcept
+  Resource::clean(const config::Container_Options & config) noexcept
   {
-    CgroupsV1::clean(hostname).unwrap();
+    CgroupsV1::clean(config).unwrap();
 
     return Ok(Void());
   }

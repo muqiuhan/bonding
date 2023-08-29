@@ -16,6 +16,21 @@
 
 namespace bonding::config
 {
+  namespace CgroupsV1
+  {
+    struct Control
+    {
+      const std::string control;
+
+      struct Setting
+      {
+        const std::string name;
+        const std::string value;
+      };
+
+      const std::vector<Setting> settings;
+    };
+  };
 
   /** Extract the command line arguments into this class
    ** and initialize a Container struct that will have to perform
@@ -53,9 +68,8 @@ namespace bonding::config
                       | CLONE_NEWNET | CLONE_NEWUTS;
 
     /** Cgroups-v1 control options */
-    std::vector<std::pair<std::string, std::string>> cgroups_options;
+    std::vector<CgroupsV1::Control> cgroups_options;
   };
-
 };
 
 #endif /* BONDING_CONFIG_H */
