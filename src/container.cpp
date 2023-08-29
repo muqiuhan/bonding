@@ -2,6 +2,7 @@
 
 #include "include/container.h"
 #include "include/config.h"
+#include "include/ipc.h"
 #include "include/namespace.h"
 #include "include/resource.h"
 #include "include/syscall.h"
@@ -11,8 +12,16 @@ namespace bonding::container
   Result<Void, error::Err>
   Container::create() noexcept
   {
-    ns::Namespace::handle_child_uid_map(m_child_process.m_pid, m_sockets.first);
-    resource::Resource::setup(m_config.hostname);
+    if (ipc::IPC::recv_boolean(m_sockets.first).unwrap())
+      {
+        ns::Namespace::handle_child_uid_map(m_child_process.m_pid).unwrap();
+        resource::Resource::setup(m_config.hostname).unwrap();
+        ipc::IPC::send_boolean(m_sockets.first, false);
+      }
+    else
+      {
+        ERR_MSG(error::Code::Namespace, "No user namespace set up from child process");
+      }
     return m_child_process.wait();
   }
 
@@ -21,7 +30,7 @@ namespace bonding::container
   {
     Container_Cleaner::close_socket(m_sockets.first).unwrap();
     Container_Cleaner::close_socket(m_sockets.second).unwrap();
-    resource::Resource::clean(m_config.hostname);
+    resource::Resource::clean(m_config.hostname).unwrap();
     syscall::Syscall::Syscall::clean().unwrap();
     return Ok(Void());
   }

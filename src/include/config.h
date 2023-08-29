@@ -49,7 +49,8 @@ namespace bonding::config
     std::vector<std::pair<std::string, std::string>> mounts;
 
     /** The child process clone flags mask */
-    int clone_flags;
+    int clone_flags = CLONE_NEWNS | CLONE_NEWCGROUP | CLONE_NEWPID | CLONE_NEWIPC
+                      | CLONE_NEWNET | CLONE_NEWUTS;
 
     /** Cgroups-v1 control options */
     std::vector<std::pair<std::string, std::string>> cgroups_options;

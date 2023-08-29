@@ -13,3 +13,6 @@ build.debug:
 
 debug:
 	sudo lldb .././build/linux/x86_64/debug/bonding run
+
+fmt:
+	find src -iname '*.h' -o -iname '*.cpp' -o -iname '*.hpp' | xargs clang-format -i

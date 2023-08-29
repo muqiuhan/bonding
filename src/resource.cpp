@@ -38,8 +38,7 @@ namespace bonding::resource
 
     for (const Control & cgroup : CONFIG)
       {
-        if (environment::CgroupsV1::supported_controllers.end()
-            != environment::CgroupsV1::supported_controllers.find(cgroup.control))
+        if (environment::CgroupsV1::check_support_controller(cgroup.control).unwrap())
           {
             const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
             unix::Filesystem::mkdir(dir).unwrap();
@@ -51,19 +50,21 @@ namespace bonding::resource
                 int fd = open(path.c_str(), O_WRONLY);
                 if (-1 == fd)
                   {
-                    spdlog::warn("Option {} is not support", setting.name);
                     close(fd);
-                    break;
+                    return ERR_MSG(error::Code::Cgroups,
+                                   "Cannot set controller " + setting.name);
                   }
 
                 if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
-                  return ERR(error::Code::Cgroups);
+                  return ERR_MSG(error::Code::Cgroups,
+                                 "Cannot set controller " + setting.name);
 
                 close(fd);
               }
           }
         else
-          spdlog::warn("Controller {} is not support", cgroup.control);
+          ERR_MSG(error::Code::Cgroups,
+                  "Controller " + cgroup.control + " is not support");
       }
 
     return Ok(Void());
@@ -105,104 +106,4 @@ namespace bonding::resource
 
     return Ok(Void());
   }
-
-  Result<std::vector<CgroupsV1::Control>, error::Err>
-  CgroupsV1::default_config() noexcept
-  {
-    return Ok(std::vector<CgroupsV1::Control>{ (Control{ .control = "memory", 
-                    .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
-						        .value = MEM_LIMIT }),
-			TASK } }),
-
-        (Control { .control = "cpu",
-			    .settings =
-			    {
-			      (Control::Setting { 
-                                .name = "cpu.shares", .value = CPU_SHARES }),
-			      TASK,
-			    } }),
-
-        (Control { .control = "pids",
-			    .settings =
-			    {
-			      (Control::Setting { .name = "pids.max",
-							   .value = PIDS_MAX }),
-			    TASK} }),
-        (Control { .control = "blkio",
-			    .settings = {
-			      ( Control::Setting {
-				.name = "blkio.bfq.weight", .value = PIDS_MAX }),
-			      TASK} })});
-  }
-
-#ifdef __WITH_LIBCGROUP
-  Result<std::vector<Cgroups::Control>, error::Err>
-  Cgroups::default_config() noexcept
-  {
-    return Ok(std::vector<Control>{ (Control{ .control = "memory", 
-                    .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
-						        .value = MEM_LIMIT }),
-			TASK } }),
-
-        (Control { .control = "cpu",
-			    .settings =
-			    {
-			      (Control::Setting { 
-                                .name = "cpu.shares", .value = CPU_SHARES }),
-			      TASK,
-			    } }),
-
-        (Control { .control = "pids",
-			    .settings =
-			    {
-			      (Control::Setting { .name = "pids.max",
-							   .value = PIDS_MAX }),
-			    TASK} }),
-        (Control { .control = "blkio",
-			    .settings = {
-			      ( Control::Setting {
-				.name = "你写你妈了个逼", .value = PIDS_MAX }),
-			      TASK} })});
-  }
-
-  Result<Void, error::Err>
-  Cgroups::setup(const std::string hostname) noexcept
-  {
-    spdlog::debug("Setting cgroups via libcgroup...");
-
-    CGROUP = cgroup_new_cgroup(hostname.c_str());
-
-    if (NULL == CGROUP)
-      return ERR(error::Code::CgroupsError);
-
-    for (const Control & config : CONFIG)
-      {
-        cgroup_controller * controller =
-          cgroup_add_controller(CGROUP, config.control.c_str());
-
-        if (NULL == controller)
-          return ERR(error::Code::CgroupsError);
-
-        for (const Control::Setting & setting : config.settings)
-          {
-
-            const int res = cgroup_set_value_string(controller,
-                                                    setting.name.c_str(),
-                                                    setting.value.c_str());
-            spdlog::debug("{} -> {} return {}", setting.value, setting.name, res);
-            if (-1 == res)
-              return ERR(error::Code::CgroupsError);
-          }
-      }
-
-    return Ok(Void());
-  }
-
-  Result<Void, error::Err>
-  Cgroups::clean(const std::string hostname) noexcept
-  {
-    cgroup_free_controllers(CGROUP);
-    return Ok(Void());
-  }
-#endif
 }

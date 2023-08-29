@@ -20,7 +20,7 @@ namespace bonding::ns
     static Result<Void, error::Err> setup(int socket, uid_t uid) noexcept;
 
     /** Called by the container when it will perform UID / GID mapping. */
-    static Result<Void, error::Err> handle_child_uid_map(pid_t pid, int socket) noexcept;
+    static Result<Void, error::Err> handle_child_uid_map(pid_t pid) noexcept;
 
    private:
     /** If that call is successful, then user namespaces are supported. */

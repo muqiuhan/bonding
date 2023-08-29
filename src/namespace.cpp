@@ -73,22 +73,13 @@ namespace bonding::ns
   }
 
   Result<Void, error::Err>
-  Namespace::handle_child_uid_map(const pid_t pid, const int socket) noexcept
+  Namespace::handle_child_uid_map(const pid_t pid) noexcept
   {
-    if (ipc::IPC::recv_boolean(socket).unwrap())
-      {
-        create_map(pid, "uid_map").unwrap();
-        create_map(pid, "gid_map").unwrap();
-      }
-    else
-      {
-        spdlog::warn("No user namespace set up from child process");
-        return Ok(Void());
-      }
+
+    create_map(pid, "uid_map").unwrap();
+    create_map(pid, "gid_map").unwrap();
 
     spdlog::debug("Child UID/GID map done, sending signal to child to continue...");
-    ipc::IPC::send_boolean(socket, false);
-
     return Ok(Void());
   }
 
