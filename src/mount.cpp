@@ -95,7 +95,8 @@ namespace bonding::mounts
                  nullptr))
       return ERR_MSG(error::Code::Mounts, "Cannot mount " + path + " to " + mount_point);
 
-    spdlog::debug("Mount {} to {}...✓", path, mount_point);
+    if (!path.empty())
+      spdlog::info("Mount {} to {}...✓", path, mount_point);
 
     return Ok(Void());
   }

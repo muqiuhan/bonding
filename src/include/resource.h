@@ -64,7 +64,8 @@ namespace bonding::resource
    public:
     static Result<Void, error::Err>
     setup(const config::Container_Options & config) noexcept;
-    static Result<Void, error::Err> clean(const config::Container_Options &config) noexcept;
+    static Result<Void, error::Err>
+    clean(const config::Container_Options & config) noexcept;
   };
 };
 

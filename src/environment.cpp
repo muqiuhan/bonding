@@ -29,7 +29,8 @@ namespace bonding::environment
       {
         if (support_controller.path().filename().c_str() == controller)
           {
-            spdlog::debug("Check if Cgroups-v1 {} controller is supported...✓", controller);
+            spdlog::debug("Check if Cgroups-v1 {} controller is supported...✓",
+                          controller);
             return Ok(true);
           }
       }

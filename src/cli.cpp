@@ -1,10 +1,13 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/cli.h"
+#include "include/bonding.hpp"
 #include "include/configfile.h"
 #include "include/container.h"
 #include "include/hostname.h"
+#include <cstdlib>
 #include <error.h>
+#include <iterator>
 #include <spdlog/spdlog.h>
 #include <vector>
 
@@ -34,6 +37,14 @@ namespace bonding::cli
                true);
 
     parser.add("help", "show this message", "help", false, true);
+
+    parser.add("version", "show the version of bonding", "version", false, true);
+
+    if (argc == 1)
+      {
+        parser.help().unwrap();
+        exit(EXIT_SUCCESS);
+      }
 
     if (parser.parse().is_err())
       {
@@ -224,6 +235,8 @@ namespace bonding::cli
       return init(parser);
     else if (parser.get<bool>("run").unwrap())
       return run(parser);
+    else if (parser.get<bool>("version").unwrap())
+      return version(parser);
     else if (parser.get<bool>("help").unwrap())
       return parser.help();
     else
@@ -242,6 +255,15 @@ namespace bonding::cli
   Result<Void, error::Err>
   init(const Parser & args) noexcept
   {
+    return ERR_MSG(error::Code::Capabilities, "Not implemented");
+  }
+
+  Result<Void, error::Err>
+  version(const Parser & args) noexcept
+  {
+    std::cout << "Welcome to Bonding v" + BONDING_VERSION + " [" + BONDING_COPYRIGHT + "]"
+              << std::endl;
+    return Ok(Void());
   }
 
 }

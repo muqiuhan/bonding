@@ -7,6 +7,7 @@
 #include <exception>
 #include <numeric>
 #include <stdexcept>
+#include <utility>
 
 namespace bonding::configfile
 {
@@ -64,8 +65,8 @@ namespace bonding::configfile
 
     try
       {
-        for (auto && mount : data["mounts"])
-          mounts.push_back(std::make_pair(mount[0], mount[1]));
+        for (auto && [path, mount_point] : data["mounts"].items())
+          mounts.push_back(std::make_pair(path, mount_point));
       }
     catch (const nlohmann::json::exception & e)
       {
