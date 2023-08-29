@@ -23,9 +23,9 @@
         "CLONE_NEWUTS"
     ],
     "cgroups-v1": {
-        "cpu.shares": 256,
-        "pids.max": 64,
-        "blkio.bfq.weight": 64,
-        "memory.limit_in_bytes": 1073741824
+        "cpu.shares": "256",
+        "pids.max": "64",
+        "blkio.bfq.weight": "64",
+        "memory.limit_in_bytes": "1073741824"
     }
 }
