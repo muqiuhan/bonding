@@ -17,18 +17,18 @@ namespace bonding::capabilities
       if (-1 == prctl(PR_CAPBSET_DROP, drop_caps, 0, 0, 0))
         return ERR(error::Code::Capabilities);
 
-    unix::Capabilities::get_proc()
+    unix::Capabilities::Get_proc()
       .and_then([](cap_t cap) {
-        unix::Capabilities::set_flag(cap,
+        unix::Capabilities::Set_flag(cap,
                                      CAP_INHERITABLE,
                                      static_cast<int>(DROP.size()),
                                      &DROP[0],
                                      CAP_CLEAR)
-          .and_then([&](const int _) { return unix::Capabilities::set_proc(cap); })
-          .and_then([&](const int _) { return unix::Capabilities::free(cap); })
+          .and_then([&](const Void _) { return unix::Capabilities::Set_proc(cap); })
+          .and_then([&](const Void _) { return unix::Capabilities::Free(cap); })
           .or_else([&](const error::Err & err) {
             if (nullptr != cap)
-              unix::Capabilities::free(cap).unwrap();
+              unix::Capabilities::Free(cap).unwrap();
 
             return ERR_MSG(error::Code::Capabilities, err.to_string());
           });

@@ -6,6 +6,7 @@
 #include "include/namespace.h"
 #include "include/resource.h"
 #include "include/syscall.h"
+#include "include/unix.h"
 #include <error.h>
 
 namespace bonding::container
@@ -64,9 +65,12 @@ namespace bonding::container
   Result<Void, error::Err>
   Container_Cleaner::close_socket(const int socket) noexcept
   {
-    if (-1 == close(socket))
-      return ERR_MSG(error::Code::Socket,
-                     "Unable to close socket " + std::to_string(socket));
+    unix::Filesystem::Close(socket)
+      .or_else([&](const auto & e) {
+        return ERR_MSG(error::Code::Socket,
+                       "Unable to close socket " + std::to_string(socket));
+      })
+      .unwrap();
 
     spdlog::debug("Closing socket {}...✓", socket);
     return Ok(Void());

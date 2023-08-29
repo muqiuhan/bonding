@@ -21,7 +21,7 @@ namespace bonding::environment
 
    public:
     Kernel()
-      : host(unix::Utsname::get().unwrap())
+      : host(unix::Utsname::Get().unwrap())
       , version(parse_version(host).unwrap())
       , machine(host.machine)
       , release(host.release)

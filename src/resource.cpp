@@ -32,43 +32,100 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
+  CgroupsV1::write_settings(const std::string & dir,
+                            const CgroupsV1::Control::Setting & setting) noexcept
+  {
+    const int fd =
+      unix::Filesystem::Open(dir + "/" + setting.name, O_WRONLY)
+        .or_else([&](const auto & e) {
+          return ERR_MSG(error::Code::Cgroups, "Cannot open controller " + setting.name);
+        })
+        .unwrap();
+
+    unix::Filesystem::Write(fd, setting.value)
+      .or_else([&](const auto & e) {
+        return ERR_MSG(error::Code::Cgroups,
+                       "Cannot write value to controller " + setting.name);
+      })
+      .unwrap();
+
+    unix::Filesystem::Close(fd)
+      .or_else([&](const auto & e) {
+        return ERR_MSG(error::Code::Cgroups, "Cannot close controller " + setting.name);
+      })
+      .unwrap();
+
+    if (setting.name != "task")
+      spdlog::debug("Setting controller {} by value {}...✓", setting.name, setting.value);
+
+    return Ok(Void());
+  }
+
+  Result<Void, error::Err>
+  CgroupsV1::write_contorl(const std::string hostname,
+                           const CgroupsV1::Control & cgroup) noexcept
+  {
+    if (environment::CgroupsV1::check_support_controller(cgroup.control).unwrap())
+      {
+        const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
+        unix::Filesystem::Mkdir(dir).unwrap();
+
+        for (const Control::Setting & setting : cgroup.settings)
+          write_settings(dir, setting).unwrap();
+
+        write_settings(dir, TASK).unwrap();
+
+        return Ok(Void());
+      }
+    else
+      return ERR_MSG(error::Code::Cgroups,
+                     "Controller " + cgroup.control + " is not support");
+  }
+
+  Result<Void, error::Err>
   CgroupsV1::setup(const std::string hostname) noexcept
   {
-    for (const Control & cgroup : CONFIG)
-      {
-        if (environment::CgroupsV1::check_support_controller(cgroup.control).unwrap())
-          {
-            const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
-            unix::Filesystem::mkdir(dir).unwrap();
-
-            for (const Control::Setting & setting : cgroup.settings)
-              {
-                const std::string path = dir + "/" + setting.name;
-
-                int fd = open(path.c_str(), O_WRONLY);
-                if (-1 == fd)
-                  {
-                    close(fd);
-                    return ERR_MSG(error::Code::Cgroups,
-                                   "Cannot set controller " + setting.name);
-                  }
-
-                if (-1 == write(fd, setting.value.c_str(), setting.value.length()))
-                  return ERR_MSG(error::Code::Cgroups,
-                                 "Cannot set controller " + setting.name);
-
-                spdlog::debug("Setting controller {} by value {}...✓",
-                              setting.name,
-                              setting.value);
-                close(fd);
-              }
-          }
-        else
-          return ERR_MSG(error::Code::Cgroups,
-                         "Controller " + cgroup.control + " is not support");
-      }
+    for (const auto & control : CONFIG)
+      write_contorl(hostname, control);
 
     spdlog::info("Setting cgroups by cgroups-v1...✓");
+    return Ok(Void());
+  }
+
+  Result<Void, error::Err>
+  CgroupsV1::clean_control_task(const CgroupsV1::Control & cgroup) noexcept
+  {
+    const std::string task = "/sys/fs/cgroup/" + cgroup.control + "/tasks";
+
+    const int taskfd =
+      unix::Filesystem::Open(task.c_str(), O_WRONLY)
+        .or_else([&](const auto & e) {
+          return ERR_MSG(error::Code::Cgroups,
+                         "Cannot open the cgroups tasks controller " + cgroup.control);
+        })
+        .unwrap();
+
+    unix::Filesystem::Write(taskfd, "0")
+      .or_else([&](const auto & e) {
+        unix::Filesystem::Close(taskfd)
+          .or_else([&](const auto & e) {
+            return ERR_MSG(error::Code::Cgroups,
+                           "Cannot close the cgroups tasks controller " + cgroup.control);
+          })
+          .unwrap();
+
+        return ERR_MSG(error::Code::Cgroups,
+                       "Cannot write the cgroups tasks controller " + cgroup.control);
+      })
+      .unwrap();
+
+    unix::Filesystem::Close(taskfd)
+      .or_else([&](const auto & e) {
+        return ERR_MSG(error::Code::Cgroups,
+                       "Cannot close the cgroups tasks controller " + cgroup.control);
+      })
+      .unwrap();
+
     return Ok(Void());
   }
 
@@ -78,27 +135,15 @@ namespace bonding::resource
     for (const Control & cgroup : CONFIG)
       {
         const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
-        const std::string task = "/sys/fs/cgroup/" + cgroup.control + "/tasks";
 
-        int taskfd = open(task.c_str(), O_WRONLY);
-        if (-1 == taskfd)
-          return ERR_MSG(error::Code::Cgroups,
-                         "Cannot clean cgroups controller " + cgroup.control);
+        clean_control_task(cgroup).unwrap();
 
-        if (-1 == write(taskfd, "0", 2))
-          {
-            close(taskfd);
+        unix::Filesystem::Rmdir(dir)
+          .or_else([&](const auto & _) {
             return ERR_MSG(error::Code::Cgroups,
                            "Cannot clean cgroups controller " + cgroup.control);
-          }
-
-        if (-1 == close(taskfd))
-          return ERR_MSG(error::Code::Cgroups,
-                         "Cannot clean cgroups controller " + cgroup.control);
-
-        if (-1 == rmdir(dir.c_str()))
-          return ERR_MSG(error::Code::Cgroups,
-                         "Cannot clean cgroups controller " + cgroup.control);
+          })
+          .unwrap();
       }
 
     spdlog::info("Cleaning cgroups-v1 settings...✓");

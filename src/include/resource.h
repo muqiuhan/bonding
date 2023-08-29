@@ -44,34 +44,35 @@ namespace bonding::resource
     static Result<Void, error::Err> clean(const std::string & hostname) noexcept;
 
    private:
+    static Result<Void, error::Err>
+    write_settings(const std::string & dir,
+                   const CgroupsV1::Control::Setting & setting) noexcept;
+
+    static Result<Void, error::Err>
+    write_contorl(const std::string hostname, const CgroupsV1::Control & cgroup) noexcept;
+
+    static Result<Void, error::Err>
+    clean_control_task(const CgroupsV1::Control & control) noexcept;
+
+   private:
     inline static const struct Control::Setting TASK = { .name = "tasks", .value = "0" };
     inline static const struct std::vector<Control> CONFIG =
       std::vector<CgroupsV1::Control>
     {
-      (Control{ .control = "memory", 
-                    .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
-						        .value = MEM_LIMIT }),
-			TASK } }),
+      (Control{ .control = "memory",
+                .settings = { (Control::Setting{ .name = "memory.limit_in_bytes",
+                                                 .value = MEM_LIMIT }) } }),
 
-        (Control { .control = "cpu",
-			    .settings =
-			    {
-			      (Control::Setting { 
-                                .name = "cpu.shares", .value = CPU_SHARES }),
-			      TASK,
-			    } }),
+        (Control{ .control = "cpu",
+                  .settings = { (Control::Setting{ .name = "cpu.shares",
+                                                   .value = CPU_SHARES }) } }),
 
-        (Control { .control = "pids",
-			    .settings =
-			    {
-			      (Control::Setting { .name = "pids.max",
-							   .value = PIDS_MAX }),
-			    TASK} }),
-        (Control { .control = "blkio",
-			    .settings = {
-			      ( Control::Setting {
-				.name = "blkio.bfq.weight", .value = PIDS_MAX }),
-			      TASK} })
+        (Control{
+          .control = "pids",
+          .settings = { (Control::Setting{ .name = "pids.max", .value = PIDS_MAX }) } }),
+        (Control{ .control = "blkio",
+                  .settings = { (Control::Setting{ .name = "blkio.bfq.weight",
+                                                   .value = PIDS_MAX }) } })
     };
   };
 
