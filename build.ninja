@@ -9,8 +9,26 @@ rule gen
  description = regenerating ninja files
 
 # rules for compiler
+rule cxx
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = compiling.release $in
+
 rule cu
  command = /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = compiling.release $in
+
+rule as
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = compiling.release $in
+
+rule mxx
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
  description = compiling.release $in
@@ -27,27 +45,9 @@ rule cc
  depfile = $out.d
  description = compiling.release $in
 
-rule mxx
- command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = compiling.release $in
-
-rule as
- command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = compiling.release $in
-
-rule cxx
- command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = compiling.release $in
-
 
 # rules for linker
-rule sh
+rule ld
  command = /usr/bin/g++ -o $out $in $ARGS
  description = linking.release $out
 
@@ -55,7 +55,7 @@ rule ar
  command = /usr/bin/ar $ARGS $out $in
  description = archiving.release $out
 
-rule ld
+rule sh
  command = /usr/bin/g++ -o $out $in $ARGS
  description = linking.release $out
 

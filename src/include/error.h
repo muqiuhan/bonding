@@ -70,8 +70,8 @@ namespace bonding::error
       , m_function(std::move(function))
     {
       LOG_ERROR << to_string() << ":" << function;
-      LOG_DEBUG << "In the " << function << " function on line " << line
-                << " of the file " << file << " (" << file << ":" << line << ")";
+      LOG_INFO << "In the " << function << " function on line " << line << " of the file "
+               << file << " (" << file << ":" << line << ")";
     }
 
     [[nodiscard]] static int32_t to_exit_code() noexcept;
