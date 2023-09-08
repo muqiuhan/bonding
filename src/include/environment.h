@@ -29,13 +29,10 @@ namespace bonding::environment
       , node_name(host.nodename)
       , domain_name(host.domainname)
     {
-      spdlog::debug("Get host machine information...");
-      spdlog::debug("System: {}, Machine: {}, Release: {}, Node: {}, Domain: {}",
-                    sysname,
-                    machine,
-                    release,
-                    node_name,
-                    domain_name);
+      LOG_DEBUG << "Get host machine information...";
+      LOG_DEBUG << "System: " << sysname << ", Machine: " << machine
+                << ", Release: " << release << ", Node: " << node_name
+                << ", Domain: " << domain_name;
     }
 
    public:

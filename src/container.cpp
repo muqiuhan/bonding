@@ -45,14 +45,14 @@ namespace bonding::container
 
     if (argv.debug)
       {
-        spdlog::set_level(spdlog::level::debug);
-        spdlog::debug("Activate debug mode...✓");
+        log::set_level(LOG_LEVEL_DEBUG);
+        LOG_DEBUG << "Activate debug mode...✓";
       }
 
     return container.create()
       .and_then([&](const auto _) {
         container.clean_and_exit().unwrap();
-        spdlog::info("Cleaning and exiting container...✓");
+        LOG_INFO << "Cleaning and exiting container...✓";
         return Ok(Void());
       })
       .or_else([&](const error::Err e) {
@@ -72,7 +72,7 @@ namespace bonding::container
       })
       .unwrap();
 
-    spdlog::debug("Closing socket {}...✓", socket);
+    LOG_DEBUG << "Closing socket " << socket << "...✓";
     return Ok(Void());
   }
 }

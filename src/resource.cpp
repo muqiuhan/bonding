@@ -3,8 +3,8 @@
 #include "include/resource.h"
 #include "include/config.h"
 #include "include/environment.h"
+#include "include/log.hpp"
 #include "include/unix.h"
-#include "spdlog/spdlog.h"
 #include <fcntl.h>
 #include <filesystem>
 #include <sys/resource.h>
@@ -15,7 +15,7 @@ namespace bonding::resource
   Result<Void, error::Err>
   Resource::setup(const config::Container_Options & config) noexcept
   {
-    spdlog::info("Restricting resources for hostname {}", config.hostname);
+    LOG_INFO << "Restricting resources for hostname " << config.hostname;
     CgroupsV1::setup(config).unwrap();
     Rlimit::setup().unwrap();
 
@@ -29,7 +29,7 @@ namespace bonding::resource
     if (-1 == setrlimit(RLIMIT_NOFILE, &rlim))
       return ERR(error::Code::Cgroups);
 
-    spdlog::info("Setting rlimit...✓");
+    LOG_INFO << "Setting rlimit...✓";
     return Ok(Void());
   }
 
@@ -58,7 +58,8 @@ namespace bonding::resource
       .unwrap();
 
     if (setting.name != "tasks")
-      spdlog::debug("Setting controller {} by value {}...✓", setting.name, setting.value);
+      LOG_DEBUG << "Setting controller " << setting.name << "  by value " << setting.value
+                << "...✓";
 
     return Ok(Void());
   }
@@ -80,7 +81,7 @@ namespace bonding::resource
         return Ok(Void());
       }
     else
-      spdlog::warn("Controller {} is not support!!", cgroup.control);
+      LOG_WARNING << "Controller " << cgroup.control << " is not support!!";
 
     return Ok(Void());
   }
@@ -91,7 +92,7 @@ namespace bonding::resource
     for (const auto & control : config.cgroups_options)
       write_contorl(config.hostname, control);
 
-    spdlog::info("Setting cgroups by cgroups-v1...✓");
+    LOG_INFO << "Setting cgroups by cgroups-v1...✓";
     return Ok(Void());
   }
 
@@ -150,7 +151,7 @@ namespace bonding::resource
           .unwrap();
       }
 
-    spdlog::info("Cleaning cgroups-v1 settings...✓");
+    LOG_INFO << "Cleaning cgroups-v1 settings...✓";
     return Ok(Void());
   }
 

@@ -19,7 +19,7 @@ namespace bonding::unix
       }
     catch (...)
       {
-        spdlog::error("Cannot create direcotry {}");
+        LOG_ERROR << "Cannot create direcotry " << path;
         return ERR(error::Code::Mounts);
       }
 

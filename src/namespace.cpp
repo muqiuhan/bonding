@@ -24,7 +24,8 @@ namespace bonding::ns
   Result<Void, error::Err>
   Namespace::setup(const int socket, const uid_t uid) noexcept
   {
-    spdlog::debug("Setting up user namespace with UID {}", uid);
+    LOG_DEBUG << "Setting up user namespace with UID " << uid;
+
     const bool has_userns = has_user_namespace().unwrap();
     const gid_t gid = uid;
 
@@ -33,9 +34,9 @@ namespace bonding::ns
       return ERR(error::Code::Namespace);
 
     if (has_userns)
-      spdlog::info("Setting user namespace...✓");
+      LOG_INFO << "Setting user namespace...✓";
     else
-      spdlog::error("Setting user namespace...✗");
+      LOG_ERROR << "Setting user namespace...✗";
 
     /* set the list of groups the process is part of */
     if (-1 == setgroups(1, groups))

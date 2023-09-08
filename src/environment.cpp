@@ -29,13 +29,14 @@ namespace bonding::environment
       {
         if (support_controller.path().filename().c_str() == controller)
           {
-            spdlog::debug("Check if Cgroups-v1 {} controller is supported...✓",
-                          controller);
+            LOG_DEBUG << "Check if Cgroups-v1 " << controller
+                      << " controller is supported...✓";
+
             return Ok(true);
           }
       }
 
-    spdlog::error("Check if Cgroups-v1 {} controller is supported...✗", controller);
+    LOG_ERROR << "Check if Cgroups-v1 " << controller << " controller is supported...✗";
     return Ok(false);
   }
 }

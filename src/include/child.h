@@ -5,8 +5,8 @@
 
 #include "config.h"
 #include "error.h"
+#include "log.hpp"
 #include "result.hpp"
-#include <spdlog/spdlog.h>
 #include <unistd.h>
 
 namespace bonding::child
@@ -22,9 +22,8 @@ namespace bonding::child
       : m_container_options(container_options)
       , m_pid(generate_child_process(container_options).unwrap())
     {
-      spdlog::info("Starting container with command `{}` on process {}",
-                   container_options.path,
-                   m_pid);
+      LOG_INFO << "Starting container with command " << container_options.path
+               << " on process " << m_pid;
     }
 
     Child()

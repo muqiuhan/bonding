@@ -1,7 +1,7 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/cli.h"
-#include "spdlog/spdlog.h"
+#include "include/log.hpp"
 #include <cstdlib>
 
 using namespace bonding;
@@ -9,15 +9,14 @@ using namespace bonding;
 int
 __main(int argc, char ** argv)
 {
-  spdlog::set_pattern("%H:%M:%S.%f %^>%$ %v");
-
+  log::set_level(LOG_LEVEL_INFO);
   try
     {
       cli::Command_Line_Args::make(argc, argv).unwrap();
     }
   catch (const std::exception & e)
     {
-      spdlog::error(e.what());
+      LOG_ERROR << e.what();
     }
 
   return 0;

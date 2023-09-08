@@ -5,10 +5,10 @@
 #include "include/configfile.h"
 #include "include/container.h"
 #include "include/hostname.h"
+#include "include/log.hpp"
 #include <cstdlib>
 #include <error.h>
 #include <iterator>
-#include <spdlog/spdlog.h>
 #include <vector>
 
 namespace bonding::cli

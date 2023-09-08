@@ -8,34 +8,28 @@ cmake_policy(SET CMP0091 NEW)
 project(bonding VERSION 0.1.3 LANGUAGES CXX C)
 
 # target
-set(CMAKE_C_COMPILER "/usr/bin/clang")
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 add_executable(bonding "")
 set_target_properties(bonding PROPERTIES OUTPUT_NAME "bonding")
-set_target_properties(bonding PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/debug")
+set_target_properties(bonding PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
 target_include_directories(bonding PRIVATE
-    /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include
-)
-target_compile_definitions(bonding PRIVATE
-    SPDLOG_SHARED_LIB
-    SPDLOG_COMPILED_LIB
-    SPDLOG_FMT_EXTERNAL
+    /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include
 )
 target_compile_options(bonding PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
     $<$<COMPILE_LANGUAGE:CXX>:-m64>
+    $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
+    $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
 )
 set_target_properties(bonding PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(bonding PRIVATE cxx_std_17)
 if(MSVC)
-    target_compile_options(bonding PRIVATE $<$<CONFIG:Debug>:-Od>)
+    target_compile_options(bonding PRIVATE $<$<CONFIG:Release>:-Ox -fp:fast>)
 else()
-    target_compile_options(bonding PRIVATE -O0)
+    target_compile_options(bonding PRIVATE -O3)
 endif()
 if(MSVC)
-    target_compile_options(bonding PRIVATE -Zi)
 else()
-    target_compile_options(bonding PRIVATE -g)
+    target_compile_options(bonding PRIVATE -fvisibility=hidden)
 endif()
 if(MSVC)
     set_property(TARGET bonding PROPERTY
@@ -44,33 +38,27 @@ endif()
 target_link_libraries(bonding PRIVATE
     seccomp
     cap
-    spdlog
-    fmt
-)
-target_link_directories(bonding PRIVATE
-    /usr/lib64
 )
 target_link_options(bonding PRIVATE
     -m64
-    -pthread
 )
 target_sources(bonding PRIVATE
-    src/ipc.cpp
-    src/config.cpp
-    src/exec.cpp
-    src/hostname.cpp
-    src/main.cpp
-    src/capabilities.cpp
     src/child.cpp
-    src/cli.cpp
+    src/config.cpp
     src/configfile.cpp
     src/container.cpp
     src/environment.cpp
     src/error.cpp
+    src/exec.cpp
+    src/main.cpp
     src/mount.cpp
     src/namespace.cpp
-    src/resource.cpp
     src/syscall.cpp
     src/unix.cpp
+    src/resource.cpp
+    src/capabilities.cpp
+    src/cli.cpp
+    src/hostname.cpp
+    src/ipc.cpp
 )
 
