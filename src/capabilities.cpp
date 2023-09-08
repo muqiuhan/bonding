@@ -1,8 +1,8 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/capabilities.h"
+#include "include/log.hpp"
 #include "include/unix.h"
-#include "spdlog/spdlog.h"
 #include <linux/prctl.h>
 #include <sys/prctl.h>
 
@@ -35,7 +35,7 @@ namespace bonding::capabilities
       })
       .unwrap();
 
-    spdlog::info("Clearing unwanted capabilities...✓");
+    LOG_INFO << "Clearing unwanted capabilities...✓";
     return Ok(Void());
   }
 }

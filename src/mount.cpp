@@ -13,10 +13,10 @@ namespace bonding::mounts
   Result<Void, error::Err>
   Mount::_umount(const std::string & path) noexcept
   {
-    spdlog::debug("Umount {}", path);
+    LOG_DEBUG << "Umount " << path;
     if (-1 == umount2(path.c_str(), MNT_DETACH))
       {
-        spdlog::error("Unable to umount {}", path);
+        LOG_ERROR << "Unable to umount " << path;
         return ERR(error::Code::Mounts);
       }
 
@@ -28,7 +28,7 @@ namespace bonding::mounts
   {
     if (-1 == remove(path.c_str()))
       {
-        spdlog::error("Unable to remove {}", path);
+        LOG_ERROR << "Unable to remove " << path;
         return ERR(error::Code::Mounts);
       }
 
@@ -41,7 +41,7 @@ namespace bonding::mounts
     const std::string & hostname,
     const std::vector<std::pair<std::string, std::string>> & mounts_paths) noexcept
   {
-    spdlog::info("Setting mount points...✓");
+    LOG_INFO << "Setting mount points...✓";
     _mount("", "/", MS_REC | MS_PRIVATE).unwrap();
 
     root = ".bonding/tmp/" + hostname + "/";
@@ -96,7 +96,7 @@ namespace bonding::mounts
       return ERR_MSG(error::Code::Mounts, "Cannot mount " + path + " to " + mount_point);
 
     if (!path.empty())
-      spdlog::info("Mount {} to {}...✓", path, mount_point);
+      LOG_INFO << "Mount " << path << " to " << mount_point << "...✓";
 
     return Ok(Void());
   }
@@ -113,7 +113,7 @@ namespace bonding::mounts
         return ERR_MSG(error::Code::Mounts, "Cannot create direcotry " + path);
       }
 
-    spdlog::debug("Create {}...✓", path);
+    LOG_DEBUG << "Create " << path << "...✓";
     return Ok(Void());
   }
 }

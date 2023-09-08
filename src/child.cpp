@@ -4,10 +4,10 @@
 #include "include/capabilities.h"
 #include "include/exec.h"
 #include "include/hostname.h"
+#include "include/log.hpp"
 #include "include/mount.h"
 #include "include/namespace.h"
 #include "include/syscall.h"
-#include "spdlog/spdlog.h"
 
 #include <cstdio>
 #include <sched.h>
@@ -37,11 +37,11 @@ namespace bonding::child
 
     setup_container_configurations()
       .and_then([](const Void ok) {
-        spdlog::info("Container setup successfully");
+        LOG_INFO << "Container setup successfully";
         return Ok(ok);
       })
       .or_else([](const error::Err & err) {
-        spdlog::error("Error while creating container");
+        LOG_ERROR << "Error while creating container";
         return Err(err);
       })
       .unwrap();
@@ -72,7 +72,7 @@ namespace bonding::child
   Result<Void, error::Err>
   Child::wait() const noexcept
   {
-    spdlog::debug("Waiting for child process {} finish...", m_pid);
+    LOG_DEBUG << "Waiting for child process " << m_pid << " finish...";
 
     int child_process_status = 0;
 
@@ -80,9 +80,8 @@ namespace bonding::child
     if (-1 == waitpid(m_pid, &child_process_status, __WALL))
       return ERR(error::Code::Container);
 
-    spdlog::info("Child process exit with code {}, signal {}",
-                 (child_process_status >> 8) & 0xFF,
-                 child_process_status & 0x7F);
+    LOG_INFO << "Child process exit with code " << ((child_process_status >> 8) & 0xFF)
+             << ", signal " << (child_process_status & 0x7F);
 
     return Ok(Void());
   }

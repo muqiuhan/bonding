@@ -9,48 +9,54 @@ rule gen
  description = regenerating ninja files
 
 # rules for compiler
-rule cc
- command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+rule cxx
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
- description = ccache compiling.release $in
+ description = compiling.release $in
+
+rule cu
+ command = /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = compiling.release $in
 
 rule as
- command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
- description = ccache compiling.release $in
-
-rule mm
- command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = ccache compiling.release $in
+ description = compiling.release $in
 
 rule mxx
- command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
- description = ccache compiling.release $in
+ description = compiling.release $in
 
-rule cxx
- command = /usr/bin/ccache /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+rule mm
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
- description = ccache compiling.release $in
+ description = compiling.release $in
+
+rule cc
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = compiling.release $in
 
 
 # rules for linker
+rule ld
+ command = /usr/bin/g++ -o $out $in $ARGS
+ description = linking.release $out
+
 rule ar
  command = /usr/bin/ar $ARGS $out $in
  description = archiving.release $out
 
-rule ld
- command = /usr/bin/clang++ -o $out $in $ARGS
- description = linking.release $out
-
 rule sh
- command = /usr/bin/clang++ -o $out $in $ARGS
+ command = /usr/bin/g++ -o $out $in $ARGS
  description = linking.release $out
 
 
@@ -62,59 +68,59 @@ build build.ninja: gen $
 
 # build target: bonding
 build bonding: phony build/linux/x86_64/release/bonding
-build build/linux/x86_64/release/bonding: ld build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o build/.objs/bonding/linux/x86_64/release/src/config.cpp.o build/.objs/bonding/linux/x86_64/release/src/exec.cpp.o build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o build/.objs/bonding/linux/x86_64/release/src/main.cpp.o build/.objs/bonding/linux/x86_64/release/src/capabilities.cpp.o build/.objs/bonding/linux/x86_64/release/src/child.cpp.o build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o build/.objs/bonding/linux/x86_64/release/src/configfile.cpp.o build/.objs/bonding/linux/x86_64/release/src/container.cpp.o build/.objs/bonding/linux/x86_64/release/src/environment.cpp.o build/.objs/bonding/linux/x86_64/release/src/error.cpp.o build/.objs/bonding/linux/x86_64/release/src/mount.cpp.o build/.objs/bonding/linux/x86_64/release/src/namespace.cpp.o build/.objs/bonding/linux/x86_64/release/src/syscall.cpp.o build/.objs/bonding/linux/x86_64/release/src/unix.cpp.o build/.objs/bonding/linux/x86_64/release/src/resource.cpp.o
- ARGS = -m64 -L/usr/lib64 -s -lseccomp -lcap -lspdlog -lfmt -pthread
-
-build build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o: cxx src/ipc.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
-
-build build/.objs/bonding/linux/x86_64/release/src/config.cpp.o: cxx src/config.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
-
-build build/.objs/bonding/linux/x86_64/release/src/exec.cpp.o: cxx src/exec.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
-
-build build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o: cxx src/hostname.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
-
-build build/.objs/bonding/linux/x86_64/release/src/main.cpp.o: cxx src/main.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
-
-build build/.objs/bonding/linux/x86_64/release/src/capabilities.cpp.o: cxx src/capabilities.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+build build/linux/x86_64/release/bonding: ld build/.objs/bonding/linux/x86_64/release/src/child.cpp.o build/.objs/bonding/linux/x86_64/release/src/config.cpp.o build/.objs/bonding/linux/x86_64/release/src/configfile.cpp.o build/.objs/bonding/linux/x86_64/release/src/container.cpp.o build/.objs/bonding/linux/x86_64/release/src/environment.cpp.o build/.objs/bonding/linux/x86_64/release/src/error.cpp.o build/.objs/bonding/linux/x86_64/release/src/exec.cpp.o build/.objs/bonding/linux/x86_64/release/src/main.cpp.o build/.objs/bonding/linux/x86_64/release/src/mount.cpp.o build/.objs/bonding/linux/x86_64/release/src/namespace.cpp.o build/.objs/bonding/linux/x86_64/release/src/syscall.cpp.o build/.objs/bonding/linux/x86_64/release/src/unix.cpp.o build/.objs/bonding/linux/x86_64/release/src/resource.cpp.o build/.objs/bonding/linux/x86_64/release/src/capabilities.cpp.o build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o
+ ARGS = -m64 -s -lseccomp -lcap
 
 build build/.objs/bonding/linux/x86_64/release/src/child.cpp.o: cxx src/child.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
-build build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o: cxx src/cli.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+build build/.objs/bonding/linux/x86_64/release/src/config.cpp.o: cxx src/config.cpp
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/configfile.cpp.o: cxx src/configfile.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/container.cpp.o: cxx src/container.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/environment.cpp.o: cxx src/environment.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/error.cpp.o: cxx src/error.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
+
+build build/.objs/bonding/linux/x86_64/release/src/exec.cpp.o: cxx src/exec.cpp
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
+
+build build/.objs/bonding/linux/x86_64/release/src/main.cpp.o: cxx src/main.cpp
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/mount.cpp.o: cxx src/mount.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/namespace.cpp.o: cxx src/namespace.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/syscall.cpp.o: cxx src/syscall.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/unix.cpp.o: cxx src/unix.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/resource.cpp.o: cxx src/resource.cpp
- ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -isystem /home/xfri_public/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include -isystem -DNDEBUG
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
+
+build build/.objs/bonding/linux/x86_64/release/src/capabilities.cpp.o: cxx src/capabilities.cpp
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
+
+build build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o: cxx src/cli.cpp
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
+
+build build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o: cxx src/hostname.cpp
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
+
+build build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o: cxx src/ipc.cpp
+ ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include -isystem -DNDEBUG
 
 build default: phony bonding
 build all: phony bonding
