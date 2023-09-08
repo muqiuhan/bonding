@@ -6,6 +6,7 @@
 #include "include/container.h"
 #include "include/hostname.h"
 #include "include/log.hpp"
+#include "include/unix.h"
 #include <cstdlib>
 #include <error.h>
 #include <iterator>
@@ -271,7 +272,7 @@ namespace bonding::cli
       "Bonding." + hostname + "/bonding.json",
       configfile::Config_File::generate_default(hostname, command).unwrap());
 
-    spdlog::info("Creating a Container...✓");
+    LOG_INFO << "Creating a Container...✓";
 
     return Ok(Void());
   }

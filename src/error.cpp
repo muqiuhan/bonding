@@ -12,7 +12,7 @@ namespace bonding::error
 
     return CODE_TO_STRING.at(m_code) + ": "
            + (system_error_msg == "Success" ? "Unknown error" : system_error_msg)
-           + (m_custom.empty() ? "" : "\n" + m_custom);
+           + (m_custom.empty() ? "" : "\n\t\t\t  > " + m_custom);
   }
 
 } // namespace bonding::error
