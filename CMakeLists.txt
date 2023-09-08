@@ -43,22 +43,22 @@ target_link_options(bonding PRIVATE
     -m64
 )
 target_sources(bonding PRIVATE
-    src/child.cpp
     src/config.cpp
-    src/configfile.cpp
+    src/exec.cpp
+    src/capabilities.cpp
+    src/child.cpp
     src/container.cpp
     src/environment.cpp
     src/error.cpp
-    src/exec.cpp
+    src/hostname.cpp
+    src/ipc.cpp
     src/main.cpp
     src/mount.cpp
     src/namespace.cpp
-    src/syscall.cpp
-    src/unix.cpp
     src/resource.cpp
-    src/capabilities.cpp
+    src/syscall.cpp
     src/cli.cpp
-    src/hostname.cpp
-    src/ipc.cpp
+    src/configfile.cpp
+    src/unix.cpp
 )
 
