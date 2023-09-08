@@ -5,14 +5,14 @@ set_xmakever("2.8.1")
 add_rules("mode.debug", "mode.release")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
 
-add_requires("libcap", "libseccomp", "spdlog", "nlohmann_json")
+add_requires("libcap", "libseccomp", "plog", "nlohmann_json")
 
 target("bonding")
     set_kind("binary")
     set_languages("c++17")
 
     add_files("src/*.cpp")
-    add_packages("spdlog", "result", "nlohmann_json")
+    add_packages("plog", "result", "nlohmann_json")
     add_links("seccomp", "cap")
 
     after_build(function (target)

@@ -4,8 +4,8 @@
 #define BONDING_CLI_H
 
 #include "error.h"
+#include "log.hpp"
 #include "result.hpp"
-#include "spdlog/spdlog.h"
 #include <algorithm>
 #include <cassert>
 #include <cstdio>

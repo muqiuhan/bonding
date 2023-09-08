@@ -12,10 +12,8 @@ namespace bonding::ipc
 
     /* With a zero flags argument, send() is equivalent to write(). */
     if (-1 == send(socket, &buf, 1, 0))
-      {
-        spdlog::error("Cannot send boolean through socket: {}", socket);
-        return ERR(error::Code::Socket);
-      }
+      return ERR_MSG(error::Code::Socket,
+                     "Cannot send boolean through socket: " + std::to_string(socket));
     return Ok(Void());
   }
 
@@ -26,10 +24,8 @@ namespace bonding::ipc
 
     /* With a zero flags argument, recv() is generally equivalent to read() */
     if (-1 == recv(socket, &buf, 1, 0))
-      {
-        spdlog::error("Cannot recevie boolean from socket {}", socket);
-        return ERR(error::Code::Socket);
-      }
+      return ERR_MSG(error::Code::Socket,
+                     "Cannot recevie boolean from socket" + std::to_string(socket));
 
     return Ok(static_cast<bool>(buf[0]));
   }

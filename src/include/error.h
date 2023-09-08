@@ -3,11 +3,12 @@
 #ifndef BONDING_ERROR_H
 #define BONDING_ERROR_H
 
+#include "log.hpp"
 #include "result.hpp"
 #include <cerrno>
+#include <cstdint>
 #include <exception>
 #include <map>
-#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -68,13 +69,9 @@ namespace bonding::error
       , m_file(std::move(file))
       , m_function(std::move(function))
     {
-      spdlog::error("{}", to_string(), function);
-      spdlog::debug("In the `{}` function on line `{}` of the file `{}` ({}:{})",
-                    function,
-                    line,
-                    file,
-                    file,
-                    line);
+      LOG_ERROR << to_string() << ":" << function;
+      LOG_INFO << "In the " << function << " function on line " << line << " of the file "
+               << file << " (" << file << ":" << line << ")";
     }
 
     [[nodiscard]] static int32_t to_exit_code() noexcept;

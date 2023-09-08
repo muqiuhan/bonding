@@ -50,7 +50,7 @@ namespace bonding::syscall
     if (0 != seccomp_load(ctx))
       return ERR_MSG(error::Code::Systemcall, "seccomp_load error");
 
-    spdlog::info("Refusing / Filtering unwanted syscalls...✓");
+    LOG_INFO << "Refusing / Filtering unwanted syscalls...✓";
     return Ok(Void());
   }
 

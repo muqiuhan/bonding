@@ -5,6 +5,7 @@
 
 #include "error.h"
 #include "result.hpp"
+#include <array>
 #include <asm-generic/ioctls.h>
 #include <cstdint>
 #include <fcntl.h>

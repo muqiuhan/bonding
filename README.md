@@ -111,7 +111,7 @@ Bonding sets the environment and various parameters through the configuration fi
 - `cgroups-v1` is used to limit the resources of the container, see [Control Groups Version 1](https://docs.kernel.org/admin-guide/cgroup-v1/index.html)
 
 ## Dependencies
-- [spdlog (MIT): Fast C++ logging library.](https://github.com/gabime/spdlog)
+- [plog (MIT):  Portable, simple and extensible C++ logging library](https://github.com/SergiusTheBest/plog)
 - [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
 - [cmd_line_parser (MIT):  Command line parser for C++17. ](https://github.com/jermp/cmd_line_parser)
 - [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
