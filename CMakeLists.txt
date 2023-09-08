@@ -8,6 +8,8 @@ cmake_policy(SET CMP0091 NEW)
 project(bonding VERSION 0.1.3 LANGUAGES CXX C)
 
 # target
+set(CMAKE_C_COMPILER "/usr/bin/clang")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 add_executable(bonding "")
 set_target_properties(bonding PROPERTIES OUTPUT_NAME "bonding")
 set_target_properties(bonding PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
@@ -49,7 +51,6 @@ target_sources(bonding PRIVATE
     src/child.cpp
     src/container.cpp
     src/environment.cpp
-    src/error.cpp
     src/hostname.cpp
     src/ipc.cpp
     src/main.cpp
@@ -57,8 +58,9 @@ target_sources(bonding PRIVATE
     src/namespace.cpp
     src/resource.cpp
     src/syscall.cpp
-    src/cli.cpp
     src/configfile.cpp
     src/unix.cpp
+    src/cli.cpp
+    src/error.cpp
 )
 
