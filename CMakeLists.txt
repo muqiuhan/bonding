@@ -13,14 +13,16 @@ set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 add_executable(bonding "")
 set_target_properties(bonding PROPERTIES OUTPUT_NAME "bonding")
 set_target_properties(bonding PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
-target_include_directories(bonding PRIVATE
-    /home/muqiu-han/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include
+target_include_directories(bonding SYSTEM PRIVATE
+    /home/muqiu/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include
+    /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include
 )
 target_compile_options(bonding PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
     $<$<COMPILE_LANGUAGE:CXX>:-m64>
     $<$<COMPILE_LANGUAGE:C>:-DNDEBUG>
     $<$<COMPILE_LANGUAGE:CXX>:-DNDEBUG>
+    $<$<COMPILE_LANGUAGE:CXX>:-O2 -ffunction-sections -Wl,-gc-sections -static-libstdc++ -s>
 )
 set_target_properties(bonding PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(bonding PRIVATE cxx_std_17)
@@ -45,22 +47,22 @@ target_link_options(bonding PRIVATE
     -m64
 )
 target_sources(bonding PRIVATE
-    src/config.cpp
-    src/exec.cpp
     src/capabilities.cpp
-    src/child.cpp
+    src/config.cpp
     src/container.cpp
     src/environment.cpp
+    src/error.cpp
+    src/exec.cpp
     src/hostname.cpp
     src/ipc.cpp
-    src/main.cpp
     src/mount.cpp
     src/namespace.cpp
+    src/unix.cpp
+    src/child.cpp
+    src/cli.cpp
+    src/configfile.cpp
+    src/main.cpp
     src/resource.cpp
     src/syscall.cpp
-    src/configfile.cpp
-    src/unix.cpp
-    src/cli.cpp
-    src/error.cpp
 )
 
