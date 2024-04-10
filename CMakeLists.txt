@@ -5,17 +5,17 @@
 # project
 cmake_minimum_required(VERSION 3.15.0)
 cmake_policy(SET CMP0091 NEW)
-project(bonding VERSION 0.1.3 LANGUAGES CXX C)
+project(bonding VERSION 0.1.3 LANGUAGES CXX)
 
 # target
-set(CMAKE_C_COMPILER "/usr/bin/clang")
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 add_executable(bonding "")
 set_target_properties(bonding PROPERTIES OUTPUT_NAME "bonding")
 set_target_properties(bonding PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/release")
 target_include_directories(bonding SYSTEM PRIVATE
-    /home/muqiu/.xmake/packages/p/plog/1.1.9/2ddcabfa535b431584ecede27117dc7d/include
-    /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.2/efd3cf16388a46048c8713952f1ede18/include
+    /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include
+    /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include
+    /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include
+    build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include
 )
 target_compile_options(bonding PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -40,29 +40,33 @@ if(MSVC)
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 target_link_libraries(bonding PRIVATE
-    seccomp
     cap
+    seccomp
+)
+target_link_directories(bonding PRIVATE
+    /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/lib
+    build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/lib
 )
 target_link_options(bonding PRIVATE
     -m64
 )
 target_sources(bonding PRIVATE
     src/capabilities.cpp
+    src/child.cpp
+    src/cli.cpp
     src/config.cpp
+    src/configfile.cpp
     src/container.cpp
     src/environment.cpp
     src/error.cpp
     src/exec.cpp
     src/hostname.cpp
     src/ipc.cpp
+    src/main.cpp
     src/mount.cpp
     src/namespace.cpp
-    src/unix.cpp
-    src/child.cpp
-    src/cli.cpp
-    src/configfile.cpp
-    src/main.cpp
     src/resource.cpp
     src/syscall.cpp
+    src/unix.cpp
 )
 
