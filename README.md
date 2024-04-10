@@ -21,7 +21,7 @@
 
 This is currently the only way to use bonding. Fortunately, xmake supports the generation of files required by build tools such as Ninja, CMake and Makefile, so this project supports building from Ninja or CMakes:
 
-1. clone: `git clone https://github.com/muqiuhan/bonding --recurse-submodules`
+1. clone: `git clone https://github.com/muqiuhan/bonding --recurse-submodules --depth=1`
 2. and build it: `make build.release` or build for debug: `make build.debug`
     > or use one of cmake and ninja
 

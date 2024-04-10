@@ -1,9 +1,8 @@
 install:
-	xmake f -m release && xmake build
-	sudo cp build/linux/x86_64/release/bonding /usr/bin
+	xmake f -m release && xmake build && xmake install --installdir=~/.local
 
 uninstall:
-	sudo rm /usr/bin/bonding
+	xmake uninstall --installdir=~/.local
 
 build.release:
 	xmake f -m release && xmake build
