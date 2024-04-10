@@ -5,7 +5,7 @@ set_xmakever("2.8.1")
 add_rules("mode.debug", "mode.release")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
 
-add_requires("plog", "nlohmann_json")
+add_requires("plog", "nlohmann_json", "libcap")
 
 target("bonding")
     set_kind("binary")
@@ -14,8 +14,8 @@ target("bonding")
 
     add_cxxflags("-O2 -ffunction-sections -Wl,-gc-sections -static-libstdc++ -s")
     add_files("src/*.cpp")
-    add_packages("plog", "result", "nlohmann_json")
-    add_links("seccomp", "cap")
+    add_packages("plog", "result", "nlohmann_json", "libcap")
+    add_links("seccomp")
 
     after_build(function (target)
         import("core.project.project")
