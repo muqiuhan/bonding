@@ -115,10 +115,11 @@ Bonding sets the environment and various parameters through the configuration fi
 - [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
 - [cmd_line_parser (MIT):  Command line parser for C++17. ](https://github.com/jermp/cmd_line_parser)
 - [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
-- [configor (MIT): A light weight configuration library for C++](https://github.com/Nomango/configor)
+- [nlohmann_json (MIT): JSON for Modern C++](https://github.com/nlohmann/json)
 
 ## REFERENCES
 
+- [Linux containers in 500 lines of code](https://blog.lizzie.io/linux-containers-in-500-loc.html)
 - Book: *The Linux Programming Interface*
 - [The Linux Kernel documentation¶](https://www.kernel.org/doc/html/latest/index.html)
 - [OS-level virtualization wikipeidia](https://en.wikipedia.org/wiki/OS-level_virtualization)
@@ -142,8 +143,6 @@ Bonding sets the environment and various parameters through the configuration fi
 - [New Linux Kernel cgroups Vulnerability Could Let Attackers Escape Container](https://thehackernews.com/2022/03/new-linux-kernel-cgroups-vulnerability.html)
 - [How to manage cgroups with CPUShares](https://www.redhat.com/sysadmin/cgroups-part-two)
 - [Limits on resources in Linux](https://0xax.gitbooks.io/linux-insides/content/SysCall/linux-syscall-6.html)
-- [Linux containers in 500 lines of code](https://blog.lizzie.io/linux-containers-in-500-loc.html)
-- [Writing a container in Rust](https://litchipi.github.io/series/container_in_rust)
 
 # LICENSE
 Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com>
