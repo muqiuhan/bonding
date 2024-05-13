@@ -12,12 +12,11 @@
 
 namespace bonding::syscall
 {
-  Result<Void, error::Err>
-  Syscall::refuse_if_comp() noexcept
+  Result<Void, error::Err> Syscall::refuse_if_comp() noexcept
   {
     for (const auto [syscall, ind, biteq] : default_refuse_if_comp_syscalls)
       {
-        const scmp_arg_cmp cmp = { ind, SCMP_CMP_MASKED_EQ, biteq, biteq };
+        const scmp_arg_cmp cmp = {ind, SCMP_CMP_MASKED_EQ, biteq, biteq};
 
         if (0 != seccomp_rule_add_array(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 1, &cmp))
           return ERR_MSG(error::Code::Systemcall, "seccomp_rule_add_array error");
@@ -26,8 +25,7 @@ namespace bonding::syscall
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Syscall::refuse_syscall() noexcept
+  Result<Void, error::Err> Syscall::refuse_syscall() noexcept
   {
     for (const int syscall : default_refuse_syscalls)
       if (0 != seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), syscall, 0))
@@ -36,8 +34,7 @@ namespace bonding::syscall
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Syscall::setup() noexcept
+  Result<Void, error::Err> Syscall::setup() noexcept
   {
     /* Initialize seccomp profile with all syscalls allowed by default */
     ctx = seccomp_init(SCMP_ACT_ALLOW);
@@ -54,10 +51,9 @@ namespace bonding::syscall
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Syscall::clean() noexcept
+  Result<Void, error::Err> Syscall::clean() noexcept
   {
     seccomp_release(ctx);
     return Ok(Void());
   }
-}
+} // namespace bonding::syscall

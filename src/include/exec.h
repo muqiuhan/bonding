@@ -12,15 +12,15 @@ namespace bonding::exec
 
   class Execve
   {
-   public:
+  public:
     /** The execve systemcall wrapper */
-    static Result<Void, error::Err> call(const std::string & path,
-                                         const std::vector<std::string> & argv) noexcept;
+    static Result<Void, error::Err>
+      call(const std::string &path, const std::vector<std::string> &argv) noexcept;
 
-   private:
+  private:
     inline static std::vector<char *> args;
   };
 
-};
+}; // namespace bonding::exec
 
 #endif /* BONDING_EXEC_H */

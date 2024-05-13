@@ -11,8 +11,7 @@
 
 namespace bonding::container
 {
-  Result<Void, error::Err>
-  Container::create() noexcept
+  Result<Void, error::Err> Container::create() noexcept
   {
     if (ipc::IPC::recv_boolean(m_sockets.first).unwrap())
       {
@@ -22,14 +21,13 @@ namespace bonding::container
       }
     else
       {
-        return ERR_MSG(error::Code::Namespace,
-                       "No user namespace set up from child process");
+        return ERR_MSG(
+          error::Code::Namespace, "No user namespace set up from child process");
       }
     return m_child_process.wait();
   }
 
-  Result<Void, error::Err>
-  Container::clean_and_exit() noexcept
+  Result<Void, error::Err> Container::clean_and_exit() noexcept
   {
     Container_Cleaner::close_socket(m_sockets.first).unwrap();
     Container_Cleaner::close_socket(m_sockets.second).unwrap();
@@ -39,7 +37,7 @@ namespace bonding::container
   }
 
   Result<Void, error::Err>
-  Container::start(const config::Container_Options & argv) noexcept
+    Container::start(const config::Container_Options & argv) noexcept
   {
     Container container(argv);
 
@@ -51,28 +49,25 @@ namespace bonding::container
 
     return container.create()
       .and_then([&](const auto _) {
-        container.clean_and_exit().unwrap();
-        LOG_INFO << "Cleaning and exiting container...✓";
-        return Ok(Void());
-      })
-      .or_else([&](const error::Err e) {
-        container.clean_and_exit().unwrap();
-        return ERR_MSG(error::Code::Container,
-                       "Error while creating container: {}" + e.to_string());
-      });
+      container.clean_and_exit().unwrap();
+      LOG_INFO << "Cleaning and exiting container...✓";
+      return Ok(Void());
+    }).or_else([&](const error::Err e) {
+      container.clean_and_exit().unwrap();
+      return ERR_MSG(
+        error::Code::Container, "Error while creating container: {}" + e.to_string());
+    });
   }
 
-  Result<Void, error::Err>
-  Container_Cleaner::close_socket(const int socket) noexcept
+  Result<Void, error::Err> Container_Cleaner::close_socket(const int socket) noexcept
   {
     unix::Filesystem::Close(socket)
       .or_else([&](const auto & e) {
-        return ERR_MSG(error::Code::Socket,
-                       "Unable to close socket " + std::to_string(socket));
-      })
-      .unwrap();
+      return ERR_MSG(
+        error::Code::Socket, "Unable to close socket " + std::to_string(socket));
+    }).unwrap();
 
     LOG_DEBUG << "Closing socket " << socket << "...✓";
     return Ok(Void());
   }
-}
+} // namespace bonding::container

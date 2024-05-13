@@ -5,8 +5,7 @@
 namespace bonding::error
 {
 
-  std::string
-  Err::to_string() const noexcept
+  std::string Err::to_string() const noexcept
   {
     const std::string system_error_msg = strerror(m_errno);
 

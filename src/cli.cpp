@@ -14,28 +14,29 @@
 
 namespace bonding::cli
 {
-  Result<Void, error::Err>
-  Command_Line_Args::make(const int argc, char * argv[]) noexcept
+  Result<Void, error::Err> Command_Line_Args::make(const int argc, char * argv[]) noexcept
   {
     return function(init_parser(argc, argv).unwrap());
   }
 
   Result<Parser, error::Err>
-  Command_Line_Args::init_parser(const int argc, char * argv[]) noexcept
+    Command_Line_Args::init_parser(const int argc, char * argv[]) noexcept
   {
     Parser parser(argc, argv);
 
-    parser.add("init",
-               "Initialize the current directory as the container directory",
-               "init",
-               false,
-               true);
+    parser.add(
+      "init",
+      "Initialize the current directory as the container directory",
+      "init",
+      false,
+      true);
 
-    parser.add("run",
-               "Run with the current directory as the container directory",
-               "run",
-               false,
-               true);
+    parser.add(
+      "run",
+      "Run with the current directory as the container directory",
+      "run",
+      false,
+      true);
 
     parser.add("help", "show this message", "help", false, true);
 
@@ -56,14 +57,13 @@ namespace bonding::cli
     return Ok(parser);
   }
 
-  Result<bool, error::Err>
-  Parser::parse() noexcept
+  Result<bool, error::Err> Parser::parse() noexcept
   {
     assert(m_argc > 0);
     if (m_argc - 1 < m_required)
       return ERR(error::Code::Cli);
 
-    int num_required = 0;
+    int                             num_required = 0;
     std::unordered_set<std::string> parsed_shorthands;
     parsed_shorthands.reserve(m_argc);
 
@@ -81,8 +81,8 @@ namespace bonding::cli
           {
             if (const auto it = parsed_shorthands.find(parsed);
                 it != parsed_shorthands.end())
-              return ERR_MSG(error::Code::Cli,
-                             "shorthand '" + parsed + "' already parsed");
+              return ERR_MSG(
+                error::Code::Cli, "shorthand '" + parsed + "' already parsed");
 
             parsed_shorthands.emplace(parsed);
             id = (*it).second;
@@ -90,7 +90,7 @@ namespace bonding::cli
 
         assert(static_cast<size_t>(id) < m_names.size());
         auto const & name = m_names[id];
-        auto & cmd = m_cmds[name];
+        auto &       cmd = m_cmds[name];
         if (cmd.is_required)
           num_required += 1;
         if (cmd.is_boolean)
@@ -111,8 +111,7 @@ namespace bonding::cli
     return Ok(true);
   }
 
-  Result<Void, error::Err>
-  Parser::help() const noexcept
+  Result<Void, error::Err> Parser::help() const noexcept
   {
     std::cerr << "Usage: " << m_argv[0] << " [help]";
     const auto print = [this](bool with_description) {
@@ -140,18 +139,17 @@ namespace bonding::cli
     return Ok(Void());
   }
 
-  Result<bool, error::Err>
-  Parser::add(std::string const & name,
-              std::string const & descr,
-              std::string const & shorthand,
-              bool is_required,
-              bool is_boolean) noexcept
+  Result<bool, error::Err> Parser::add(
+    std::string const & name,
+    std::string const & descr,
+    std::string const & shorthand,
+    bool                is_required,
+    bool                is_boolean) noexcept
   {
     bool ret =
       m_cmds
         .emplace(
-          name,
-          cmd{ shorthand, is_boolean ? "false" : "", descr, is_required, is_boolean })
+          name, cmd{shorthand, is_boolean ? "false" : "", descr, is_required, is_boolean})
         .second;
     if (ret)
       {
@@ -164,8 +162,7 @@ namespace bonding::cli
   }
 
   template <typename T>
-  Result<T, error::Err>
-  Parser::get(std::string const & name) const noexcept
+  Result<T, error::Err> Parser::get(std::string const & name) const noexcept
   {
     auto it = m_cmds.find(name);
     if (it == m_cmds.end())
@@ -176,7 +173,7 @@ namespace bonding::cli
   }
 
   [[maybe_unused]] Result<bool, error::Err>
-  Parser::parsed(std::string const & name) const noexcept
+    Parser::parsed(std::string const & name) const noexcept
   {
     auto it = m_cmds.find(name);
     if (it == m_cmds.end())
@@ -195,30 +192,31 @@ namespace bonding::cli
   }
 
   template <typename T>
-  Result<T, error::Err>
-  Parser::parse(std::string const & value) const noexcept
+  Result<T, error::Err> Parser::parse(std::string const & value) const noexcept
   {
     if constexpr (std::is_same<T, std::string>::value)
       return value;
-    else if constexpr (std::is_same<T, char>::value || std::is_same<T, signed char>::value
-                       || std::is_same<T, unsigned char>::value)
+    else if constexpr (
+      std::is_same<T, char>::value || std::is_same<T, signed char>::value
+      || std::is_same<T, unsigned char>::value)
       return value.front();
-    else if constexpr (std::is_same<T, unsigned int>::value || std::is_same<T, int>::value
-                       || std::is_same<T, unsigned short int>::value
-                       || std::is_same<T, short int>::value)
+    else if constexpr (
+      std::is_same<T, unsigned int>::value || std::is_same<T, int>::value
+      || std::is_same<T, unsigned short int>::value || std::is_same<T, short int>::value)
       return std::strtol(value.c_str(), nullptr, 10);
-    else if constexpr (std::is_same<T, unsigned long int>::value
-                       || std::is_same<T, long int>::value
-                       || std::is_same<T, unsigned long long int>::value
-                       || std::is_same<T, long long int>::value)
+    else if constexpr (
+      std::is_same<T, unsigned long int>::value || std::is_same<T, long int>::value
+      || std::is_same<T, unsigned long long int>::value
+      || std::is_same<T, long long int>::value)
       return std::strtoll(value.c_str(), nullptr, 10);
-    else if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value
-                       || std::is_same<T, long double>::value)
+    else if constexpr (
+      std::is_same<T, float>::value || std::is_same<T, double>::value
+      || std::is_same<T, long double>::value)
       return std::strtod(value.c_str(), nullptr);
     else if constexpr (std::is_same<T, bool>::value)
       {
         std::istringstream stream(value);
-        bool ret;
+        bool               ret;
         if (value == "true" || value == "false")
           stream >> std::boolalpha >> ret;
         else
@@ -229,8 +227,7 @@ namespace bonding::cli
     return ERR_MSG(error::Code::Cli, "unsupported type");
   }
 
-  Result<Void, error::Err>
-  function(const Parser parser) noexcept
+  Result<Void, error::Err> function(const Parser parser) noexcept
   {
     if (parser.get<bool>("init").unwrap())
       return init(parser);
@@ -246,15 +243,13 @@ namespace bonding::cli
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  run(const Parser & args) noexcept
+  Result<Void, error::Err> run(const Parser & args) noexcept
   {
     return container::Container::start(
       configfile::Config_File::read("./bonding.json").unwrap());
   }
 
-  Result<Void, error::Err>
-  init(const Parser & args) noexcept
+  Result<Void, error::Err> init(const Parser & args) noexcept
   {
     std::string hostname;
     std::string command;
@@ -277,12 +272,11 @@ namespace bonding::cli
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  version(const Parser & args) noexcept
+  Result<Void, error::Err> version(const Parser & args) noexcept
   {
     std::cout << "Welcome to Bonding v" + BONDING_VERSION + " [" + BONDING_COPYRIGHT + "]"
               << std::endl;
     return Ok(Void());
   }
 
-}
+} // namespace bonding::cli

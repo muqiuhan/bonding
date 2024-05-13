@@ -15,13 +15,11 @@
 
 namespace bonding::child
 {
-  Result<Void, error::Err>
-  Child::Process::setup_container_configurations() noexcept
+  Result<Void, error::Err> Child::Process::setup_container_configurations() noexcept
   {
     hostname::Hostname::setup(container_options->hostname).unwrap();
-    mounts::Mount::setup(container_options->mount_dir,
-                         container_options->hostname,
-                         container_options->mounts)
+    mounts::Mount::setup(
+      container_options->mount_dir, container_options->hostname, container_options->mounts)
       .unwrap();
     ns::Namespace::setup(container_options->ipc.second, container_options->uid).unwrap();
     capabilities::Capabilities::setup().unwrap();
@@ -30,21 +28,19 @@ namespace bonding::child
     return Ok(Void());
   }
 
-  int
-  Child::Process::_main(void * options) noexcept
+  int Child::Process::_main(void *options) noexcept
   {
     container_options = static_cast<config::Container_Options *>(options);
 
     setup_container_configurations()
       .and_then([](const Void ok) {
-        LOG_INFO << "Container setup successfully";
-        return Ok(ok);
-      })
-      .or_else([](const error::Err & err) {
-        LOG_ERROR << "Error while creating container";
-        return Err(err);
-      })
-      .unwrap();
+      LOG_INFO << "Container setup successfully";
+      return Ok(ok);
+    })
+      .or_else([](const error::Err &err) {
+      LOG_ERROR << "Error while creating container";
+      return Err(err);
+    }).unwrap();
 
     int ret_code = 0;
     if (exec::Execve::call(container_options->path, container_options->argv).is_err())
@@ -53,15 +49,14 @@ namespace bonding::child
     return ret_code;
   }
 
-  Result<pid_t, error::Err>
-  Child::generate_child_process(
+  Result<pid_t, error::Err> Child::generate_child_process(
     const config::Container_Options container_options) noexcept
   {
-    const pid_t child_pid =
-      clone(Process::_main,
-            static_cast<char *>(Process::STACK) + Process::STACK_SIZE,
-            container_options.clone_flags,
-            (void *)&container_options);
+    const pid_t child_pid = clone(
+      Process::_main,
+      static_cast<char *>(Process::STACK) + Process::STACK_SIZE,
+      container_options.clone_flags,
+      (void *) &container_options);
 
     if (-1 == child_pid)
       return ERR(error::Code::ChildProcess);
@@ -69,8 +64,7 @@ namespace bonding::child
     return Ok(child_pid);
   }
 
-  Result<Void, error::Err>
-  Child::wait() const noexcept
+  Result<Void, error::Err> Child::wait() const noexcept
   {
     LOG_DEBUG << "Waiting for child process " << m_pid << " finish...";
 
@@ -85,4 +79,4 @@ namespace bonding::child
 
     return Ok(Void());
   }
-}
+} // namespace bonding::child

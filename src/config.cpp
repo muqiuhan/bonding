@@ -6,6 +6,4 @@
 #include <sstream>
 
 namespace bonding::config
-{
-
-}
+{}

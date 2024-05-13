@@ -10,8 +10,7 @@
 namespace bonding::mounts
 {
 
-  Result<Void, error::Err>
-  Mount::_umount(const std::string & path) noexcept
+  Result<Void, error::Err> Mount::_umount(const std::string & path) noexcept
   {
     LOG_DEBUG << "Umount " << path;
     if (-1 == umount2(path.c_str(), MNT_DETACH))
@@ -23,8 +22,7 @@ namespace bonding::mounts
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Mount::_delete(const std::string & path) noexcept
+  Result<Void, error::Err> Mount::_delete(const std::string & path) noexcept
   {
     if (-1 == remove(path.c_str()))
       {
@@ -35,10 +33,9 @@ namespace bonding::mounts
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Mount::setup(
-    const std::string & mount_dir,
-    const std::string & hostname,
+  Result<Void, error::Err> Mount::setup(
+    const std::string &                                      mount_dir,
+    const std::string &                                      hostname,
     const std::vector<std::pair<std::string, std::string>> & mounts_paths) noexcept
   {
     LOG_INFO << "Setting mount points...✓";
@@ -73,8 +70,7 @@ namespace bonding::mounts
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Mount::clean() noexcept
+  Result<Void, error::Err> Mount::clean() noexcept
   {
     if (-1 == rmdir(root.c_str()))
       return ERR(error::Code::Mounts);
@@ -82,17 +78,19 @@ namespace bonding::mounts
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Mount::_mount(const std::string & path,
-                const std::string & mount_point,
-                unsigned long flags) noexcept
+  Result<Void, error::Err> Mount::_mount(
+    const std::string & path,
+    const std::string & mount_point,
+    unsigned long       flags) noexcept
   {
-    if (-1
-        == mount((path.empty() ? nullptr : path.c_str()),
-                 mount_point.c_str(),
-                 nullptr,
-                 flags,
-                 nullptr))
+    if (
+      -1
+      == mount(
+        (path.empty() ? nullptr : path.c_str()),
+        mount_point.c_str(),
+        nullptr,
+        flags,
+        nullptr))
       return ERR_MSG(error::Code::Mounts, "Cannot mount " + path + " to " + mount_point);
 
     if (!path.empty())
@@ -101,8 +99,7 @@ namespace bonding::mounts
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Mount::_create(const std::string & path) noexcept
+  Result<Void, error::Err> Mount::_create(const std::string & path) noexcept
   {
     try
       {
@@ -116,4 +113,4 @@ namespace bonding::mounts
     LOG_DEBUG << "Create " << path << "...✓";
     return Ok(Void());
   }
-}
+} // namespace bonding::mounts

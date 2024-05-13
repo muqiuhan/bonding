@@ -6,8 +6,7 @@
 
 using namespace bonding;
 
-int
-__main(int argc, char ** argv)
+int __main(int argc, char ** argv)
 {
   log::set_level(LOG_LEVEL_INFO);
   try
@@ -22,8 +21,4 @@ __main(int argc, char ** argv)
   return 0;
 }
 
-int
-main(int argc, char ** argv)
-{
-  return __main(argc, argv);
-}
+int main(int argc, char ** argv) { return __main(argc, argv); }

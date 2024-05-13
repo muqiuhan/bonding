@@ -16,33 +16,31 @@ namespace bonding::resource
    ** the configuration for a given group under the same directory. */
   class CgroupsV1
   {
-   public:
+  public:
     static Result<Void, error::Err>
-    setup(const bonding::config::Container_Options & config) noexcept;
+      setup(const bonding::config::Container_Options & config) noexcept;
 
     /** After the child process exited, container need to clean
      ** all the cgroups restriction added.
      ** NOTE: This is very simple as cgroups v2 centralises everything in a directory
      **       under /sys/fs/cgroup/<groupname>/ */
     static Result<Void, error::Err>
-    clean(const config::Container_Options & config) noexcept;
+      clean(const config::Container_Options & config) noexcept;
 
-   private:
+  private:
+    static Result<Void, error::Err> write_settings(
+      const std::string &                         dir,
+      const config::CgroupsV1::Control::Setting & setting) noexcept;
+
+    static Result<Void, error::Err> write_contorl(
+      const std::string hostname, const config::CgroupsV1::Control & cgroup) noexcept;
+
     static Result<Void, error::Err>
-    write_settings(const std::string & dir,
-                   const config::CgroupsV1::Control::Setting & setting) noexcept;
+      clean_control_task(const config::CgroupsV1::Control & control) noexcept;
 
-    static Result<Void, error::Err>
-    write_contorl(const std::string hostname,
-                  const config::CgroupsV1::Control & cgroup) noexcept;
-
-    static Result<Void, error::Err>
-    clean_control_task(const config::CgroupsV1::Control & control) noexcept;
-
-   private:
+  private:
     inline static const struct config::CgroupsV1::Control::Setting TASK = {
-      .name = "tasks", .value = "0"
-    };
+      .name = "tasks", .value = "0"};
   };
 
   /** Rlimit is a system used to restrict a single process.
@@ -50,10 +48,10 @@ namespace bonding::resource
    ** system ressources it consumes. */
   class Rlimit
   {
-   public:
+  public:
     static Result<Void, error::Err> setup() noexcept;
 
-   private:
+  private:
     /** The file descriptor number, like the number of pids, is per-user, and  prevent
      ** in-container process from occupying all of them. */
     inline static const uint64_t NOFILE = 64;
@@ -61,12 +59,12 @@ namespace bonding::resource
 
   class Resource
   {
-   public:
+  public:
     static Result<Void, error::Err>
-    setup(const config::Container_Options & config) noexcept;
+      setup(const config::Container_Options & config) noexcept;
     static Result<Void, error::Err>
-    clean(const config::Container_Options & config) noexcept;
+      clean(const config::Container_Options & config) noexcept;
   };
-};
+}; // namespace bonding::resource
 
 #endif /* BONDING_RESOURCE_H */

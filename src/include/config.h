@@ -30,14 +30,14 @@ namespace bonding::config
 
       const std::vector<Setting> settings;
     };
-  };
+  }; // namespace CgroupsV1
 
   /** Extract the command line arguments into this class
    ** and initialize a Container struct that will have to perform
    ** the container work. */
   class Container_Options
   {
-   public:
+  public:
     /** Active debug mode */
     bool debug;
 
@@ -70,6 +70,6 @@ namespace bonding::config
     /** Cgroups-v1 control options */
     std::vector<CgroupsV1::Control> cgroups_options;
   };
-};
+}; // namespace bonding::config
 
 #endif /* BONDING_CONFIG_H */

@@ -10,8 +10,7 @@
 
 namespace bonding::unix
 {
-  Result<Void, error::Err>
-  Filesystem::Mkdir(const std::string & path) noexcept
+  Result<Void, error::Err> Filesystem::Mkdir(const std::string & path) noexcept
   {
     try
       {
@@ -41,11 +40,12 @@ namespace bonding::unix
   GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
     int,
     -1,
-    Capabilities::Set_flag(cap_t cap,
-                           cap_flag_t flag,
-                           int ncap,
-                           const cap_value_t * caps,
-                           cap_flag_value_t value),
+    Capabilities::Set_flag(
+      cap_t               cap,
+      cap_flag_t          flag,
+      int                 ncap,
+      const cap_value_t * caps,
+      cap_flag_value_t    value),
     cap_set_flag,
     cap,
     flag,
@@ -54,46 +54,44 @@ namespace bonding::unix
     value)
 
   /** Filesystem::Close */
-  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
-    int, -1, Filesystem::Close(int fd), close, fd);
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(int, -1, Filesystem::Close(int fd), close, fd);
 
   /** Filesystem::Rmdir */
   GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
     int, -1, Filesystem::Rmdir(const std::string & path), rmdir, path.c_str());
 
   /** Filesystem::Open */
-  GENERATE_SYSTEM_CALL_WRAPPER(int,
-                               -1,
-                               Filesystem::Open(const std::string & file, int flag),
-                               open,
-                               file.c_str(),
-                               flag);
+  GENERATE_SYSTEM_CALL_WRAPPER(
+    int,
+    -1,
+    Filesystem::Open(const std::string & file, int flag),
+    open,
+    file.c_str(),
+    flag);
 
   /** Filesystem::Open */
-  GENERATE_SYSTEM_CALL_WRAPPER(int,
-                               -1,
-                               Filesystem::Open(const std::string & file,
-                                                int flag,
-                                                int mode),
-                               open,
-                               file.c_str(),
-                               flag,
-                               mode);
+  GENERATE_SYSTEM_CALL_WRAPPER(
+    int,
+    -1,
+    Filesystem::Open(const std::string & file, int flag, int mode),
+    open,
+    file.c_str(),
+    flag,
+    mode);
 
   /** Filesystem::Write */
-  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(int,
-                                            -1,
-                                            Filesystem::Write(int fd,
-                                                              const std::string & s),
-                                            write,
-                                            fd,
-                                            s.c_str(),
-                                            s.length());
+  GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(
+    int,
+    -1,
+    Filesystem::Write(int fd, const std::string & s),
+    write,
+    fd,
+    s.c_str(),
+    s.length());
 
-  Result<utsname, error::Err>
-  Utsname::Get() noexcept
+  Result<utsname, error::Err> Utsname::Get() noexcept
   {
-    struct utsname host = { 0 };
+    struct utsname host = {0};
     if (-1 == uname(&host))
       return ERR(error::Code::Unix);
 
@@ -101,7 +99,7 @@ namespace bonding::unix
   }
 
   Result<std::string, error::Err>
-  Filesystem::read_entire_file(const std::string & path) noexcept
+    Filesystem::read_entire_file(const std::string & path) noexcept
   {
     constexpr auto read_size = std::size_t(4096);
 
@@ -121,11 +119,11 @@ namespace bonding::unix
   }
 
   Result<Void, error::Err>
-  Filesystem::Write(const std::string & path, const std::string & s) noexcept
+    Filesystem::Write(const std::string & path, const std::string & s) noexcept
   {
     int fd = Filesystem::Open(path, O_WRONLY | O_CREAT, 0777).unwrap();
     Filesystem::Write(fd, s).unwrap();
     return Filesystem::Close(fd);
   }
 
-}
+} // namespace bonding::unix

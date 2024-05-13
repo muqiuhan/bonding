@@ -13,13 +13,13 @@ namespace bonding::environment
 {
   class Kernel
   {
-   private:
+  private:
     const utsname host;
 
-   private:
+  private:
     static Result<std::pair<int, int>, error::Err> parse_version(const utsname & host);
 
-   public:
+  public:
     Kernel()
       : host(unix::Utsname::Get().unwrap())
       , version(parse_version(host).unwrap())
@@ -35,30 +35,30 @@ namespace bonding::environment
                 << ", Domain: " << domain_name;
     }
 
-   public:
+  public:
     std::pair<int, int> version;
-    const std::string domain_name;
-    const std::string machine;
-    const std::string release;
-    const std::string sysname;
-    const std::string node_name;
+    const std::string   domain_name;
+    const std::string   machine;
+    const std::string   release;
+    const std::string   sysname;
+    const std::string   node_name;
   };
 
   class CgroupsV1
   {
-   private:
+  private:
     inline static const std::string PATH = "/sys/fs/cgroup/";
 
-   public:
+  public:
     static Result<bool, error::Err>
-    checking_if_controller_supported(const std::string & controller) noexcept;
+      checking_if_controller_supported(const std::string & controller) noexcept;
   };
 
   class Info
   {
-   public:
+  public:
     inline static const Kernel kernel;
   };
-};
+}; // namespace bonding::environment
 
 #endif /* BONDING_CHECK_H */

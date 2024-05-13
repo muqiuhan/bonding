@@ -15,20 +15,20 @@ namespace bonding::ns
    ** It also allows the child namespace to have its own users / groups configuration. */
   class Namespace
   {
-   public:
+  public:
     /** Executed by the child process during its configuration. */
     static Result<Void, error::Err> setup(int socket, uid_t uid) noexcept;
 
     /** Called by the container when it will perform UID / GID mapping. */
     static Result<Void, error::Err> handle_child_uid_map(pid_t pid) noexcept;
 
-   private:
+  private:
     /** If that call is successful, then user namespaces are supported. */
     static Result<bool, error::Err> has_user_namespace() noexcept;
 
     static Result<Void, error::Err> create_map(int id, std::string map) noexcept;
 
-   private:
+  private:
     inline static gid_t groups[1];
 
     /** mapped by the system to a real UID >10000,
@@ -37,6 +37,6 @@ namespace bonding::ns
     static inline const uint64_t USERNS_OFFSET = 10000;
     static inline const uint64_t USERNS_COUNT = 2000;
   };
-};
+}; // namespace bonding::ns
 
 #endif /* BONDING_NAMESPACE_H */
