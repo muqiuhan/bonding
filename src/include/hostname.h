@@ -14,9 +14,9 @@ namespace bonding::hostname
    ** It is used by many different networking softwares. */
   class Hostname
   {
-   public:
+  public:
     static Result<Void, error::Err> setup(const std::string & custom) noexcept;
   };
-}
+} // namespace bonding::hostname
 
 #endif /* BONDING_HOSTNAME_H */

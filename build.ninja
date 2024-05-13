@@ -9,25 +9,13 @@ rule gen
  description = regenerating ninja files
 
 # rules for compiler
-rule cu
- command = /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+rule mxx
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
  description = compiling.release $in
 
 rule cxx
- command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = compiling.release $in
-
-rule mm
- command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
- deps = gcc
- depfile = $out.d
- description = compiling.release $in
-
-rule mxx
  command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
@@ -39,7 +27,19 @@ rule cc
  depfile = $out.d
  description = compiling.release $in
 
+rule cu
+ command = /usr/bin/clang $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = compiling.release $in
+
 rule as
+ command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
+ deps = gcc
+ depfile = $out.d
+ description = compiling.release $in
+
+rule mm
  command = /usr/bin/gcc $ARGS -MMD -MF $out.d -o $out -c $in
  deps = gcc
  depfile = $out.d
@@ -47,6 +47,10 @@ rule as
 
 
 # rules for linker
+rule ar
+ command = /usr/bin/ar $ARGS $out $in
+ description = archiving.release $out
+
 rule sh
  command = /usr/bin/g++ -o $out $in $ARGS
  description = linking.release $out
@@ -54,10 +58,6 @@ rule sh
 rule ld
  command = /usr/bin/g++ -o $out $in $ARGS
  description = linking.release $out
-
-rule ar
- command = /usr/bin/ar $ARGS $out $in
- description = archiving.release $out
 
 
 # build targets
@@ -69,58 +69,58 @@ build build.ninja: gen $
 # build target: bonding
 build bonding: phony build/linux/x86_64/release/bonding
 build build/linux/x86_64/release/bonding: ld build/.objs/bonding/linux/x86_64/release/src/capabilities.cpp.o build/.objs/bonding/linux/x86_64/release/src/child.cpp.o build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o build/.objs/bonding/linux/x86_64/release/src/config.cpp.o build/.objs/bonding/linux/x86_64/release/src/configfile.cpp.o build/.objs/bonding/linux/x86_64/release/src/container.cpp.o build/.objs/bonding/linux/x86_64/release/src/environment.cpp.o build/.objs/bonding/linux/x86_64/release/src/error.cpp.o build/.objs/bonding/linux/x86_64/release/src/exec.cpp.o build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o build/.objs/bonding/linux/x86_64/release/src/main.cpp.o build/.objs/bonding/linux/x86_64/release/src/mount.cpp.o build/.objs/bonding/linux/x86_64/release/src/namespace.cpp.o build/.objs/bonding/linux/x86_64/release/src/resource.cpp.o build/.objs/bonding/linux/x86_64/release/src/syscall.cpp.o build/.objs/bonding/linux/x86_64/release/src/unix.cpp.o
- ARGS = -m64 -L/home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/lib -Lbuild/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/lib -s -lcap -lseccomp
+ ARGS = -m64 -L/home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/lib -Lbuild/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/lib -s -lcap -lseccomp -stdlib=libc++
 
 build build/.objs/bonding/linux/x86_64/release/src/capabilities.cpp.o: cxx src/capabilities.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/child.cpp.o: cxx src/child.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/cli.cpp.o: cxx src/cli.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/config.cpp.o: cxx src/config.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/configfile.cpp.o: cxx src/configfile.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/container.cpp.o: cxx src/container.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/environment.cpp.o: cxx src/environment.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/error.cpp.o: cxx src/error.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/exec.cpp.o: cxx src/exec.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/hostname.cpp.o: cxx src/hostname.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/ipc.cpp.o: cxx src/ipc.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/main.cpp.o: cxx src/main.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/mount.cpp.o: cxx src/mount.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/namespace.cpp.o: cxx src/namespace.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/resource.cpp.o: cxx src/resource.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/syscall.cpp.o: cxx src/syscall.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build build/.objs/bonding/linux/x86_64/release/src/unix.cpp.o: cxx src/unix.cpp
- ARGS = -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -O2 -isystem -ffunction-sections -isystem -Wl,-gc-sections -isystem -static-libstdc++ -isystem -s -isystem -DNDEBUG
+ ARGS = -Qunused-arguments -m64 -fvisibility=hidden -fvisibility-inlines-hidden -O3 -std=c++17 -isystem /home/muqiu/.xmake/packages/p/plog/1.1.10/9bd46c8b51fb47df8790d72fefd839f3/include -isystem /home/muqiu/.xmake/packages/n/nlohmann_json/v3.11.3/ec1183311a224b34b5c138edda96fdde/include -isystem /home/muqiu/.xmake/packages/l/libcap/2.27/946920539efd4c39b523bde035ef6d3e/include -isystem build/.packages/l/libseccomp/latest/4e0143c97b65425b855ad5fd03038b6a/include -isystem -stdlib=libc++ -isystem -DNDEBUG
 
 build default: phony bonding
 build all: phony bonding

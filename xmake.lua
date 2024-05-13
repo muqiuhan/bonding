@@ -20,8 +20,10 @@ target("bonding")
     set_kind("binary")
     set_languages("c++17")
     set_policy("check.auto_ignore_flags", false)
+    set_toolchains("clang")
 
-    add_cxxflags("-O2 -ffunction-sections -Wl,-gc-sections -static-libstdc++ -s")
+    add_cxxflags("-stdlib=libc++")
+    add_ldflags("-stdlib=libc++")
     add_files("src/*.cpp")
     add_packages("plog", "result", "nlohmann_json", "libcap", "libseccomp")
 

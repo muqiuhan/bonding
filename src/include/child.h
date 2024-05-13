@@ -17,7 +17,7 @@ namespace bonding::child
    ** the `cli::Args.m_command` */
   class Child
   {
-   public:
+  public:
     explicit Child(const config::Container_Options & container_options)
       : m_container_options(container_options)
       , m_pid(generate_child_process(container_options).unwrap())
@@ -26,9 +26,7 @@ namespace bonding::child
                << " on process " << m_pid;
     }
 
-    Child()
-      : m_container_options(config::Container_Options())
-      , m_pid(-1)
+    Child() : m_container_options(config::Container_Options()), m_pid(-1)
     {
       std::terminate();
     }
@@ -36,17 +34,17 @@ namespace bonding::child
     /* Wait for the child to finish. */
     [[nodiscard]] Result<Void, error::Err> wait() const noexcept;
 
-   private:
+  private:
     class Process
     {
-     private:
+    private:
       inline static config::Container_Options * container_options;
 
-     public:
+    public:
       inline static const uint32_t STACK_SIZE = 1024 * 1024;
-      inline static void * STACK = malloc(STACK_SIZE);
+      inline static void *         STACK = malloc(STACK_SIZE);
 
-     public:
+    public:
       /** Make a copy of config::Container_Optionsm, instead of using
        ** the reference of the parent process */
       [[maybe_unused]] static int _main(void * options) noexcept;
@@ -54,16 +52,16 @@ namespace bonding::child
       static Result<Void, error::Err> setup_container_configurations() noexcept;
     };
 
-   private:
+  private:
     static Result<pid_t, error::Err>
-    generate_child_process(config::Container_Options container_options) noexcept;
+      generate_child_process(config::Container_Options container_options) noexcept;
 
-   private:
+  private:
     const config::Container_Options m_container_options;
 
-   public:
+  public:
     const pid_t m_pid;
   };
-}
+} // namespace bonding::child
 
 #endif /* BONDING_CHILD_H */

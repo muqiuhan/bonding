@@ -13,7 +13,7 @@
 namespace bonding::resource
 {
   Result<Void, error::Err>
-  Resource::setup(const config::Container_Options & config) noexcept
+    Resource::setup(const config::Container_Options & config) noexcept
   {
     LOG_INFO << "Restricting resources for hostname " << config.hostname;
     CgroupsV1::setup(config).unwrap();
@@ -22,10 +22,9 @@ namespace bonding::resource
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  Rlimit::setup() noexcept
+  Result<Void, error::Err> Rlimit::setup() noexcept
   {
-    const rlimit rlim = rlimit{ .rlim_cur = NOFILE, .rlim_max = NOFILE };
+    const rlimit rlim = rlimit{.rlim_cur = NOFILE, .rlim_max = NOFILE};
     if (-1 == setrlimit(RLIMIT_NOFILE, &rlim))
       return ERR(error::Code::Cgroups);
 
@@ -33,29 +32,24 @@ namespace bonding::resource
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  CgroupsV1::write_settings(const std::string & dir,
-                            const config::CgroupsV1::Control::Setting & setting) noexcept
+  Result<Void, error::Err> CgroupsV1::write_settings(
+    const std::string & dir, const config::CgroupsV1::Control::Setting & setting) noexcept
   {
-    const int fd =
-      unix::Filesystem::Open(dir + "/" + setting.name, O_WRONLY)
-        .or_else([&](const auto & e) {
-          return ERR_MSG(error::Code::Cgroups, "Cannot open controller " + setting.name);
-        })
-        .unwrap();
+    const int fd = unix::Filesystem::Open(dir + "/" + setting.name, O_WRONLY)
+                     .or_else([&](const auto & e) {
+      return ERR_MSG(error::Code::Cgroups, "Cannot open controller " + setting.name);
+    }).unwrap();
 
     unix::Filesystem::Write(fd, setting.value)
       .or_else([&](const auto & e) {
-        return ERR_MSG(error::Code::Cgroups,
-                       "Cannot write value to controller " + setting.name);
-      })
-      .unwrap();
+      return ERR_MSG(
+        error::Code::Cgroups, "Cannot write value to controller " + setting.name);
+    }).unwrap();
 
     unix::Filesystem::Close(fd)
       .or_else([&](const auto & e) {
-        return ERR_MSG(error::Code::Cgroups, "Cannot close controller " + setting.name);
-      })
-      .unwrap();
+      return ERR_MSG(error::Code::Cgroups, "Cannot close controller " + setting.name);
+    }).unwrap();
 
     if (setting.name != "tasks")
       LOG_DEBUG << "Setting controller " << setting.name << "  by value " << setting.value
@@ -64,9 +58,8 @@ namespace bonding::resource
     return Ok(Void());
   }
 
-  Result<Void, error::Err>
-  CgroupsV1::write_contorl(const std::string hostname,
-                           const config::CgroupsV1::Control & cgroup) noexcept
+  Result<Void, error::Err> CgroupsV1::write_contorl(
+    const std::string hostname, const config::CgroupsV1::Control & cgroup) noexcept
   {
     if (environment::CgroupsV1::checking_if_controller_supported(cgroup.control).unwrap())
       {
@@ -87,7 +80,7 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  CgroupsV1::setup(const config::Container_Options & config) noexcept
+    CgroupsV1::setup(const config::Container_Options & config) noexcept
   {
     for (const auto & control : config.cgroups_options)
       write_contorl(config.hostname, control);
@@ -97,44 +90,43 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  CgroupsV1::clean_control_task(const config::CgroupsV1::Control & cgroup) noexcept
+    CgroupsV1::clean_control_task(const config::CgroupsV1::Control & cgroup) noexcept
   {
     const std::string task = "/sys/fs/cgroup/" + cgroup.control + "/tasks";
 
-    const int taskfd =
-      unix::Filesystem::Open(task.c_str(), O_WRONLY)
-        .or_else([&](const auto & e) {
-          return ERR_MSG(error::Code::Cgroups,
-                         "Cannot open the cgroups tasks controller " + cgroup.control);
-        })
-        .unwrap();
+    const int taskfd = unix::Filesystem::Open(task.c_str(), O_WRONLY)
+                         .or_else([&](const auto & e) {
+      return ERR_MSG(
+        error::Code::Cgroups,
+        "Cannot open the cgroups tasks controller " + cgroup.control);
+    }).unwrap();
 
     unix::Filesystem::Write(taskfd, "0")
       .or_else([&](const auto & e) {
-        unix::Filesystem::Close(taskfd)
-          .or_else([&](const auto & e) {
-            return ERR_MSG(error::Code::Cgroups,
-                           "Cannot close the cgroups tasks controller " + cgroup.control);
-          })
-          .unwrap();
+      unix::Filesystem::Close(taskfd)
+        .or_else([&](const auto & e) {
+        return ERR_MSG(
+          error::Code::Cgroups,
+          "Cannot close the cgroups tasks controller " + cgroup.control);
+      }).unwrap();
 
-        return ERR_MSG(error::Code::Cgroups,
-                       "Cannot write the cgroups tasks controller " + cgroup.control);
-      })
-      .unwrap();
+      return ERR_MSG(
+        error::Code::Cgroups,
+        "Cannot write the cgroups tasks controller " + cgroup.control);
+    }).unwrap();
 
     unix::Filesystem::Close(taskfd)
       .or_else([&](const auto & e) {
-        return ERR_MSG(error::Code::Cgroups,
-                       "Cannot close the cgroups tasks controller " + cgroup.control);
-      })
-      .unwrap();
+      return ERR_MSG(
+        error::Code::Cgroups,
+        "Cannot close the cgroups tasks controller " + cgroup.control);
+    }).unwrap();
 
     return Ok(Void());
   }
 
   Result<Void, error::Err>
-  CgroupsV1::clean(const config::Container_Options & config) noexcept
+    CgroupsV1::clean(const config::Container_Options & config) noexcept
   {
     for (const auto & cgroup : config.cgroups_options)
       {
@@ -145,10 +137,9 @@ namespace bonding::resource
 
         unix::Filesystem::Rmdir(dir)
           .or_else([&](const auto & _) {
-            return ERR_MSG(error::Code::Cgroups,
-                           "Cannot clean cgroups controller " + cgroup.control);
-          })
-          .unwrap();
+          return ERR_MSG(
+            error::Code::Cgroups, "Cannot clean cgroups controller " + cgroup.control);
+        }).unwrap();
       }
 
     LOG_INFO << "Cleaning cgroups-v1 settings...✓";
@@ -156,10 +147,10 @@ namespace bonding::resource
   }
 
   Result<Void, error::Err>
-  Resource::clean(const config::Container_Options & config) noexcept
+    Resource::clean(const config::Container_Options & config) noexcept
   {
     CgroupsV1::clean(config).unwrap();
 
     return Ok(Void());
   }
-}
+} // namespace bonding::resource

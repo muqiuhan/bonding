@@ -1,36 +1,59 @@
 Language:	Cpp
-BasedOnStyle:	GNU
-AccessModifierOffset:	-1
+BasedOnStyle:	LLVM
 BinPackArguments:	false
 BinPackParameters:	false
-BraceWrapping:   
+BraceWrapping:
   AfterClass:	true
-  AfterControlStatement:	true
   AfterEnum:	true
   AfterFunction:	true
   AfterNamespace:	true
   AfterStruct:	true
-  AfterUnion:	true
+  AfterUnion: true
   BeforeCatch:	true
   BeforeElse:	true
+  AfterControlStatement:	true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
   IndentBraces:	true
 BreakBeforeBinaryOperators:	NonAssignment
 BreakBeforeBraces:	Custom
 BreakBeforeTernaryOperators:	true
 BreakConstructorInitializersBeforeComma:	true
-AllowAllArgumentsOnNextLine: false
+AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
 ColumnLimit: 90
+LambdaBodyIndentation: OuterScope
+RemoveBracesLLVM: true
+SeparateDefinitionBlocks: Always
 CommentPragmas:	'^ IWYU pragma:'
-ConstructorInitializerAllOnOneLineOrOnePerLine:	false
+ConstructorInitializerAllOnOneLineOrOnePerLine:	true
 ConstructorInitializerIndentWidth:	2
 ContinuationIndentWidth:	2
-Cpp11BracedListStyle:	false
-DerivePointerAlignment:	false
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveDeclarations:
+  Enabled:         true
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   true
+  PadOperators:    true
+AlignConsecutiveMacros:
+  Enabled:         true
+  AcrossEmptyLines: true
+  AcrossComments:  true
+  AlignCompound:   true
+  PadOperators:    true
+AlignEscapedNewlines: Right
+AlignOperands:   Align
+AlignTrailingComments: true
+AllowShortEnumsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+Cpp11BracedListStyle:	true
+DerivePointerAlignment:	true
 DisableFormat:	false
-ExperimentalAutoDetectBinPacking:	false
+ExperimentalAutoDetectBinPacking:	true
 ForEachMacros:	[ foreach, Q_FOREACH, BOOST_FOREACH ]
-IncludeCategories: 
+IncludeCategories:
   - Regex:	'^"(llvm|llvm-c|clang|clang-c)/'
     Priority:	2
   - Regex:	'^(<|"(gtest|isl|json)/)'
@@ -39,21 +62,21 @@ IncludeCategories:
     Priority:	1
 IndentCaseLabels:	false
 IndentWidth:	2
-IndentWrappedFunctionNames:	false
+IndentWrappedFunctionNames:	true
 KeepEmptyLinesAtTheStartOfBlocks:	true
 MacroBlockBegin:	''
 MacroBlockEnd:	''
 MaxEmptyLinesToKeep:	1
 NamespaceIndentation: All
-PenaltyBreakComment:	300
-PenaltyBreakFirstLessLess:	120
-PenaltyBreakString:	1000
-PenaltyExcessCharacter:	1000000
-PenaltyReturnTypeOnItsOwnLine:	60
+PenaltyBreakComment:	90
+PenaltyBreakFirstLessLess:	90
+PenaltyBreakString:	90
+PenaltyExcessCharacter:	90
+PenaltyReturnTypeOnItsOwnLine:	90
 PointerAlignment:	Middle
 ReflowComments:	true
-SortIncludes:	true
-SpaceAfterCStyleCast:	false
+SortIncludes:	"Never"
+SpaceAfterCStyleCast:	true
 SpaceBeforeAssignmentOperators:	true
 SpaceBeforeParens:	ControlStatements
 SpaceInEmptyParentheses:	false

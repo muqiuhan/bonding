@@ -9,34 +9,25 @@
 #include <plog/Log.h>
 #include <plog/Util.h>
 
-#define LOG_INFO PLOG_INFO
-#define LOG_DEBUG PLOG_DEBUG
-#define LOG_ERROR PLOG_ERROR
-#define LOG_WARNING PLOG_WARNING
-#define LOG_FATAL PLOG_FATAL
-#define LOG_LEVEL plog::Severity
-#define LOG_LEVEL_INFO plog::Severity::info
-#define LOG_LEVEL_DEBUG plog::Severity::debug
+#define LOG_LEVEL         plog::Severity
+#define LOG_LEVEL_INFO    plog::Severity::info
+#define LOG_LEVEL_DEBUG   plog::Severity::debug
 #define LOG_LEVEL_WARNING plog::Severity::warning
-#define LOG_LEVEL_ERROR plog::Severity::error
-#define LOG_LEVEL_FATAL plog::Severity::fatal
+#define LOG_LEVEL_ERROR   plog::Severity::error
+#define LOG_LEVEL_FATAL   plog::Severity::fatal
 
 namespace bonding::log
 {
   namespace formatter
   {
     using namespace plog;
+
     class Formatter
     {
-     public:
-      inline static util::nstring
-      header() noexcept
-      {
-        return util::nstring();
-      }
+    public:
+      inline static util::nstring header() noexcept { return util::nstring(); }
 
-      inline static util::nstring
-      format(const plog::Record & record) noexcept
+      inline static util::nstring format(const plog::Record & record) noexcept
       {
         tm t;
         util::localtime_s(&t, &record.getTime().time);
@@ -55,7 +46,7 @@ namespace bonding::log
         return ss.str();
       }
     };
-  }
+  } // namespace formatter
 
   namespace appender
   {
@@ -64,24 +55,21 @@ namespace bonding::log
     template <class Formatter>
     class PLOG_LINKAGE_HIDDEN ColorConsoleAppender : public ConsoleAppender<Formatter>
     {
-     public:
+    public:
       ColorConsoleAppender(OutputStream outStream = streamStdOut)
         : ConsoleAppender<Formatter>(outStream)
-      {
-      }
+      {}
 
-      virtual void
-      write(const Record & record) noexcept PLOG_OVERRIDE
+      virtual void write(const Record & record) noexcept PLOG_OVERRIDE
       {
-        util::nstring str = Formatter::format(record);
+        util::nstring   str = Formatter::format(record);
         util::MutexLock lock(this->m_mutex);
 
         this->writestr(getColor(record.getSeverity()) + str + "\033[0m");
       }
 
-     protected:
-      std::string
-      getColor(Severity severity) noexcept
+    protected:
+      std::string getColor(Severity severity) noexcept
       {
         if (this->m_isatty)
           {
@@ -110,14 +98,13 @@ namespace bonding::log
         return "";
       }
     };
-  }
+  } // namespace appender
 
-  static inline void
-  set_level(const LOG_LEVEL & __level) noexcept
+  static inline void set_level(const LOG_LEVEL & __level) noexcept
   {
     static appender::ColorConsoleAppender<formatter::Formatter> appender;
     plog::init(__level, &appender);
   }
-};
+}; // namespace bonding::log
 
 #endif /* BONDING_LOG_HPP */

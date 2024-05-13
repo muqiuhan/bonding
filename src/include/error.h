@@ -35,33 +35,34 @@ namespace bonding::error
   };
 
   inline const std::map<Code, std::string> CODE_TO_STRING = {
-    { Code::Undefined, "Unknown Error" },
-    { Code::Socket, "Socket Error" },
-    { Code::ChildProcess, "Child Process Error" },
-    { Code::Container, "Container Error" },
-    { Code::Hostname, "Hostname Error" },
-    { Code::Mounts, "Mounts Error" },
-    { Code::Namespace, "Namespace Error" },
-    { Code::Systemcall, "System Call Error" },
-    { Code::Cgroups, "Cgroups Error" },
-    { Code::Exec, "Execute Error" },
-    { Code::Cli, "Cli Error" },
-    { Code::Environment, "Envronment Error" },
-    { Code::Capabilities, "Capabilities Error" },
-    { Code::Unix, "Unix Error" },
-    { Code::Configfile, "Config File Error" },
+    {Code::Undefined, "Unknown Error"},
+    {Code::Socket, "Socket Error"},
+    {Code::ChildProcess, "Child Process Error"},
+    {Code::Container, "Container Error"},
+    {Code::Hostname, "Hostname Error"},
+    {Code::Mounts, "Mounts Error"},
+    {Code::Namespace, "Namespace Error"},
+    {Code::Systemcall, "System Call Error"},
+    {Code::Cgroups, "Cgroups Error"},
+    {Code::Exec, "Execute Error"},
+    {Code::Cli, "Cli Error"},
+    {Code::Environment, "Envronment Error"},
+    {Code::Capabilities, "Capabilities Error"},
+    {Code::Unix, "Unix Error"},
+    {Code::Configfile, "Config File Error"},
   };
 
   class Err
   {
-   public:
+  public:
     Err() { std::terminate(); }
 
-    Err(const Code code,
-        std::string custom,
-        const uint32_t line,
-        std::string file,
-        std::string function)
+    Err(
+      const Code     code,
+      std::string    custom,
+      const uint32_t line,
+      std::string    file,
+      std::string    function)
       : m_code(code)
       , m_errno(errno)
       , m_custom(std::move(custom))
@@ -75,12 +76,12 @@ namespace bonding::error
     }
 
     [[nodiscard]] static int32_t to_exit_code() noexcept;
-    [[nodiscard]] std::string to_string() const noexcept;
+    [[nodiscard]] std::string    to_string() const noexcept;
 
-   private:
+  private:
     Code m_code;
 
-    int m_errno;
+    int      m_errno;
     uint32_t m_line;
 
     std::string m_custom;
@@ -88,7 +89,7 @@ namespace bonding::error
     std::string m_file;
   };
 
-}
+} // namespace bonding::error
 
 #define ERR(CODE) Err(bonding::error::Err(CODE, "", __LINE__, __FILE__, __FUNCTION__))
 #define ERR_MSG(CODE, MSG)                                                               \

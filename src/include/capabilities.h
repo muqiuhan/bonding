@@ -16,10 +16,10 @@ namespace bonding::capabilities
    ** powers controlling isolated systems and processes of the system.  */
   class Capabilities
   {
-   public:
+  public:
     static Result<Void, error::Err> setup() noexcept;
 
-   private:
+  private:
     /** The list of the capabilities we will restrict: */
     inline const static std::vector<cap_value_t> DROP = {
       CAP_AUDIT_READ,      CAP_AUDIT_READ,   CAP_AUDIT_WRITE,  CAP_BLOCK_SUSPEND,
@@ -27,9 +27,8 @@ namespace bonding::capabilities
       CAP_MAC_ADMIN,       CAP_MAC_OVERRIDE, CAP_MKNOD,        CAP_SETFCAP,
       CAP_SYSLOG,          CAP_SYS_ADMIN,    CAP_SYS_BOOT,     CAP_SYS_MODULE,
       CAP_SYS_NICE,        CAP_SYS_RAWIO,    CAP_SYS_RESOURCE, CAP_SYS_TIME,
-      CAP_WAKE_ALARM
-    };
+      CAP_WAKE_ALARM};
   };
-}
+} // namespace bonding::capabilities
 
 #endif /* BONDING_CAPABILITIES_H */

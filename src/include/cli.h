@@ -24,46 +24,42 @@ namespace bonding::cli
 {
   struct Parser
   {
-    Parser(int argc, char ** argv)
-      : m_argc(argc)
-      , m_argv(argv)
-      , m_required(0)
-    {
-    }
+    Parser(int argc, char ** argv) : m_argc(argc), m_argv(argv), m_required(0) {}
 
     Parser() = default;
 
     struct cmd
     {
       std::string shorthand, value, descr;
-      bool is_required, is_boolean;
+      bool        is_required, is_boolean;
     };
 
     Result<bool, error::Err> parse() noexcept;
     Result<Void, error::Err> help() const noexcept;
 
-    Result<bool, error::Err> add(std::string const & name,
-                                 std::string const & descr,
-                                 std::string const & shorthand,
-                                 bool is_required,
-                                 bool is_boolean = false) noexcept;
+    Result<bool, error::Err> add(
+      std::string const & name,
+      std::string const & descr,
+      std::string const & shorthand,
+      bool                is_required,
+      bool                is_boolean = false) noexcept;
 
     template <typename T>
     Result<T, error::Err> get(std::string const & name) const noexcept;
 
     [[maybe_unused]] Result<bool, error::Err>
-    parsed(std::string const & name) const noexcept;
+      parsed(std::string const & name) const noexcept;
 
     template <typename T>
     Result<T, error::Err> parse(std::string const & value) const noexcept;
 
-   private:
-    int m_argc;
-    char ** m_argv;
-    int m_required;
+  private:
+    int                                  m_argc;
+    char **                              m_argv;
+    int                                  m_required;
     std::unordered_map<std::string, cmd> m_cmds;
     std::unordered_map<std::string, int> m_shorthands;
-    std::vector<std::string> m_names;
+    std::vector<std::string>             m_names;
   };
 
   enum class Mode
@@ -75,8 +71,8 @@ namespace bonding::cli
 
   class Command_Line_Args
   {
-   public:
-    static Result<Void, error::Err> make(int argc, char * argv[]) noexcept;
+  public:
+    static Result<Void, error::Err>   make(int argc, char * argv[]) noexcept;
     static Result<Parser, error::Err> init_parser(int argc, char * argv[]) noexcept;
   };
 
@@ -84,6 +80,6 @@ namespace bonding::cli
   Result<Void, error::Err> run(const Parser & args) noexcept;
   Result<Void, error::Err> init(const Parser & args) noexcept;
   Result<Void, error::Err> version(const Parser & args) noexcept;
-};
+}; // namespace bonding::cli
 
 #endif /* BONDING_CLI_H */
