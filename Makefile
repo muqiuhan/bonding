@@ -8,7 +8,7 @@ build.release:
 	xmake f -m release && xmake build
 
 build.debug:
-	xmake f -m release && xmake build
+	xmake f -m debug && xmake build
 
 debug:
 	xmake f -m debug && xmake build
