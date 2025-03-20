@@ -4,9 +4,9 @@
 #define BONDING_CAPABILITIES_H
 
 #include "error.h"
-#include "result.hpp"
 #include "unix.h"
 #include <vector>
+#include <expected>
 
 namespace bonding::capabilities
 {
@@ -17,7 +17,33 @@ namespace bonding::capabilities
   class Capabilities
   {
   public:
-    static Result<Void, error::Err> setup() noexcept;
+    inline static std::expected<void, error::Err> setup() noexcept
+    {
+      for (const int drop_caps : DROP)
+        if (-1 == prctl(PR_CAPBSET_DROP, drop_caps, 0, 0, 0))
+          return std::unexpected(ERR(error::Code::Capabilities));
+
+      unix::Capabilities::Get_proc()
+        .transform([](cap_t cap) {
+        unix::Capabilities::Set_flag(
+          cap, CAP_INHERITABLE, static_cast<int>(DROP.size()), &DROP[0], CAP_CLEAR)
+          .and_then([&]() { return unix::Capabilities::Set_proc(cap); })
+          .and_then([&]() {
+          return unix::Capabilities::Free(cap);
+        }).transform_error([&](const error::Err & err) {
+          if (nullptr != cap)
+            unix::Capabilities::Free(cap).value();
+
+          return ERR_MSG(error::Code::Capabilities, err.to_string());
+        }).value();
+
+        return cap;
+      }).value();
+
+      LOG_INFO << "Clearing unwanted capabilities...✓";
+
+      return {};
+    }
 
   private:
     /** The list of the capabilities we will restrict: */

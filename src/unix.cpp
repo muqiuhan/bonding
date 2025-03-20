@@ -10,7 +10,7 @@
 
 namespace bonding::unix
 {
-  Result<Void, error::Err> Filesystem::Mkdir(const std::string & path) noexcept
+  std::expected<void, error::Err> Filesystem::Mkdir(const std::string & path) noexcept
   {
     try
       {
@@ -19,10 +19,10 @@ namespace bonding::unix
     catch (...)
       {
         LOG_ERROR << "Cannot create direcotry " << path;
-        return ERR(error::Code::Mounts);
+        return std::unexpected(ERR(error::Code::Mounts));
       }
 
-    return Ok(Void());
+    return {};
   }
 
   /** Capabilities::get_proc */
@@ -89,16 +89,16 @@ namespace bonding::unix
     s.c_str(),
     s.length());
 
-  Result<utsname, error::Err> Utsname::Get() noexcept
+  std::expected<utsname, error::Err> Utsname::Get() noexcept
   {
     struct utsname host = {0};
     if (-1 == uname(&host))
-      return ERR(error::Code::Unix);
+      return std::unexpected(ERR(error::Code::Unix));
 
-    return Ok(host);
+    return host;
   }
 
-  Result<std::string, error::Err>
+  std::expected<std::string, error::Err>
     Filesystem::read_entire_file(const std::string & path) noexcept
   {
     constexpr auto read_size = std::size_t(4096);
@@ -107,7 +107,7 @@ namespace bonding::unix
     stream.exceptions(std::ios_base::badbit);
 
     if (!stream.is_open())
-      return ERR(error::Code::Unix);
+      return std::unexpected(ERR(error::Code::Unix));
 
     auto out = std::string();
     auto buf = std::string(read_size, '\0');
@@ -115,14 +115,14 @@ namespace bonding::unix
       out.append(buf, 0, stream.gcount());
 
     out.append(buf, 0, stream.gcount());
-    return Ok(out);
+    return out;
   }
 
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     Filesystem::Write(const std::string & path, const std::string & s) noexcept
   {
-    int fd = Filesystem::Open(path, O_WRONLY | O_CREAT, 0777).unwrap();
-    Filesystem::Write(fd, s).unwrap();
+    int fd = Filesystem::Open(path, O_WRONLY | O_CREAT, 0777).value();
+    Filesystem::Write(fd, s).value();
     return Filesystem::Close(fd);
   }
 

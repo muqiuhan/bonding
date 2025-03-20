@@ -3,7 +3,7 @@
 #ifndef BONDING_CHECK_H
 #define BONDING_CHECK_H
 
-#include "result.hpp"
+#include <expected>
 #include "unix.h"
 #include <map>
 #include <sys/utsname.h>
@@ -17,12 +17,12 @@ namespace bonding::environment
     const utsname host;
 
   private:
-    static Result<std::pair<int, int>, error::Err> parse_version(const utsname & host);
+    static std::expected<std::pair<int, int>, error::Err> parse_version(const utsname & host);
 
   public:
     Kernel()
-      : host(unix::Utsname::Get().unwrap())
-      , version(parse_version(host).unwrap())
+      : host(unix::Utsname::Get().value())
+      , version(parse_version(host).value())
       , machine(host.machine)
       , release(host.release)
       , sysname(host.sysname)
@@ -50,7 +50,7 @@ namespace bonding::environment
     inline static const std::string PATH = "/sys/fs/cgroup/";
 
   public:
-    static Result<bool, error::Err>
+    static std::expected<bool, error::Err>
       checking_if_controller_supported(const std::string & controller) noexcept;
   };
 

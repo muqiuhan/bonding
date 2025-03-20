@@ -6,13 +6,14 @@
 
 namespace bonding::hostname
 {
-  Result<Void, error::Err> Hostname::setup(const std::string & hostname) noexcept
+  std::expected<void, error::Err> Hostname::setup(const std::string & hostname) noexcept
   {
     if (-1 == sethostname(hostname.c_str(), hostname.size()))
-      return ERR_MSG(
-        error::Code::Hostname, "Cannot set hostname " + hostname + " for container");
+      return std::unexpected(ERR_MSG(
+        error::Code::Hostname, "Cannot set hostname " + hostname + " for container"));
 
     LOG_INFO << "Container hostname is now " << hostname;
-    return Ok(Void());
+
+    return {};
   }
 } // namespace bonding::hostname

@@ -14,54 +14,60 @@
 
 namespace bonding::cli
 {
-  Result<Void, error::Err> Command_Line_Args::make(const int argc, char * argv[]) noexcept
+  std::expected<void, error::Err>
+    Command_Line_Args::make(const int argc, char * argv[]) noexcept
   {
-    return function(init_parser(argc, argv).unwrap());
+    return function(init_parser(argc, argv).value());
   }
 
-  Result<Parser, error::Err>
+  std::expected<Parser, error::Err>
     Command_Line_Args::init_parser(const int argc, char * argv[]) noexcept
   {
     Parser parser(argc, argv);
 
-    parser.add(
-      "init",
-      "Initialize the current directory as the container directory",
-      "init",
-      false,
-      true);
+    parser
+      .add(
+        "init",
+        "Initialize the current directory as the container directory",
+        "init",
+        false,
+        true)
+      .value();
 
-    parser.add(
-      "run",
-      "Run with the current directory as the container directory",
-      "run",
-      false,
-      true);
+    parser
+      .add(
+        "run",
+        "Run with the current directory as the container directory",
+        "run",
+        false,
+        true)
+      .value();
 
-    parser.add("help", "show this message", "help", false, true);
+    parser.add("help", "show this message", "help", false, true).value();
 
-    parser.add("version", "show the version of bonding", "version", false, true);
+    parser.add("version", "show the version of bonding", "version", false, true).value();
 
     if (argc == 1)
       {
-        parser.help().unwrap();
+        parser.help().value();
         exit(EXIT_SUCCESS);
       }
 
-    if (parser.parse().is_err())
+    if (!parser.parse().has_value())
       {
-        parser.help().unwrap();
-        return ERR_MSG(error::Code::Cli, "Cannot parse the command line argument");
+        parser.help().value();
+        return std::unexpected(
+          ERR_MSG(error::Code::Cli, "Cannot parse the command line argument"));
       }
 
-    return Ok(parser);
+    return parser;
   }
 
-  Result<bool, error::Err> Parser::parse() noexcept
+  std::expected<bool, error::Err> Parser::parse() noexcept
   {
     assert(m_argc > 0);
     if (m_argc - 1 < m_required)
-      return ERR(error::Code::Cli);
+      return std::unexpected(ERR(error::Code::Cli));
 
     int                             num_required = 0;
     std::unordered_set<std::string> parsed_shorthands;
@@ -71,18 +77,19 @@ namespace bonding::cli
       {
         std::string parsed(m_argv[i]);
         if (parsed == "-h" || parsed == "--help")
-          return ERR(error::Code::Cli);
+          return std::unexpected(ERR(error::Code::Cli));
 
         int id = 0;
         if (const auto it = m_shorthands.find(parsed); it == m_shorthands.end())
-          return ERR_MSG(error::Code::Cli, "shorthand " + parsed + " not found");
+          return std::unexpected(
+            ERR_MSG(error::Code::Cli, "shorthand " + parsed + " not found"));
 
         else
           {
             if (const auto it = parsed_shorthands.find(parsed);
                 it != parsed_shorthands.end())
-              return ERR_MSG(
-                error::Code::Cli, "shorthand '" + parsed + "' already parsed");
+              return std::unexpected(
+                ERR_MSG(error::Code::Cli, "shorthand '" + parsed + "' already parsed"));
 
             parsed_shorthands.emplace(parsed);
             id = (*it).second;
@@ -99,19 +106,19 @@ namespace bonding::cli
           {
             ++i;
             if (i == m_argc)
-              return ERR(error::Code::Cli);
+              return std::unexpected(ERR(error::Code::Cli));
             parsed = m_argv[i];
           }
         cmd.value = parsed;
       }
 
     if (num_required != m_required)
-      return ERR(error::Code::Cli);
+      return std::unexpected(ERR(error::Code::Cli));
 
-    return Ok(true);
+    return true;
   }
 
-  Result<Void, error::Err> Parser::help() const noexcept
+  std::expected<void, error::Err> Parser::help() const noexcept
   {
     std::cerr << "Usage: " << m_argv[0] << " [help]";
     const auto print = [this](bool with_description) {
@@ -135,11 +142,10 @@ namespace bonding::cli
     print(false);
     std::cout << "\n\n";
     print(true);
-
-    return Ok(Void());
+    return {};
   }
 
-  Result<bool, error::Err> Parser::add(
+  std::expected<bool, error::Err> Parser::add(
     std::string const & name,
     std::string const & descr,
     std::string const & shorthand,
@@ -158,41 +164,42 @@ namespace bonding::cli
         m_names.push_back(name);
         m_shorthands.emplace(shorthand, m_names.size() - 1);
       }
-    return Ok(ret);
+    return ret;
   }
 
   template <typename T>
-  Result<T, error::Err> Parser::get(std::string const & name) const noexcept
+  std::expected<T, error::Err> Parser::get(std::string const & name) const noexcept
   {
     auto it = m_cmds.find(name);
     if (it == m_cmds.end())
-      return ERR_MSG(error::Code::Cli, "error: '" + name + "' not found");
+      return std::unexpected(
+        ERR_MSG(error::Code::Cli, "error: '" + name + "' not found"));
 
     auto const & value = (*it).second.value;
-    return Ok(parse<T>(value).unwrap());
+    return parse<T>(value).value();
   }
 
-  [[maybe_unused]] Result<bool, error::Err>
+  [[maybe_unused]] std::expected<bool, error::Err>
     Parser::parsed(std::string const & name) const noexcept
   {
     auto it = m_cmds.find(name);
     if (it == m_cmds.end())
-      return Ok(false);
+      return false;
     auto const & cmd = (*it).second;
     if (cmd.is_boolean)
       {
         if (cmd.value == "true")
-          return Ok(true);
+          return true;
         if (cmd.value == "false")
-          return Ok(false);
+          return false;
         assert(false); // should never happen
       }
 
-    return Ok(cmd.value != "");
+    return cmd.value != "";
   }
 
   template <typename T>
-  Result<T, error::Err> Parser::parse(std::string const & value) const noexcept
+  std::expected<T, error::Err> Parser::parse(std::string const & value) const noexcept
   {
     if constexpr (std::is_same<T, std::string>::value)
       return value;
@@ -221,35 +228,37 @@ namespace bonding::cli
           stream >> std::boolalpha >> ret;
         else
           stream >> std::noboolalpha >> ret;
-        return Ok(ret);
+        return ret;
       }
     assert(false); // should never happen
-    return ERR_MSG(error::Code::Cli, "unsupported type");
+    return std::unexpected(ERR_MSG(error::Code::Cli, "unsupported type"));
   }
 
-  Result<Void, error::Err> function(const Parser parser) noexcept
+  std::expected<void, error::Err> function(const Parser parser) noexcept
   {
-    if (parser.get<bool>("init").unwrap())
+    if (parser.get<bool>("init"))
       return init(parser);
-    else if (parser.get<bool>("run").unwrap())
+    else if (parser.get<bool>("run"))
       return run(parser);
-    else if (parser.get<bool>("version").unwrap())
+    else if (parser.get<bool>("version"))
       return version(parser);
-    else if (parser.get<bool>("help").unwrap())
+    else if (parser.get<bool>("help"))
       return parser.help();
     else
-      return ERR(error::Code::Cli);
+      return std::unexpected(ERR(error::Code::Cli));
 
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err> run(const Parser & args) noexcept
+  std::expected<void, error::Err> run(const Parser & args) noexcept
   {
     return container::Container::start(
-      configfile::Config_File::read("./bonding.json").unwrap());
+      configfile::Config_File::read("./bonding.json").value());
+
+    return {};
   }
 
-  Result<Void, error::Err> init(const Parser & args) noexcept
+  std::expected<void, error::Err> init(const Parser & args) noexcept
   {
     std::string hostname;
     std::string command;
@@ -260,23 +269,25 @@ namespace bonding::cli
     std::cout << "Command: ";
     std::getline(std::cin, command);
 
-    unix::Filesystem::Mkdir("Bonding." + hostname).unwrap();
-    unix::Filesystem::Mkdir("Bonding." + hostname + "/mount_dir").unwrap();
+    unix::Filesystem::Mkdir("Bonding." + hostname).value();
+    unix::Filesystem::Mkdir("Bonding." + hostname + "/mount_dir").value();
 
     unix::Filesystem::Write(
       "Bonding." + hostname + "/bonding.json",
-      configfile::Config_File::generate_default(hostname, command).unwrap());
+      configfile::Config_File::generate_default(hostname, command).value())
+      .value();
 
     LOG_INFO << "Creating a Container...✓";
 
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err> version(const Parser & args) noexcept
+  std::expected<void, error::Err> version(const Parser & args) noexcept
   {
     std::cout << "Welcome to Bonding v" + BONDING_VERSION + " [" + BONDING_COPYRIGHT + "]"
               << std::endl;
-    return Ok(Void());
+
+    return {};
   }
 
 } // namespace bonding::cli

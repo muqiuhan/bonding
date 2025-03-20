@@ -5,7 +5,8 @@
 
 #include "config.h"
 #include "error.h"
-#include "result.hpp"
+#include <expected>
+
 #include <cstdint>
 
 namespace bonding::resource
@@ -17,25 +18,25 @@ namespace bonding::resource
   class CgroupsV1
   {
   public:
-    static Result<Void, error::Err>
+    static std::expected<void, error::Err>
       setup(const bonding::config::Container_Options & config) noexcept;
 
     /** After the child process exited, container need to clean
      ** all the cgroups restriction added.
      ** NOTE: This is very simple as cgroups v2 centralises everything in a directory
      **       under /sys/fs/cgroup/<groupname>/ */
-    static Result<Void, error::Err>
+    static std::expected<void, error::Err>
       clean(const config::Container_Options & config) noexcept;
 
   private:
-    static Result<Void, error::Err> write_settings(
+    static std::expected<void, error::Err> write_settings(
       const std::string &                         dir,
       const config::CgroupsV1::Control::Setting & setting) noexcept;
 
-    static Result<Void, error::Err> write_contorl(
+    static std::expected<void, error::Err> write_contorl(
       const std::string hostname, const config::CgroupsV1::Control & cgroup) noexcept;
 
-    static Result<Void, error::Err>
+    static std::expected<void, error::Err>
       clean_control_task(const config::CgroupsV1::Control & control) noexcept;
 
   private:
@@ -49,7 +50,7 @@ namespace bonding::resource
   class Rlimit
   {
   public:
-    static Result<Void, error::Err> setup() noexcept;
+    static std::expected<void, error::Err> setup() noexcept;
 
   private:
     /** The file descriptor number, like the number of pids, is per-user, and  prevent
@@ -60,9 +61,9 @@ namespace bonding::resource
   class Resource
   {
   public:
-    static Result<Void, error::Err>
+    static std::expected<void, error::Err>
       setup(const config::Container_Options & config) noexcept;
-    static Result<Void, error::Err>
+    static std::expected<void, error::Err>
       clean(const config::Container_Options & config) noexcept;
   };
 }; // namespace bonding::resource

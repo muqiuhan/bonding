@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "error.h"
-#include "result.hpp"
+#include <expected>
 #include <map>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -13,28 +13,30 @@ namespace bonding::configfile
   class Config_File
   {
   public:
-    static Result<config::Container_Options, error::Err>
+    static std::expected<config::Container_Options, error::Err>
       read(const std::string & file) noexcept;
 
-    static Result<std::string, error::Err>
+    static std::expected<std::string, error::Err>
       generate_default(std::string hostname, std::string command) noexcept;
 
   private:
-    static Result<nlohmann::json, error::Err> parse(const std::string & str) noexcept;
-    static Result<config::Container_Options, error::Err>
+    static std::expected<nlohmann::json, error::Err>
+      parse(const std::string & str) noexcept;
+    static std::expected<config::Container_Options, error::Err>
       Container_Options_of_json(const nlohmann::json & json) noexcept;
 
-    static Result<std::vector<std::pair<std::string, std::string>>, error::Err>
+    static std::expected<std::vector<std::pair<std::string, std::string>>, error::Err>
       read_mounts(const nlohmann::json & data) noexcept;
 
-    static Result<int, error::Err> read_clone(const nlohmann::json & data) noexcept;
+    static std::expected<int, error::Err> read_clone(const nlohmann::json & data) noexcept;
 
-    static Result<std::vector<config::CgroupsV1::Control>, error::Err>
+    static std::expected<std::vector<config::CgroupsV1::Control>, error::Err>
       read_cgroups_options(const nlohmann::json & data) noexcept;
 
-    static Result<std::vector<std::string>, Void> parse_argv(std::string argv) noexcept;
+    static std::expected<std::vector<std::string>, error::Err>
+      parse_argv(std::string argv) noexcept;
 
-    static Result<std::pair<int, int>, error::Err> generate_socketpair() noexcept;
+    static std::expected<std::pair<int, int>, error::Err> generate_socketpair() noexcept;
   };
 
   inline static const std::map<std::string, uint32_t> CLONE_FLAGS_MAP = {

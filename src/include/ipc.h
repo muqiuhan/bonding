@@ -4,7 +4,7 @@
 #define BONDING_IPC_H
 
 #include "error.h"
-#include "result.hpp"
+#include <expected>
 
 namespace bonding::ipc
 {
@@ -13,8 +13,8 @@ namespace bonding::ipc
   class IPC
   {
   public:
-    static Result<Void, error::Err> send_boolean(int socket, bool data) noexcept;
-    static Result<bool, error::Err> recv_boolean(int socket) noexcept;
+    static std::expected<void, error::Err> send_boolean(int socket, bool data) noexcept;
+    static std::expected<bool, error::Err> recv_boolean(int socket) noexcept;
   };
 } // namespace bonding::ipc
 

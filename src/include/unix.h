@@ -4,32 +4,32 @@
 #define BONDING_UNIX_H
 
 #include "error.h"
-#include "result.hpp"
 #include <linux/prctl.h>
 #include <sys/capability.h>
 #include <sys/prctl.h>
 #include <sys/utsname.h>
+#include <expected>
 
 /** Auto generate wrapper function for system calls function  */
 #define GENERATE_SYSTEM_CALL_WRAPPER(                                                    \
   OK_TYPE, FAILURE_VALUE, WRAPPER_FUNCTION_SIGNATURE, SYSTEM_CALL_FUNCTION_NAME, ...)    \
-  Result<OK_TYPE, error::Err> WRAPPER_FUNCTION_SIGNATURE noexcept                        \
+  std::expected<OK_TYPE, error::Err> WRAPPER_FUNCTION_SIGNATURE noexcept                 \
   {                                                                                      \
     OK_TYPE SYSTEM_CALL_FUNCTION_RESULT = SYSTEM_CALL_FUNCTION_NAME(__VA_ARGS__);        \
     if (FAILURE_VALUE == SYSTEM_CALL_FUNCTION_RESULT)                                    \
-      return ERR(error::Code::Unix);                                                     \
-    return Ok(SYSTEM_CALL_FUNCTION_RESULT);                                              \
+      return std::unexpected(ERR(error::Code::Unix));                                    \
+    return SYSTEM_CALL_FUNCTION_RESULT;                                                  \
   }
 
 /** Auto generate wrapper function for system calls function  */
 #define GENERATE_NO_RET_VALUE_SYSTEM_CALL_WRAPPER(                                       \
   OK_TYPE, FAILURE_VALUE, WRAPPER_FUNCTION_SIGNATURE, SYSTEM_CALL_FUNCTION_NAME, ...)    \
-  Result<Void, error::Err> WRAPPER_FUNCTION_SIGNATURE noexcept                           \
+  std::expected<void, error::Err> WRAPPER_FUNCTION_SIGNATURE noexcept                    \
   {                                                                                      \
     OK_TYPE SYSTEM_CALL_FUNCTION_RESULT = SYSTEM_CALL_FUNCTION_NAME(__VA_ARGS__);        \
     if (FAILURE_VALUE == SYSTEM_CALL_FUNCTION_RESULT)                                    \
-      return ERR(error::Code::Unix);                                                     \
-    return Ok(Void());                                                                   \
+      return std::unexpected(ERR(error::Code::Unix));                                    \
+    return {};                                                                           \
   }
 
 namespace bonding::unix
@@ -37,27 +37,28 @@ namespace bonding::unix
   class Filesystem
   {
   public:
-    static Result<Void, error::Err> Mkdir(const std::string & path) noexcept;
-    static Result<std::string, error::Err>
-                                   read_entire_file(const std::string & path) noexcept;
-    static Result<int, error::Err> Open(const std::string & file, int flag) noexcept;
-    static Result<int, error::Err>
+    static std::expected<void, error::Err> Mkdir(const std::string & path) noexcept;
+    static std::expected<std::string, error::Err>
+      read_entire_file(const std::string & path) noexcept;
+    static std::expected<int, error::Err>
+      Open(const std::string & file, int flag) noexcept;
+    static std::expected<int, error::Err>
       Open(const std::string & file, int flag, int mode) noexcept;
-    static Result<Void, error::Err> Rmdir(const std::string & file) noexcept;
-    static Result<Void, error::Err> Close(int fd) noexcept;
-    static Result<Void, error::Err> Write(int fd, const std::string & s) noexcept;
-    static Result<Void, error::Err>
+    static std::expected<void, error::Err> Rmdir(const std::string & file) noexcept;
+    static std::expected<void, error::Err> Close(int fd) noexcept;
+    static std::expected<void, error::Err> Write(int fd, const std::string & s) noexcept;
+    static std::expected<void, error::Err>
       Write(const std::string & path, const std::string & s) noexcept;
   };
 
   class Capabilities
   {
   public:
-    static Result<cap_t, error::Err> Get_proc() noexcept;
-    static Result<Void, error::Err>  Set_proc(cap_t cap) noexcept;
-    static Result<Void, error::Err>  Free(cap_t cap) noexcept;
+    static std::expected<cap_t, error::Err> Get_proc() noexcept;
+    static std::expected<void, error::Err>  Set_proc(cap_t cap) noexcept;
+    static std::expected<void, error::Err>  Free(cap_t cap) noexcept;
 
-    static Result<Void, error::Err> Set_flag(
+    static std::expected<void, error::Err> Set_flag(
       cap_t               cap_p,
       cap_flag_t          flag,
       int                 ncap,
@@ -68,7 +69,7 @@ namespace bonding::unix
   class Utsname
   {
   public:
-    static Result<utsname, error::Err> Get() noexcept;
+    static std::expected<utsname, error::Err> Get() noexcept;
   };
 }; // namespace bonding::unix
 

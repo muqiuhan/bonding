@@ -3,10 +3,11 @@
 #ifndef BONDING_CHILD_H
 #define BONDING_CHILD_H
 
+#include <expected>
 #include "config.h"
 #include "error.h"
 #include "log.hpp"
-#include "result.hpp"
+
 #include <unistd.h>
 
 namespace bonding::child
@@ -20,7 +21,7 @@ namespace bonding::child
   public:
     explicit Child(const config::Container_Options & container_options)
       : m_container_options(container_options)
-      , m_pid(generate_child_process(container_options).unwrap())
+      , m_pid(generate_child_process(container_options).value())
     {
       LOG_INFO << "Starting container with command " << container_options.path
                << " on process " << m_pid;
@@ -32,7 +33,7 @@ namespace bonding::child
     }
 
     /* Wait for the child to finish. */
-    [[nodiscard]] Result<Void, error::Err> wait() const noexcept;
+    [[nodiscard]] std::expected<void, error::Err> wait() const noexcept;
 
   private:
     class Process
@@ -49,11 +50,11 @@ namespace bonding::child
        ** the reference of the parent process */
       [[maybe_unused]] static int _main(void * options) noexcept;
 
-      static Result<Void, error::Err> setup_container_configurations() noexcept;
+      static std::expected<void, error::Err> setup_container_configurations() noexcept;
     };
 
   private:
-    static Result<pid_t, error::Err>
+    static std::expected<pid_t, error::Err>
       generate_child_process(config::Container_Options container_options) noexcept;
 
   private:

@@ -9,23 +9,25 @@
 #include "include/namespace.h"
 #include "include/syscall.h"
 
+#include <__expected/expected.h>
 #include <cstdio>
+#include <error.h>
 #include <sched.h>
 #include <sys/wait.h>
 
 namespace bonding::child
 {
-  Result<Void, error::Err> Child::Process::setup_container_configurations() noexcept
+  std::expected<void, error::Err> Child::Process::setup_container_configurations() noexcept
   {
-    hostname::Hostname::setup(container_options->hostname).unwrap();
+    hostname::Hostname::setup(container_options->hostname).value();
     mounts::Mount::setup(
       container_options->mount_dir, container_options->hostname, container_options->mounts)
-      .unwrap();
-    ns::Namespace::setup(container_options->ipc.second, container_options->uid).unwrap();
-    capabilities::Capabilities::setup().unwrap();
-    syscall::Syscall::setup().unwrap();
+      .value();
+    ns::Namespace::setup(container_options->ipc.second, container_options->uid).value();
+    capabilities::Capabilities::setup().value();
+    syscall::Syscall::setup().value();
 
-    return Ok(Void());
+    return {};
   }
 
   int Child::Process::_main(void *options) noexcept
@@ -33,23 +35,24 @@ namespace bonding::child
     container_options = static_cast<config::Container_Options *>(options);
 
     setup_container_configurations()
-      .and_then([](const Void ok) {
+      .transform([]() -> std::expected<void, error::Err> {
       LOG_INFO << "Container setup successfully";
-      return Ok(ok);
+      return {};
     })
-      .or_else([](const error::Err &err) {
+      .transform_error([&](const error::Err &err) {
       LOG_ERROR << "Error while creating container";
-      return Err(err);
-    }).unwrap();
+      return err;
+    }).value();
 
     int ret_code = 0;
-    if (exec::Execve::call(container_options->path, container_options->argv).is_err())
+
+    if (!exec::Execve::call(container_options->path, container_options->argv).has_value())
       ret_code = -1;
 
     return ret_code;
   }
 
-  Result<pid_t, error::Err> Child::generate_child_process(
+  std::expected<pid_t, error::Err> Child::generate_child_process(
     const config::Container_Options container_options) noexcept
   {
     const pid_t child_pid = clone(
@@ -59,12 +62,12 @@ namespace bonding::child
       (void *) &container_options);
 
     if (-1 == child_pid)
-      return ERR(error::Code::ChildProcess);
+      return std::unexpected(ERR(error::Code::ChildProcess));
 
-    return Ok(child_pid);
+    return child_pid;
   }
 
-  Result<Void, error::Err> Child::wait() const noexcept
+  std::expected<void, error::Err> Child::wait() const noexcept
   {
     LOG_DEBUG << "Waiting for child process " << m_pid << " finish...";
 
@@ -72,11 +75,11 @@ namespace bonding::child
 
     /** To wait for children produced by clone(), need __WCLONE flag */
     if (-1 == waitpid(m_pid, &child_process_status, __WALL))
-      return ERR(error::Code::Container);
+      return std::unexpected(ERR(error::Code::Container));
 
     LOG_INFO << "Child process exit with code " << ((child_process_status >> 8) & 0xFF)
              << ", signal " << (child_process_status & 0x7F);
 
-    return Ok(Void());
+    return {};
   }
 } // namespace bonding::child

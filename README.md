@@ -112,7 +112,6 @@ Bonding sets the environment and various parameters through the configuration fi
 
 ## Dependencies
 - [plog (MIT):  Portable, simple and extensible C++ logging library](https://github.com/SergiusTheBest/plog)
-- [result (MIT): Result<T, E> for Modern C++](https://github.com/p-ranav/result)
 - [cmd_line_parser (MIT):  Command line parser for C++17. ](https://github.com/jermp/cmd_line_parser)
 - [libseccomp (LGPL-2.1): The main libseccomp repository](https://github.com/seccomp/libseccomp)
 - [nlohmann_json (MIT): JSON for Modern C++](https://github.com/nlohmann/json)

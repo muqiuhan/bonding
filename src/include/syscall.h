@@ -4,7 +4,7 @@
 #define BONDING_SYSCALL_H
 
 #include "error.h"
-#include "result.hpp"
+#include <expected>
 #include <array>
 #include <asm-generic/ioctls.h>
 #include <cstdint>
@@ -26,15 +26,15 @@ namespace bonding::syscall
   class Syscall
   {
   public:
-    static Result<Void, error::Err> setup() noexcept;
-    static Result<Void, error::Err> clean() noexcept;
+    static std::expected<void, error::Err> setup() noexcept;
+    static std::expected<void, error::Err> clean() noexcept;
 
   private:
     /** Totally deny any attempt to call that syscall in the child process. */
-    static Result<Void, error::Err> refuse_syscall() noexcept;
+    static std::expected<void, error::Err> refuse_syscall() noexcept;
 
     /** Takes a value and return wether the permission should be set or not. */
-    static Result<Void, error::Err> refuse_if_comp() noexcept;
+    static std::expected<void, error::Err> refuse_if_comp() noexcept;
 
   private:
     inline static scmp_filter_ctx ctx = nullptr;

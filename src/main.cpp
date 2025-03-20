@@ -11,7 +11,7 @@ int __main(int argc, char ** argv)
   log::set_level(LOG_LEVEL_INFO);
   try
     {
-      cli::Command_Line_Args::make(argc, argv).unwrap();
+      cli::Command_Line_Args::make(argc, argv);
     }
   catch (const std::exception & e)
     {

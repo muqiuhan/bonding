@@ -11,32 +11,33 @@
 
 namespace bonding::container
 {
-  Result<Void, error::Err> Container::create() noexcept
+  std::expected<void, error::Err> Container::create() noexcept
   {
-    if (ipc::IPC::recv_boolean(m_sockets.first).unwrap())
+    if (ipc::IPC::recv_boolean(m_sockets.first))
       {
-        ns::Namespace::handle_child_uid_map(m_child_process.m_pid).unwrap();
-        resource::Resource::setup(m_config).unwrap();
-        ipc::IPC::send_boolean(m_sockets.first, false).unwrap();
+        ns::Namespace::handle_child_uid_map(m_child_process.m_pid).value();
+        resource::Resource::setup(m_config).value();
+        ipc::IPC::send_boolean(m_sockets.first, false).value();
       }
     else
       {
-        return ERR_MSG(
-          error::Code::Namespace, "No user namespace set up from child process");
+        return std::unexpected(
+          ERR_MSG(error::Code::Namespace, "No user namespace set up from child process"));
       }
     return m_child_process.wait();
   }
 
-  Result<Void, error::Err> Container::clean_and_exit() noexcept
+  std::expected<void, error::Err> Container::clean_and_exit() noexcept
   {
-    Container_Cleaner::close_socket(m_sockets.first).unwrap();
-    Container_Cleaner::close_socket(m_sockets.second).unwrap();
-    resource::Resource::clean(m_config).unwrap();
-    syscall::Syscall::Syscall::clean().unwrap();
-    return Ok(Void());
+    Container_Cleaner::close_socket(m_sockets.first).value();
+    Container_Cleaner::close_socket(m_sockets.second).value();
+    resource::Resource::clean(m_config).value();
+    syscall::Syscall::Syscall::clean().value();
+
+    return {};
   }
 
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     Container::start(const config::Container_Options & argv) noexcept
   {
     Container container(argv);
@@ -48,26 +49,25 @@ namespace bonding::container
       }
 
     return container.create()
-      .and_then([&](const auto _) {
-      container.clean_and_exit().unwrap();
+      .transform([&]() {
       LOG_INFO << "Cleaning and exiting container...✓";
-      return Ok(Void());
-    }).or_else([&](const error::Err e) {
-      container.clean_and_exit().unwrap();
+      return container.clean_and_exit().value();
+    }).transform_error([&](const error::Err e) {
+      container.clean_and_exit().value();
       return ERR_MSG(
         error::Code::Container, "Error while creating container: {}" + e.to_string());
     });
   }
 
-  Result<Void, error::Err> Container_Cleaner::close_socket(const int socket) noexcept
+  std::expected<void, error::Err>
+    Container_Cleaner::close_socket(const int socket) noexcept
   {
     unix::Filesystem::Close(socket)
-      .or_else([&](const auto & e) {
+      .transform_error([&](const auto & e) {
       return ERR_MSG(
         error::Code::Socket, "Unable to close socket " + std::to_string(socket));
-    }).unwrap();
+    }).value();
 
     LOG_DEBUG << "Closing socket " << socket << "...✓";
-    return Ok(Void());
   }
 } // namespace bonding::container

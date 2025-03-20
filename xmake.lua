@@ -18,7 +18,7 @@ package("libseccomp")
 
 target("bonding")
     set_kind("binary")
-    set_languages("c++17")
+    set_languages("c++23")
     set_policy("check.auto_ignore_flags", false)
     set_toolchains("clang")
 
@@ -26,11 +26,3 @@ target("bonding")
     add_ldflags("-stdlib=libc++")
     add_files("src/*.cpp")
     add_packages("plog", "result", "nlohmann_json", "libcap", "libseccomp")
-
-    after_build(function (target)
-        import("core.project.project")
-        import("core.base.task")
-        
-        task.run("project", {kind = "cmake", outputdir = "."})
-        task.run("project", {kind = "ninja", outputdir = "."})
-    end)

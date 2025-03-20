@@ -4,7 +4,7 @@
 #define BONDING_EXEC_H
 
 #include "error.h"
-#include "result.hpp"
+#include <expected>
 #include <vector>
 
 namespace bonding::exec
@@ -14,7 +14,7 @@ namespace bonding::exec
   {
   public:
     /** The execve systemcall wrapper */
-    static Result<Void, error::Err>
+    static std::expected<void, error::Err>
       call(const std::string &path, const std::vector<std::string> &argv) noexcept;
 
   private:

@@ -12,120 +12,118 @@
 
 namespace bonding::resource
 {
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     Resource::setup(const config::Container_Options & config) noexcept
   {
     LOG_INFO << "Restricting resources for hostname " << config.hostname;
-    CgroupsV1::setup(config).unwrap();
-    Rlimit::setup().unwrap();
+    CgroupsV1::setup(config).value();
+    Rlimit::setup().value();
 
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err> Rlimit::setup() noexcept
+  std::expected<void, error::Err> Rlimit::setup() noexcept
   {
     const rlimit rlim = rlimit{.rlim_cur = NOFILE, .rlim_max = NOFILE};
     if (-1 == setrlimit(RLIMIT_NOFILE, &rlim))
-      return ERR(error::Code::Cgroups);
+      return std::unexpected(ERR(error::Code::Cgroups));
 
     LOG_INFO << "Setting rlimit...✓";
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err> CgroupsV1::write_settings(
+  std::expected<void, error::Err> CgroupsV1::write_settings(
     const std::string & dir, const config::CgroupsV1::Control::Setting & setting) noexcept
   {
     const int fd = unix::Filesystem::Open(dir + "/" + setting.name, O_WRONLY)
-                     .or_else([&](const auto & e) {
+                     .transform_error([&](const auto & e) {
       return ERR_MSG(error::Code::Cgroups, "Cannot open controller " + setting.name);
-    }).unwrap();
+    }).value();
 
     unix::Filesystem::Write(fd, setting.value)
-      .or_else([&](const auto & e) {
+      .transform_error([&](const auto & e) {
       return ERR_MSG(
         error::Code::Cgroups, "Cannot write value to controller " + setting.name);
-    }).unwrap();
+    }).value();
 
     unix::Filesystem::Close(fd)
-      .or_else([&](const auto & e) {
+      .transform_error([&](const auto & e) {
       return ERR_MSG(error::Code::Cgroups, "Cannot close controller " + setting.name);
-    }).unwrap();
+    }).value();
 
     if (setting.name != "tasks")
       LOG_DEBUG << "Setting controller " << setting.name << "  by value " << setting.value
                 << "...✓";
 
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err> CgroupsV1::write_contorl(
+  std::expected<void, error::Err> CgroupsV1::write_contorl(
     const std::string hostname, const config::CgroupsV1::Control & cgroup) noexcept
   {
-    if (environment::CgroupsV1::checking_if_controller_supported(cgroup.control).unwrap())
+    if (environment::CgroupsV1::checking_if_controller_supported(cgroup.control))
       {
         const std::string dir = "/sys/fs/cgroup/" + cgroup.control + "/" + hostname;
-        unix::Filesystem::Mkdir(dir).unwrap();
+        unix::Filesystem::Mkdir(dir).value();
 
         for (const auto & setting : cgroup.settings)
-          write_settings(dir, setting).unwrap();
+          write_settings(dir, setting).value();
 
-        write_settings(dir, TASK).unwrap();
-
-        return Ok(Void());
+        write_settings(dir, TASK).value();
       }
     else
       LOG_WARNING << "Controller " << cgroup.control << " is not support!!";
 
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     CgroupsV1::setup(const config::Container_Options & config) noexcept
   {
     for (const auto & control : config.cgroups_options)
-      write_contorl(config.hostname, control);
+      write_contorl(config.hostname, control).value();
 
     LOG_INFO << "Setting cgroups by cgroups-v1...✓";
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     CgroupsV1::clean_control_task(const config::CgroupsV1::Control & cgroup) noexcept
   {
     const std::string task = "/sys/fs/cgroup/" + cgroup.control + "/tasks";
 
     const int taskfd = unix::Filesystem::Open(task.c_str(), O_WRONLY)
-                         .or_else([&](const auto & e) {
+                         .transform_error([&](const auto & e) {
       return ERR_MSG(
         error::Code::Cgroups,
         "Cannot open the cgroups tasks controller " + cgroup.control);
-    }).unwrap();
+    }).value();
 
     unix::Filesystem::Write(taskfd, "0")
-      .or_else([&](const auto & e) {
+      .transform_error([&](const auto & e) {
       unix::Filesystem::Close(taskfd)
-        .or_else([&](const auto & e) {
+        .transform_error([&](const auto & e) {
         return ERR_MSG(
           error::Code::Cgroups,
           "Cannot close the cgroups tasks controller " + cgroup.control);
-      }).unwrap();
+      }).value();
 
       return ERR_MSG(
         error::Code::Cgroups,
         "Cannot write the cgroups tasks controller " + cgroup.control);
-    }).unwrap();
+    }).value();
 
     unix::Filesystem::Close(taskfd)
-      .or_else([&](const auto & e) {
+      .transform_error([&](const auto & e) {
       return ERR_MSG(
         error::Code::Cgroups,
         "Cannot close the cgroups tasks controller " + cgroup.control);
-    }).unwrap();
+    }).value();
 
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     CgroupsV1::clean(const config::Container_Options & config) noexcept
   {
     for (const auto & cgroup : config.cgroups_options)
@@ -133,24 +131,24 @@ namespace bonding::resource
         const std::string dir =
           "/sys/fs/cgroup/" + cgroup.control + "/" + config.hostname;
 
-        clean_control_task(cgroup).unwrap();
+        clean_control_task(cgroup).value();
 
         unix::Filesystem::Rmdir(dir)
-          .or_else([&](const auto & _) {
+          .transform_error([&](const auto & _) {
           return ERR_MSG(
             error::Code::Cgroups, "Cannot clean cgroups controller " + cgroup.control);
-        }).unwrap();
+        }).value();
       }
 
     LOG_INFO << "Cleaning cgroups-v1 settings...✓";
-    return Ok(Void());
+    return {};
   }
 
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     Resource::clean(const config::Container_Options & config) noexcept
   {
-    CgroupsV1::clean(config).unwrap();
+    CgroupsV1::clean(config).value();
 
-    return Ok(Void());
+    return {};
   }
 } // namespace bonding::resource

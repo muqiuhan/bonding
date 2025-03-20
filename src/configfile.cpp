@@ -12,44 +12,46 @@
 
 namespace bonding::configfile
 {
-  Result<nlohmann::json, error::Err> Config_File::parse(const std::string & str) noexcept
+  std::expected<nlohmann::json, error::Err>
+    Config_File::parse(const std::string & str) noexcept
   {
     try
       {
-        return Ok(nlohmann::json::parse(str));
+        return nlohmann::json::parse(str);
       }
     catch (const nlohmann::json::exception & e)
       {
-        return ERR_MSG(error::Code::Configfile, e.what());
+        return std::unexpected(ERR_MSG(error::Code::Configfile, e.what()));
       }
   }
 
-  Result<config::Container_Options, error::Err>
+  std::expected<config::Container_Options, error::Err>
     Config_File::Container_Options_of_json(const nlohmann::json & json) noexcept
   {
-    return Ok(config::Container_Options{
+    return config::Container_Options{
       json["debug"],
       json["command"],
       json["mount_dir"],
       json["uid"],
-      parse_argv(json["command"]).unwrap(),
-      generate_socketpair().unwrap(),
+      parse_argv(json["command"]).value(),
+      generate_socketpair().value(),
       json["hostname"],
-      read_mounts(json).unwrap(),
-      read_clone(json).unwrap(),
-      read_cgroups_options(json).unwrap()});
+      read_mounts(json).value(),
+      read_clone(json).value(),
+      read_cgroups_options(json).value()};
   }
 
-  Result<config::Container_Options, error::Err>
+  std::expected<config::Container_Options, error::Err>
     Config_File::read(const std::string & path) noexcept
   {
     const nlohmann::json data =
-      parse(unix::Filesystem::read_entire_file(path).unwrap()).unwrap();
+      parse(unix::Filesystem::read_entire_file(path).value()).value();
 
     return Container_Options_of_json(data);
   }
 
-  Result<int, error::Err> Config_File::read_clone(const nlohmann::json & data) noexcept
+  std::expected<int, error::Err>
+    Config_File::read_clone(const nlohmann::json & data) noexcept
   {
     std::vector<int> result;
 
@@ -62,20 +64,20 @@ namespace bonding::configfile
             }
           catch (const std::out_of_range & e)
             {
-              return ERR_MSG(
-                error::Code::Configfile, std::string(flag) + " is not a valid flag");
+              return std::unexpected(ERR_MSG(
+                error::Code::Configfile, std::string(flag) + " is not a valid flag"));
             }
       }
     catch (const nlohmann::json::exception & e)
       {
-        return ERR_MSG(error::Code::Configfile, e.what());
+        return std::unexpected(ERR_MSG(error::Code::Configfile, e.what()));
       }
 
-    return Ok(std::accumulate(
-      result.begin(), result.end(), 0, [](uint32_t a, uint32_t b) { return a | b; }));
+    return std::accumulate(
+      result.begin(), result.end(), 0, [](uint32_t a, uint32_t b) { return a | b; });
   }
 
-  Result<std::vector<std::pair<std::string, std::string>>, error::Err>
+  std::expected<std::vector<std::pair<std::string, std::string>>, error::Err>
     Config_File::read_mounts(const nlohmann::json & data) noexcept
   {
     std::vector<std::pair<std::string, std::string>> mounts;
@@ -87,12 +89,12 @@ namespace bonding::configfile
       }
     catch (const nlohmann::json::exception & e)
       {
-        return ERR_MSG(error::Code::Configfile, e.what());
+        return std::unexpected(ERR_MSG(error::Code::Configfile, e.what()));
       }
-    return Ok(mounts);
+    return mounts;
   }
 
-  Result<std::vector<config::CgroupsV1::Control>, error::Err>
+  std::expected<std::vector<config::CgroupsV1::Control>, error::Err>
     Config_File::read_cgroups_options(const nlohmann::json & data) noexcept
   {
     std::vector<config::CgroupsV1::Control> options;
@@ -119,33 +121,34 @@ namespace bonding::configfile
       }
     catch (const nlohmann::json::exception & e)
       {
-        return ERR_MSG(error::Code::Configfile, e.what());
+        return std::unexpected(ERR_MSG(error::Code::Configfile, e.what()));
       }
-    return Ok(options);
+    return options;
   }
 
-  Result<std::vector<std::string>, Void>
+  std::expected<std::vector<std::string>, error::Err>
     Config_File::parse_argv(const std::string argv) noexcept
   {
     std::istringstream argv_stream(argv);
     const auto         result = std::vector<std::string>(
       (std::istream_iterator<std::string>(argv_stream)),
       std::istream_iterator<std::string>());
-    return Ok(result);
+    return result;
   }
 
-  Result<std::pair<int, int>, error::Err> Config_File::generate_socketpair() noexcept
+  std::expected<std::pair<int, int>, error::Err>
+    Config_File::generate_socketpair() noexcept
   {
     int __fds[2] = {0};
     /* creating a Unix domain socket, and socket will use a communication semantic with
      * packets and fixed length datagrams.*/
     if (-1 == socketpair(AF_UNIX, SOCK_SEQPACKET, 0, __fds))
-      return ERR(error::Code::Socket);
+      return std::unexpected(ERR(error::Code::Socket));
 
-    return Ok(std::make_pair(__fds[0], __fds[1]));
+    return std::make_pair(__fds[0], __fds[1]);
   }
 
-  Result<std::string, error::Err>
+  std::expected<std::string, error::Err>
     Config_File::generate_default(std::string hostname, std::string command) noexcept
   {
     nlohmann::json config;
@@ -170,7 +173,7 @@ namespace bonding::configfile
       "CLONE_NEWUTS"};
     config["cgroups-v1"] = {{"pid.max", "64"}};
 
-    return Ok(config.dump(2));
+    return config.dump(2);
   }
 
 } // namespace bonding::configfile

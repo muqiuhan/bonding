@@ -4,14 +4,13 @@
 #define BONDING_ERROR_H
 
 #include "log.hpp"
-#include "result.hpp"
 #include <cerrno>
 #include <cstdint>
 #include <exception>
 #include <map>
-#include <stdexcept>
 #include <string>
 #include <utility>
+#include <expected>
 
 namespace bonding::error
 {
@@ -55,7 +54,11 @@ namespace bonding::error
   class Err
   {
   public:
-    Err() { std::terminate(); }
+    Err()
+    {
+      // Err object is an unrecoverable error, so we terminate the program.
+      std::terminate();
+    }
 
     Err(
       const Code     code,
@@ -91,8 +94,10 @@ namespace bonding::error
 
 } // namespace bonding::error
 
-#define ERR(CODE) Err(bonding::error::Err(CODE, "", __LINE__, __FILE__, __FUNCTION__))
+/** Some macros to create an Err object. */
+#define ERR(CODE) bonding::error::Err(CODE, "", __LINE__, __FILE__, __FUNCTION__)
+
 #define ERR_MSG(CODE, MSG)                                                               \
-  Err(bonding::error::Err(CODE, MSG, __LINE__, __FILE__, __FUNCTION__))
+  bonding::error::Err(CODE, MSG, __LINE__, __FILE__, __FUNCTION__)
 
 #endif /* BONDING_ERROR_H */

@@ -7,6 +7,7 @@
 #include "cli.h"
 #include "config.h"
 #include "error.h"
+#include <expected>
 
 namespace bonding::container
 {
@@ -28,15 +29,15 @@ namespace bonding::container
 
   public:
     /** handle the container creation process. */
-    Result<Void, error::Err> create() noexcept;
+    std::expected<void, error::Err> create() noexcept;
 
     /** called before each exit to be sure we stay clean. */
-    Result<Void, error::Err> clean_and_exit() noexcept;
+    std::expected<void, error::Err> clean_and_exit() noexcept;
 
     /** get the args from the commandline and handle everything
      ** from the struct Container creation to the exit.
      ** returns a Result that will inform if an error happened during the process. */
-    static Result<Void, error::Err> start(const config::Container_Options & argv) noexcept;
+    static std::expected<void, error::Err> start(const config::Container_Options & argv) noexcept;
 
   private:
     const config::Container_Options m_config;
@@ -47,7 +48,7 @@ namespace bonding::container
   class Container_Cleaner
   {
   public:
-    static Result<Void, error::Err> close_socket(const int socket) noexcept;
+    static std::expected<void, error::Err> close_socket(const int socket) noexcept;
   };
 }; // namespace bonding::container
 

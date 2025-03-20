@@ -4,7 +4,7 @@
 #define BONDING_NAMESPACE_H
 
 #include "error.h"
-#include "result.hpp"
+#include <expected>
 #include <sched.h>
 #include <sys/types.h>
 
@@ -17,16 +17,16 @@ namespace bonding::ns
   {
   public:
     /** Executed by the child process during its configuration. */
-    static Result<Void, error::Err> setup(int socket, uid_t uid) noexcept;
+    static std::expected<void, error::Err> setup(int socket, uid_t uid) noexcept;
 
     /** Called by the container when it will perform UID / GID mapping. */
-    static Result<Void, error::Err> handle_child_uid_map(pid_t pid) noexcept;
+    static std::expected<void, error::Err> handle_child_uid_map(pid_t pid) noexcept;
 
   private:
     /** If that call is successful, then user namespaces are supported. */
-    static Result<bool, error::Err> has_user_namespace() noexcept;
+    static std::expected<bool, error::Err> has_user_namespace() noexcept;
 
-    static Result<Void, error::Err> create_map(int id, std::string map) noexcept;
+    static std::expected<void, error::Err> create_map(int id, std::string map) noexcept;
 
   private:
     inline static gid_t groups[1];

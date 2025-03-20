@@ -4,8 +4,9 @@
 #define BONDING_HOSTNAME_H
 
 #include "error.h"
-#include "result.hpp"
+
 #include <ctime>
+#include <expected>
 
 namespace bonding::hostname
 {
@@ -15,7 +16,7 @@ namespace bonding::hostname
   class Hostname
   {
   public:
-    static Result<Void, error::Err> setup(const std::string & custom) noexcept;
+    static std::expected<void, error::Err> setup(const std::string & custom) noexcept;
   };
 } // namespace bonding::hostname
 

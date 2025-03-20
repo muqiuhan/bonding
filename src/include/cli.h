@@ -5,7 +5,7 @@
 
 #include "error.h"
 #include "log.hpp"
-#include "result.hpp"
+#include <expected>
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
@@ -34,10 +34,10 @@ namespace bonding::cli
       bool        is_required, is_boolean;
     };
 
-    Result<bool, error::Err> parse() noexcept;
-    Result<Void, error::Err> help() const noexcept;
+    std::expected<bool, error::Err> parse() noexcept;
+    std::expected<void, error::Err> help() const noexcept;
 
-    Result<bool, error::Err> add(
+    std::expected<bool, error::Err> add(
       std::string const & name,
       std::string const & descr,
       std::string const & shorthand,
@@ -45,13 +45,13 @@ namespace bonding::cli
       bool                is_boolean = false) noexcept;
 
     template <typename T>
-    Result<T, error::Err> get(std::string const & name) const noexcept;
+    std::expected<T, error::Err> get(std::string const & name) const noexcept;
 
-    [[maybe_unused]] Result<bool, error::Err>
+    [[maybe_unused]] std::expected<bool, error::Err>
       parsed(std::string const & name) const noexcept;
 
     template <typename T>
-    Result<T, error::Err> parse(std::string const & value) const noexcept;
+    std::expected<T, error::Err> parse(std::string const & value) const noexcept;
 
   private:
     int                                  m_argc;
@@ -72,14 +72,14 @@ namespace bonding::cli
   class Command_Line_Args
   {
   public:
-    static Result<Void, error::Err>   make(int argc, char * argv[]) noexcept;
-    static Result<Parser, error::Err> init_parser(int argc, char * argv[]) noexcept;
+    static std::expected<void, error::Err>   make(int argc, char * argv[]) noexcept;
+    static std::expected<Parser, error::Err> init_parser(int argc, char * argv[]) noexcept;
   };
 
-  Result<Void, error::Err> function(const Parser args) noexcept;
-  Result<Void, error::Err> run(const Parser & args) noexcept;
-  Result<Void, error::Err> init(const Parser & args) noexcept;
-  Result<Void, error::Err> version(const Parser & args) noexcept;
+  std::expected<void, error::Err> function(const Parser args) noexcept;
+  std::expected<void, error::Err> run(const Parser & args) noexcept;
+  std::expected<void, error::Err> init(const Parser & args) noexcept;
+  std::expected<void, error::Err> version(const Parser & args) noexcept;
 }; // namespace bonding::cli
 
 #endif /* BONDING_CLI_H */

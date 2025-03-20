@@ -1,13 +1,15 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/exec.h"
+#include <__expected/unexpected.h>
 #include <algorithm>
 #include <iterator>
 #include <unistd.h>
+#include "include/error.h"
 
 namespace bonding::exec
 {
-  Result<Void, error::Err>
+  std::expected<void, error::Err>
     Execve::call(const std::string &path, const std::vector<std::string> &argv) noexcept
   {
     std::transform(
@@ -17,8 +19,7 @@ namespace bonding::exec
 
     const auto x = &args[0];
     if (-1 == execve(path.c_str(), static_cast<char *const *>(&args[0]), nullptr))
-      return ERR(error::Code::Exec);
-
-    return Ok(Void());
+      return std::unexpected(ERR(error::Code::Exec));
+    return {};
   }
 } // namespace bonding::exec
