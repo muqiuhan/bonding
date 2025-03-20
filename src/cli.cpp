@@ -107,6 +107,7 @@ namespace bonding::cli
             ++i;
             if (i == m_argc)
               return std::unexpected(ERR(error::Code::Cli));
+
             parsed = m_argv[i];
           }
         cmd.value = parsed;
@@ -168,7 +169,8 @@ namespace bonding::cli
   }
 
   template <typename T>
-  std::expected<T, error::Err> Parser::get(std::string const & name) const noexcept
+  [[nodiscard]] std::expected<T, error::Err>
+    Parser::get(std::string const & name) const noexcept
   {
     auto it = m_cmds.find(name);
     if (it == m_cmds.end())
@@ -179,7 +181,7 @@ namespace bonding::cli
     return parse<T>(value).value();
   }
 
-  [[maybe_unused]] std::expected<bool, error::Err>
+  [[maybe_unused]] [[nodiscard]] std::expected<bool, error::Err>
     Parser::parsed(std::string const & name) const noexcept
   {
     auto it = m_cmds.find(name);
@@ -199,7 +201,8 @@ namespace bonding::cli
   }
 
   template <typename T>
-  std::expected<T, error::Err> Parser::parse(std::string const & value) const noexcept
+  [[nodiscard]] std::expected<T, error::Err>
+    Parser::parse(std::string const & value) const noexcept
   {
     if constexpr (std::is_same<T, std::string>::value)
       return value;
@@ -234,15 +237,15 @@ namespace bonding::cli
     return std::unexpected(ERR_MSG(error::Code::Cli, "unsupported type"));
   }
 
-  std::expected<void, error::Err> function(const Parser parser) noexcept
+  [[nodiscard]] std::expected<void, error::Err> function(const Parser parser) noexcept
   {
-    if (parser.get<bool>("init"))
+    if (parser.get<bool>("init").value())
       return init(parser);
-    else if (parser.get<bool>("run"))
+    else if (parser.get<bool>("run").value())
       return run(parser);
-    else if (parser.get<bool>("version"))
+    else if (parser.get<bool>("version").value())
       return version(parser);
-    else if (parser.get<bool>("help"))
+    else if (parser.get<bool>("help").value())
       return parser.help();
     else
       return std::unexpected(ERR(error::Code::Cli));
@@ -250,7 +253,7 @@ namespace bonding::cli
     return {};
   }
 
-  std::expected<void, error::Err> run(const Parser & args) noexcept
+  [[nodiscard]] std::expected<void, error::Err> run(const Parser & args) noexcept
   {
     return container::Container::start(
       configfile::Config_File::read("./bonding.json").value());
@@ -258,7 +261,7 @@ namespace bonding::cli
     return {};
   }
 
-  std::expected<void, error::Err> init(const Parser & args) noexcept
+  [[nodiscard]] std::expected<void, error::Err> init(const Parser & args) noexcept
   {
     std::string hostname;
     std::string command;
@@ -282,7 +285,7 @@ namespace bonding::cli
     return {};
   }
 
-  std::expected<void, error::Err> version(const Parser & args) noexcept
+  [[nodiscard]] std::expected<void, error::Err> version(const Parser & args) noexcept
   {
     std::cout << "Welcome to Bonding v" + BONDING_VERSION + " [" + BONDING_COPYRIGHT + "]"
               << std::endl;
