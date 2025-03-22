@@ -4,7 +4,6 @@
 #include "include/bonding.hpp"
 #include "include/configfile.h"
 #include "include/container.h"
-#include "include/hostname.h"
 #include "logging.h"
 #include "include/unix.h"
 #include <cstdlib>

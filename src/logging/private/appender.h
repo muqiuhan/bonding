@@ -3,7 +3,6 @@
 #include "formatter.h"
 #include <plog/Appenders/ConsoleAppender.h>
 #include <plog/Initializers/ConsoleInitializer.h>
-#include <plog/Log.h>
 #include <plog/Util.h>
 
 // Log levels using plog's Severity enumeration for better readability.
@@ -25,14 +24,14 @@ namespace bonding::logging::appender
   public:
     /// Initializes the ColorConsoleAppender with a specified output stream.
     /// @param outStream The output stream to which log messages will be written.
-    ColorConsoleAppender(OutputStream outStream = streamStdOut)
+    explicit ColorConsoleAppender(OutputStream outStream = streamStdOut)
       : ConsoleAppender<Formatter>(outStream)
     {}
 
     /// Writes a log record to the console with appropriate color coding based on
     /// severity.
     /// @param record The log record to write.
-    virtual auto write(const Record & record) noexcept -> void PLOG_OVERRIDE;
+    auto write(const Record & record) noexcept -> void PLOG_OVERRIDE;
 
   protected:
     /// Returns the color code for the specified severity level.

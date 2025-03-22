@@ -5,15 +5,12 @@ namespace bonding::logging::formatter
 {
   using namespace plog;
 
-  [[nodiscard]] auto Formatter::header() noexcept -> util::nstring
-  {
-    return util::nstring();
-  }
+  [[nodiscard]] auto Formatter::header() noexcept -> util::nstring { return {}; }
 
   [[nodiscard]] auto Formatter::format(const plog::Record & record) noexcept
     -> util::nstring
   {
-    tm t;
+    tm t{};
     util::localtime_s(&t, &record.getTime().time);
     util::nostringstream ss;
 
