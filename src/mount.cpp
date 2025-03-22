@@ -96,7 +96,9 @@ namespace bonding::mounts
         ERR_MSG(error::Code::Mounts, "Cannot mount " + path + " to " + mount_point));
 
     if (!path.empty())
-      LOG_INFO << "Mount " << path << " to " << mount_point << "...✓";
+      {
+        LOG_INFO << "Mount " << path << " to " << mount_point << "...✓";
+      }
 
     return {};
   }

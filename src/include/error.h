@@ -3,7 +3,6 @@
 #ifndef BONDING_ERROR_H
 #define BONDING_ERROR_H
 
-#include "log.hpp"
 #include <cerrno>
 #include <cstdint>
 #include <exception>
@@ -11,6 +10,7 @@
 #include <string>
 #include <utility>
 #include <expected>
+#include "logging.h"
 
 namespace bonding::error
 {
@@ -68,10 +68,10 @@ namespace bonding::error
       std::string    function)
       : m_code(code)
       , m_errno(errno)
-      , m_custom(std::move(custom))
       , m_line(line)
-      , m_file(std::move(file))
+      , m_custom(std::move(custom))
       , m_function(std::move(function))
+      , m_file(std::move(file))
     {
       LOG_ERROR << to_string() << ":" << function;
       LOG_INFO << "In the " << function << " function on line " << line << " of the file "

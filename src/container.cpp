@@ -44,7 +44,7 @@ namespace bonding::container
 
     if (argv.debug)
       {
-        log::set_level(LOG_LEVEL_DEBUG);
+        logging::set_level(LOG_LEVEL_DEBUG);
         LOG_DEBUG << "Activate debug mode...✓";
       }
 
@@ -68,6 +68,10 @@ namespace bonding::container
         error::Code::Socket, "Unable to close socket " + std::to_string(socket));
     }).value();
 
-    LOG_DEBUG << "Closing socket " << socket << "...✓";
+    {
+      LOG_DEBUG << "Closing socket " << socket << "...✓";
+    };
+
+    return {};
   }
 } // namespace bonding::container

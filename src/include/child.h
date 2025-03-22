@@ -6,7 +6,7 @@
 #include <expected>
 #include "config.h"
 #include "error.h"
-#include "log.hpp"
+#include "logging.h"
 
 #include <unistd.h>
 

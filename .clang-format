@@ -24,7 +24,6 @@ AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
 ColumnLimit: 90
 LambdaBodyIndentation: OuterScope
-RemoveBracesLLVM: true
 SeparateDefinitionBlocks: Always
 CommentPragmas:	'^ IWYU pragma:'
 ConstructorInitializerAllOnOneLineOrOnePerLine:	true
@@ -74,7 +73,7 @@ PenaltyBreakString:	90
 PenaltyExcessCharacter:	90
 PenaltyReturnTypeOnItsOwnLine:	90
 PointerAlignment:	Middle
-ReflowComments:	true
+ReflowComments:	false
 SortIncludes:	"Never"
 SpaceAfterCStyleCast:	true
 SpaceBeforeAssignmentOperators:	true

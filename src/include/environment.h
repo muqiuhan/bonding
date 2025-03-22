@@ -17,17 +17,19 @@ namespace bonding::environment
     const utsname host;
 
   private:
-    static std::expected<std::pair<int, int>, error::Err> parse_version(const utsname & host);
+    static std::expected<std::pair<int, int>, error::Err>
+      parse_version(const utsname & host);
 
   public:
     Kernel()
       : host(unix::Utsname::Get().value())
       , version(parse_version(host).value())
+      , domain_name(host.domainname)
       , machine(host.machine)
       , release(host.release)
       , sysname(host.sysname)
       , node_name(host.nodename)
-      , domain_name(host.domainname)
+
     {
       LOG_DEBUG << "Get host machine information...";
       LOG_DEBUG << "System: " << sysname << ", Machine: " << machine

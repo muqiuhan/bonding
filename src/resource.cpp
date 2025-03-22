@@ -3,7 +3,7 @@
 #include "include/resource.h"
 #include "include/config.h"
 #include "include/environment.h"
-#include "include/log.hpp"
+#include "logging.h"
 #include "include/unix.h"
 #include <fcntl.h>
 #include <filesystem>
@@ -52,8 +52,10 @@ namespace bonding::resource
     }).value();
 
     if (setting.name != "tasks")
-      LOG_DEBUG << "Setting controller " << setting.name << "  by value " << setting.value
-                << "...✓";
+      {
+        LOG_DEBUG << "Setting controller " << setting.name << "  by value "
+                  << setting.value << "...✓";
+      }
 
     return {};
   }

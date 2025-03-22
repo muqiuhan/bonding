@@ -5,7 +5,7 @@
 #include "include/configfile.h"
 #include "include/container.h"
 #include "include/hostname.h"
-#include "include/log.hpp"
+#include "logging.h"
 #include "include/unix.h"
 #include <cstdlib>
 #include <error.h>

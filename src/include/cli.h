@@ -4,7 +4,7 @@
 #define BONDING_CLI_H
 
 #include "error.h"
-#include "log.hpp"
+#include "logging.h"
 #include <expected>
 #include <algorithm>
 #include <cassert>
@@ -72,7 +72,7 @@ namespace bonding::cli
   class Command_Line_Args
   {
   public:
-    static std::expected<void, error::Err>   make(int argc, char * argv[]) noexcept;
+    static std::expected<void, error::Err> make(int argc, char * argv[]) noexcept;
     static std::expected<Parser, error::Err> init_parser(int argc, char * argv[]) noexcept;
   };
 

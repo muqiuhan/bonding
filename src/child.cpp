@@ -4,7 +4,7 @@
 #include "include/capabilities.h"
 #include "include/exec.h"
 #include "include/hostname.h"
-#include "include/log.hpp"
+#include "logging.h"
 #include "include/mount.h"
 #include "include/namespace.h"
 #include "include/syscall.h"

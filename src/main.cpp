@@ -1,14 +1,14 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/cli.h"
-#include "include/log.hpp"
+#include "logging.h"
 #include <cstdlib>
 
 using namespace bonding;
 
 int __main(int argc, char ** argv)
 {
-  log::set_level(LOG_LEVEL_INFO);
+  logging::set_level(LOG_LEVEL_INFO);
   try
     {
       cli::Command_Line_Args::make(argc, argv);

@@ -91,7 +91,7 @@ namespace bonding::unix
 
   std::expected<utsname, error::Err> Utsname::Get() noexcept
   {
-    struct utsname host = {0};
+    struct utsname host = {{0}};
     if (-1 == uname(&host))
       return std::unexpected(ERR(error::Code::Unix));
 

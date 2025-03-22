@@ -1,7 +1,6 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/hostname.h"
-#include "include/log.hpp"
 #include <unistd.h>
 
 namespace bonding::hostname

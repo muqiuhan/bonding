@@ -17,7 +17,7 @@ namespace bonding::exec
       return const_cast<char *>(arg.c_str());
     }));
 
-    const auto x = &args[0];
+    // const auto x = &args[0];
     if (-1 == execve(path.c_str(), static_cast<char *const *>(&args[0]), nullptr))
       return std::unexpected(ERR(error::Code::Exec));
     return {};
