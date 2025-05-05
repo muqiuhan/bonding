@@ -9,7 +9,6 @@
 #include "include/namespace.h"
 #include "include/syscall.h"
 
-#include <__expected/expected.h>
 #include <cstdio>
 #include <error.h>
 #include <sched.h>

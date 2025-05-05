@@ -26,7 +26,8 @@ namespace bonding::logging::appender
     /// @param outStream The output stream to which log messages will be written.
     explicit ColorConsoleAppender(OutputStream outStream = streamStdOut)
       : ConsoleAppender<Formatter>(outStream)
-    {}
+    {
+    }
 
     /// Writes a log record to the console with appropriate color coding based on
     /// severity.
@@ -60,30 +61,23 @@ namespace bonding::logging::appender
   [[nodiscard]] auto ColorConsoleAppender<T>::get_color(Severity severity) noexcept
     -> std::string
   {
-    if (this->m_isatty)
-      {
-        switch (severity)
-          {
-          case fatal: // White text on red background for fatal errors.
-            return "\x1B[97m\x1B[41m";
+    if (!this->m_isatty)
+      return std::string();
 
-          case error: // Red text for errors.
-            return "\x1B[91m";
-
-          case warning: // Yellow text for warnings.
-            return "\x1B[93m";
-
-          case debug: // Cyan text for debug messages.
-            return "\x1B[96m";
-
-          case info: // Green text for informational messages.
-            return "\x1B[92m";
-
-          default:
-            return ""; // No color for other severities.
-          }
-      }
-
-    return ""; // No color if not a terminal output.
+    switch (severity)
+    {
+      case fatal:
+        return std::string("\x1B[97m\x1B[41m");
+      case error:
+        return std::string("\x1B[91m");
+      case warning:
+        return std::string("\x1B[93m");
+      case debug:
+        return std::string("\x1B[96m");
+      case info:
+        return std::string("\x1B[92m");
+      default:
+        return std::string();
+    }
   }
 } // namespace bonding::logging::appender

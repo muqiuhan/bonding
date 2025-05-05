@@ -14,7 +14,7 @@ namespace bonding::syscall
 {
   std::expected<void, error::Err> Syscall::refuse_if_comp() noexcept
   {
-    for (const auto [syscall, ind, biteq] : default_refuse_if_comp_syscalls)
+    for (const auto & [syscall, ind, biteq] : default_refuse_if_comp_syscalls)
       {
         const scmp_arg_cmp cmp = {ind, SCMP_CMP_MASKED_EQ, biteq, biteq};
 

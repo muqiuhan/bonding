@@ -1,7 +1,6 @@
 /** Copyright (C) 2023 Muqiu Han <muqiu-han@outlook.com> */
 
 #include "include/exec.h"
-#include <__expected/unexpected.h>
 #include <algorithm>
 #include <iterator>
 #include <unistd.h>
